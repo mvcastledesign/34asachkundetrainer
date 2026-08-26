@@ -1,0 +1,6 @@
+{
+  "name": "34a Sachkunde-Trainer",
+  "description": "Interaktiver Prüfungstrainer für die Sachkundeprüfung nach § 34a GewO mit Lernstatistiken, Karteikarten, Prüfungssimulation und Datenverwaltung.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
