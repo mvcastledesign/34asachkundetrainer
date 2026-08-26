@@ -156,33 +156,16 @@ export default function Pruefungsmodus({
     const isCorrect = vote === 'riktig';
     const metrics = trackerRef.current.getMetrics();
 
-    // Fire psychometric telemetry
+    // Fire telemetry to Supabase question_attempts
     if (currentQ) {
       logQuestionAttempt({
         session_id: sessionIdRef.current,
         mode: 'exam',
-        question_id: currentQ.id,
-        topic: currentQ.kategorie || 'Mündliche Prüfung',
-        selected_option_id: isCorrect ? 1 : 0,
-        selected_option_ids: [isCorrect ? 1 : 0],
-        correct_option_id: 1,
-        correct_option_ids: [1],
-        is_correct: isCorrect,
-        time_spent_ms: metrics.time_spent_ms,
-        time_to_first_click_ms: metrics.time_to_first_click_ms,
-        switched_answers: metrics.switched_answers,
-        decision_path: [
-          `Frage ${currentIndex + 1} von ${examQuestions.length}`,
-          `Kategorie: ${currentQ.kategorie}`,
-          `Notizen eingegeben: ${Boolean(tempAnswers[currentQ.id]?.trim())}`,
-          `Selbstbewertung: ${vote}`
-        ],
-        metadata: {
-          draft_notes_length: (tempAnswers[currentQ.id] || '').length,
-          time_limit_minutes: timeLimit,
-          time_remaining_seconds: timeLeft,
-          vote
-        }
+        question_id: String(currentQ.id || 'exam_item'),
+        topic: String(currentQ.kategorie || 'Mündliche Prüfung'),
+        is_correct: Boolean(isCorrect),
+        time_spent_ms: Number(metrics.time_spent_ms || 1500),
+        switched_answers: Boolean(metrics.switched_answers || false)
       });
     }
 

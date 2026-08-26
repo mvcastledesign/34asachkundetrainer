@@ -107,30 +107,15 @@ export default function Lernmodus({
       const isCorrect = status === 'gewusst';
       const metrics = trackerRef.current.getMetrics();
 
-      // Fire psychometric telemetry to Supabase question_attempts
+      // Fire telemetry to Supabase question_attempts
       logQuestionAttempt({
         session_id: sessionIdRef.current,
         mode: 'flashcards',
-        question_id: currentQuestion.id,
-        topic: currentQuestion.kategorie || '§ 34a Sachgebiete',
-        selected_option_id: isCorrect ? 1 : 0,
-        selected_option_ids: [isCorrect ? 1 : 0],
-        correct_option_id: 1,
-        correct_option_ids: [1],
-        is_correct: isCorrect,
-        time_spent_ms: metrics.time_spent_ms,
-        time_to_first_click_ms: metrics.time_to_first_click_ms,
-        switched_answers: metrics.switched_answers,
-        decision_path: [
-          `Kategorie: ${selectedCategory}`,
-          `Schwierigkeit: ${currentQuestion.schwierigkeit}`,
-          `Selbstbewertung: ${status}`
-        ],
-        metadata: {
-          category_filter: selectedCategory,
-          difficulty: currentQuestion.schwierigkeit,
-          self_assessment: status
-        }
+        question_id: String(currentQuestion.id || 'q_item'),
+        topic: String(currentQuestion.kategorie || '§ 34a Sachgebiete'),
+        is_correct: Boolean(isCorrect),
+        time_spent_ms: Number(metrics.time_spent_ms || 1500),
+        switched_answers: Boolean(metrics.switched_answers || false)
       });
 
       onAnswer(currentQuestion.id, status);

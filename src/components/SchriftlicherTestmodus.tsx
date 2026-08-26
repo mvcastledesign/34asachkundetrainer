@@ -393,31 +393,11 @@ export default function SchriftlicherTestmodus({
       logQuestionAttempt({
         session_id: sessionIdRef.current,
         mode: 'exam',
-        question_id: q.id,
-        topic: q.kategorie || 'Schriftliche Prüfung',
-        selected_option_id: selection.length > 0 ? selection[0] : null,
-        selected_option_ids: selection,
-        correct_option_id: q.korrekteAntworten && q.korrekteAntworten.length > 0 ? q.korrekteAntworten[0] : null,
-        correct_option_ids: q.korrekteAntworten || [],
-        is_correct: evalRes.isFullyCorrect,
-        time_spent_ms: metrics.time_spent_ms,
-        time_to_first_click_ms: metrics.time_to_first_click_ms,
-        switched_answers: metrics.switched_answers,
-        decision_path: [
-          `Frage ${idx + 1} (${q.kategorie})`,
-          `SubMode: ${subMode}`,
-          `Punkte: ${evalRes.points} / ${evalRes.maxPoints}`,
-          `Status: ${evalRes.statusText}`,
-          `Flagged: ${Boolean(flaggedQuestions[q.id])}`
-        ],
-        metadata: {
-          exam_submode: subMode,
-          points_earned: evalRes.points,
-          max_points: evalRes.maxPoints,
-          is_partial: evalRes.isPartial,
-          is_overmarked: evalRes.isOvermarked,
-          is_flagged: Boolean(flaggedQuestions[q.id])
-        }
+        question_id: String(q.id || 'exam_item'),
+        topic: String(q.kategorie || 'Schriftliche Prüfung'),
+        is_correct: Boolean(evalRes.isFullyCorrect),
+        time_spent_ms: Number(metrics.time_spent_ms || 1500),
+        switched_answers: Boolean(metrics.switched_answers || false)
       });
     });
 

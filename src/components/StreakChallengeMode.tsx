@@ -373,23 +373,11 @@ export default function StreakChallengeMode({
     logQuestionAttempt({
       session_id: sessionIdRef.current,
       mode: 'riddle',
-      question_id: currentQuestion.id,
-      topic: currentQuestion.category || '§ 34a GewO / Schnellquiz',
-      selected_option_id: index,
-      selected_option_ids: [index],
-      correct_option_id: currentQuestion.correctIndex,
-      correct_option_ids: [currentQuestion.correctIndex],
-      is_correct: isCorrect,
-      time_spent_ms: metrics.time_spent_ms,
-      time_to_first_click_ms: metrics.time_to_first_click_ms,
-      switched_answers: metrics.switched_answers,
-      decision_path: [`Aktueller Streak vor Klick: ${streak}`, `Frage: ${currentQuestion.question}`, `Gewählt: Option ${String.fromCharCode(65 + index)}`],
-      metadata: {
-        current_streak: streak,
-        personal_best: personalBest,
-        chosen_text: currentQuestion.options[index],
-        correct_text: currentQuestion.correctAnswer
-      }
+      question_id: String(currentQuestion.id || 'streak_item'),
+      topic: String(currentQuestion.category || '§ 34a GewO / Schnellquiz'),
+      is_correct: Boolean(isCorrect),
+      time_spent_ms: Number(metrics.time_spent_ms || 1500),
+      switched_answers: Boolean(metrics.switched_answers || false)
     });
 
     if (isCorrect) {

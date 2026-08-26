@@ -77,22 +77,11 @@ export default function FallbeispieleModus({
     logQuestionAttempt({
       session_id: sessionIdRef.current,
       mode: 'scenario',
-      question_id: currentCase.id,
-      topic: 'Strafrecht & Notwehr / BGB',
-      selected_option_id: index,
-      selected_option_ids: [index],
-      correct_option_id: currentCase.correct,
-      correct_option_ids: [currentCase.correct],
-      is_correct: isCorrect,
-      time_spent_ms: metrics.time_spent_ms,
-      time_to_first_click_ms: metrics.time_to_first_click_ms,
-      switched_answers: metrics.switched_answers,
-      decision_path: decisionPathRef.current,
-      metadata: {
-        case_title: currentCase.title,
-        chosen_text: currentCase.options[index],
-        correct_text: currentCase.options[currentCase.correct]
-      }
+      question_id: String(currentCase.id || 'case_item'),
+      topic: String(currentCase.title || 'Strafrecht & Notwehr / BGB'),
+      is_correct: Boolean(isCorrect),
+      time_spent_ms: Number(metrics.time_spent_ms || 1500),
+      switched_answers: Boolean(metrics.switched_answers || false)
     });
 
     if (onRecordHistory) {

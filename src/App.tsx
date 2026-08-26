@@ -56,6 +56,7 @@ import LegalConceptGuesser from './components/LegalConceptGuesser.tsx';
 import StreakChallengeMode from './components/StreakChallengeMode.tsx';
 import FachbegriffeTrainer from './components/FachbegriffeTrainer.tsx';
 import CustomDropdown from './components/CustomDropdown.tsx';
+import SupabaseSyncToast from './components/SupabaseSyncToast.tsx';
 
 const languageOptions = [
   { value: 'deaktiviert', label: 'Deaktiviert (Nur Deutsch)' },
@@ -638,6 +639,9 @@ export default function App() {
     <div className="min-h-screen bg-[#05060b] text-slate-100 flex flex-col font-sans transition-all selection:bg-[#dfb871] selection:text-slate-950 relative overflow-hidden">
       {/* Luxurious background noise & spot radiance overlay */}
       <div className="obsidian-overlay" />
+
+      {/* Visual Feedback for Supabase saving on Mobile & Desktop */}
+      <SupabaseSyncToast />
 
       {/* RENDER LOGIN IF NOT LOGGED IN */}
       {!currentUser ? (

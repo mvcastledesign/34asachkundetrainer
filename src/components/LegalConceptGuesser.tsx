@@ -261,22 +261,11 @@ export default function LegalConceptGuesser({
     logQuestionAttempt({
       session_id: sessionIdRef.current,
       mode: 'riddle',
-      question_id: `riddle_${currentRiddle.id}`,
+      question_id: String(currentRiddle.id || 'riddle_item'),
       topic: 'Rechtliche Grundlagen & Begriffe',
-      selected_option_id: optIndex,
-      selected_option_ids: [optIndex],
-      correct_option_id: currentRiddle.options.indexOf(currentRiddle.correct),
-      correct_option_ids: [currentRiddle.options.indexOf(currentRiddle.correct)],
-      is_correct: isCorrect,
-      time_spent_ms: metrics.time_spent_ms,
-      time_to_first_click_ms: metrics.time_to_first_click_ms,
-      switched_answers: metrics.switched_answers,
-      decision_path: [`Rätsel #${currentRiddle.id}`, `Option: ${option}`, `Ergebnis: ${isCorrect ? 'Korrekt' : 'Fehler'}`],
-      metadata: {
-        riddle_text: currentRiddle.riddle,
-        chosen_option: option,
-        correct_option: currentRiddle.correct
-      }
+      is_correct: Boolean(isCorrect),
+      time_spent_ms: Number(metrics.time_spent_ms || 1500),
+      switched_answers: Boolean(metrics.switched_answers || false)
     });
 
     if (isCorrect) {

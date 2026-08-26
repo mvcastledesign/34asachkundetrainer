@@ -277,25 +277,12 @@ export default function InteractiveVideoTrainer({
     // Fire-and-Forget Logging to Supabase question_attempts
     logQuestionAttempt({
       session_id: sessionIdRef.current,
-      mode: 'video',
-      question_id: `video_${activeScenario.id}_scene_${currentScene.id}`,
-      topic: currentScene.topic || 'Recht & Deeskalation (§ 34a GewO)',
-      selected_option_id: answer.id,
-      selected_option_ids: [answer.id],
-      correct_option_id: correctOptionIds.length > 0 ? correctOptionIds[0] : null,
-      correct_option_ids: correctOptionIds,
-      is_correct: answer.is_correct,
-      time_spent_ms: metrics.time_spent_ms,
-      time_to_first_click_ms: metrics.time_to_first_click_ms,
-      switched_answers: metrics.switched_answers,
-      decision_path: decisionPathRef.current,
-      metadata: {
-        scenario_id: activeScenario.id,
-        scenario_title: activeScenario.title,
-        scene_id: currentScene.id,
-        first_try: !hasFailedCurrentScene,
-        feedback: answer.feedback
-      }
+      mode: 'scenario',
+      question_id: String(`video_${activeScenario.id}_scene_${currentScene.id}`),
+      topic: String(currentScene.topic || 'Recht & Deeskalation (§ 34a GewO)'),
+      is_correct: Boolean(answer.is_correct),
+      time_spent_ms: Number(metrics.time_spent_ms || 1500),
+      switched_answers: Boolean(metrics.switched_answers || false)
     });
 
     // Statistik erfassen

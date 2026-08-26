@@ -2,8 +2,9 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  * 
- * Central EdTech & Psychometric Diagnostic Tracking System
- * Logs detailed learner behavior and cognitive patterns to Supabase `question_attempts` and `exam_sessions` tables.
+ * Central EdTech & Telemetry Tracking System
+ * Directly synchronizes user question attempts and exam sessions with Supabase tables
+ * "question_attempts" and "exam_sessions".
  */
 
 import { supabase } from './supabase.ts';
@@ -11,11 +12,12 @@ import { supabase } from './supabase.ts';
 export type ExamAnalyticsMode = 'exam' | 'flashcards' | 'riddle' | 'scenario' | 'video' | string;
 
 export interface QuestionAttemptData {
-  user_id?: string;
+  user_id?: string | number;
   session_id?: string;
   mode: ExamAnalyticsMode;
   question_id: string | number;
-  topic: string;
+  topic?: string;
+  category?: string;
   selected_option_id?: string | number | null;
   selected_option_ids?: (string | number)[];
   correct_option_id?: string | number | null;
@@ -29,13 +31,13 @@ export interface QuestionAttemptData {
 }
 
 export interface ExamSessionData {
-  user_id?: string;
+  user_id?: string | number;
   session_id?: string;
   mode?: string;
   exam_type?: string;
   total_questions: number;
   correct_count: number;
-  incorrect_count: number;
+  incorrect_count?: number;
   score_percent: number;
   points_earned?: number;
   max_points?: number;
@@ -47,6 +49,23 @@ export interface ExamSessionData {
 
 // Active session storage per mode
 const activeSessions: Record<string, string> = {};
+
+/**
+ * Triggers the visual mobile & desktop feedback toast when Supabase successfully records data
+ */
+export function triggerSaveIndicator(message: string = 'Gespeichert'): void {
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('supabase-sync-success', {
+          detail: { message, timestamp: Date.now() }
+        })
+      );
+    }
+  } catch {
+    // Ignore in non-browser environments
+  }
+}
 
 /**
  * Generates a unique session ID for a learning or exam run
@@ -71,11 +90,10 @@ export function getOrCreateSessionId(mode: string): string {
 }
 
 /**
- * Retrieves the current authenticated user ID or fallback
+ * Retrieves the current authenticated user ID, prioritizing active user, or default test user '13'
  */
 export function getActiveUserId(): string {
   try {
-    // 1. Check current logged in user from localStorage
     const localUser = localStorage.getItem('sachkunde_34a_current_user');
     if (localUser) {
       const parsed = JSON.parse(localUser);
@@ -91,219 +109,177 @@ export function getActiveUserId(): string {
     // Ignore parse errors
   }
 
-  return 'anonymous_student';
+  return '13'; // Standard test user ID as requested
 }
 
 /**
- * Standard logQuestionAttempt:
- * Non-blocking, resilient attempt logger for Supabase `question_attempts`.
- * Captures all critical EdTech and diagnostic telemetry without interfering with the user experience.
+ * Robust, direct logger for Supabase `question_attempts`.
+ * Inserts the exact specified schema:
+ * { user_id, question_id, topic, mode, is_correct, time_spent_ms, switched_answers }
  */
-export function logQuestionAttempt(attempt: QuestionAttemptData): void {
-  // Execute completely asynchronously in background
-  setTimeout(async () => {
+export async function logQuestionAttempt(attempt: QuestionAttemptData): Promise<boolean> {
+  try {
+    const userId = String(attempt.user_id || getActiveUserId() || '13');
+    const topic = String(attempt.topic || attempt.category || 'Sachkunde § 34a');
+    const timeSpent = Math.max(100, Math.round(attempt.time_spent_ms || 1500));
+    const switched = Boolean(attempt.switched_answers);
+    const questionId = String(attempt.question_id || 'q_item');
+    const mode = attempt.mode || 'exam';
+    const isCorrect = Boolean(attempt.is_correct);
+
+    // Primary exact payload
+    const primaryPayload = {
+      user_id: userId,
+      question_id: questionId,
+      topic: topic,
+      mode: mode,
+      is_correct: isCorrect,
+      time_spent_ms: timeSpent,
+      switched_answers: switched
+    };
+
+    // Buffer in localStorage for offline & testing inspector
     try {
-      const userId = String(attempt.user_id || getActiveUserId());
-      const sessionId = attempt.session_id || getOrCreateSessionId(attempt.mode);
-      const timeSpent = Math.max(0, Math.round(attempt.time_spent_ms || 0));
-      const timeToFirstClick = typeof attempt.time_to_first_click_ms === 'number' 
-        ? Math.max(0, Math.round(attempt.time_to_first_click_ms))
-        : timeSpent;
-      const switched = Boolean(attempt.switched_answers);
-      const nowIso = new Date().toISOString();
+      const existingRecentRaw = localStorage.getItem('sachkunde_34a_recent_attempts');
+      const existingRecent: any[] = existingRecentRaw ? JSON.parse(existingRecentRaw) : [];
+      existingRecent.unshift({
+        ...primaryPayload,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('sachkunde_34a_recent_attempts', JSON.stringify(existingRecent.slice(0, 100)));
+    } catch {
+      // Ignore localStorage limits
+    }
 
-      // Normalize single vs array option IDs
-      let singleSelected: string | number | null = null;
-      let arraySelected: (string | number)[] = [];
+    // Direct Supabase insert
+    const { error } = await supabase
+      .from('question_attempts')
+      .insert([primaryPayload]);
 
-      if (attempt.selected_option_id !== undefined && attempt.selected_option_id !== null) {
-        singleSelected = attempt.selected_option_id;
-        arraySelected = attempt.selected_option_ids || [attempt.selected_option_id];
-      } else if (attempt.selected_option_ids && attempt.selected_option_ids.length > 0) {
-        singleSelected = attempt.selected_option_ids[0];
-        arraySelected = attempt.selected_option_ids;
-      }
+    if (!error) {
+      // Visual feedback toast on success
+      triggerSaveIndicator('Antwort gespeichert');
+      return true;
+    } else {
+      console.warn('[Supabase question_attempts primary insert warning]:', error.message || error);
 
-      let singleCorrect: string | number | null = null;
-      let arrayCorrect: (string | number)[] = [];
-
-      if (attempt.correct_option_id !== undefined && attempt.correct_option_id !== null) {
-        singleCorrect = attempt.correct_option_id;
-        arrayCorrect = attempt.correct_option_ids || [attempt.correct_option_id];
-      } else if (attempt.correct_option_ids && attempt.correct_option_ids.length > 0) {
-        singleCorrect = attempt.correct_option_ids[0];
-        arrayCorrect = attempt.correct_option_ids;
-      }
-
-      const decisionPath = attempt.decision_path ?? [];
-
-      // 1. Full rich payload (handles schemas with single option or array columns)
-      const primaryPayload: Record<string, any> = {
-        user_id: userId,
-        session_id: sessionId,
-        mode: attempt.mode,
-        question_id: String(attempt.question_id),
-        topic: attempt.topic || 'Allgemein',
-        selected_option_id: singleSelected !== null ? String(singleSelected) : null,
-        selected_option_ids: arraySelected,
-        correct_option_id: singleCorrect !== null ? String(singleCorrect) : null,
-        correct_option_ids: arrayCorrect,
-        is_correct: attempt.is_correct,
-        time_spent_ms: timeSpent,
-        time_to_first_click_ms: timeToFirstClick,
-        switched_answers: switched,
-        decision_path: decisionPath,
-        created_at: nowIso
-      };
-
-      // Buffer in localStorage for immediate inspection & offline sync
-      try {
-        const existingRecentRaw = localStorage.getItem('sachkunde_34a_recent_attempts');
-        const existingRecent: any[] = existingRecentRaw ? JSON.parse(existingRecentRaw) : [];
-        existingRecent.unshift({ ...primaryPayload, metadata: attempt.metadata });
-        // Keep last 100 attempts locally
-        localStorage.setItem('sachkunde_34a_recent_attempts', JSON.stringify(existingRecent.slice(0, 100)));
-      } catch {
-        // localStorage quota exceeded or disabled
-      }
-
-      // 2. Fire Supabase Insert with primary payload
-      const { error } = await supabase
-        .from('question_attempts')
-        .insert([primaryPayload]);
-
-      if (error) {
-        // Fallback 1: Try minimal single-option schema (if array columns don't exist in the DB table)
-        const minimalSnakePayload = {
-          user_id: userId,
-          session_id: sessionId,
-          mode: attempt.mode,
-          question_id: String(attempt.question_id),
-          topic: attempt.topic || 'Allgemein',
-          selected_option_id: singleSelected !== null ? String(singleSelected) : null,
-          correct_option_id: singleCorrect !== null ? String(singleCorrect) : null,
-          is_correct: attempt.is_correct,
-          time_spent_ms: timeSpent,
-          switched_answers: switched,
-          created_at: nowIso
+      // Fallback 1: in case user_id is integer in Postgres DDL
+      const numUserId = parseInt(userId, 10);
+      if (!isNaN(numUserId)) {
+        const altPayload = {
+          ...primaryPayload,
+          user_id: numUserId
         };
-
-        const { error: fallbackError } = await supabase
+        const { error: altError } = await supabase
           .from('question_attempts')
-          .insert([minimalSnakePayload]);
+          .insert([altPayload]);
 
-        if (fallbackError) {
-          // Fallback 2: Try camelCase columns if Supabase was created with camelCase DDL
-          const camelPayload = {
-            userId: userId,
-            sessionId: sessionId,
-            mode: attempt.mode,
-            questionId: String(attempt.question_id),
-            topic: attempt.topic || 'Allgemein',
-            selectedOptionId: singleSelected !== null ? String(singleSelected) : null,
-            correctOptionId: singleCorrect !== null ? String(singleCorrect) : null,
-            isCorrect: attempt.is_correct,
-            timeSpentMs: timeSpent,
-            switchedAnswers: switched,
-            createdAt: nowIso
-          };
-
-          await (supabase
-            .from('question_attempts')
-            .insert([camelPayload]) as any);
+        if (!altError) {
+          triggerSaveIndicator('Antwort gespeichert');
+          return true;
         }
       }
-    } catch (err) {
-      // Completely resilient - never crash user UI on network hiccup
-      console.warn('[Analytics] Notice logging attempt to Supabase:', err);
+
+      // Fallback 2: in case columns are camelCase
+      const camelPayload = {
+        userId: userId,
+        questionId: questionId,
+        topic: topic,
+        mode: mode,
+        isCorrect: isCorrect,
+        timeSpentMs: timeSpent,
+        switchedAnswers: switched
+      };
+      const { error: camelError } = await (supabase
+        .from('question_attempts')
+        .insert([camelPayload]) as any);
+
+      if (!camelError) {
+        triggerSaveIndicator('Antwort gespeichert');
+        return true;
+      }
     }
-  }, 0);
+  } catch (err) {
+    console.error('[Supabase question_attempts exception]:', err);
+  }
+
+  return false;
 }
 
 /**
  * Standard logExamSession:
- * Non-blocking, resilient logger for finished exam sessions to Supabase `exam_sessions` table.
+ * Synchronizes completed exam sessions into Supabase `exam_sessions` table.
  */
-export function logExamSession(session: ExamSessionData): void {
-  setTimeout(async () => {
-    try {
-      const userId = String(session.user_id || getActiveUserId());
-      const sessionId = session.session_id || getOrCreateSessionId(session.mode || 'exam');
-      const nowIso = new Date().toISOString();
+export async function logExamSession(session: ExamSessionData): Promise<boolean> {
+  try {
+    const userId = String(session.user_id || getActiveUserId() || '13');
+    const sessionId = session.session_id || getOrCreateSessionId(session.mode || 'exam');
+    const totalQ = session.total_questions || 1;
+    const correctC = session.correct_count || 0;
+    const incorrectC = session.incorrect_count !== undefined ? session.incorrect_count : Math.max(0, totalQ - correctC);
+    const scorePct = session.score_percent !== undefined ? session.score_percent : Math.round((correctC / totalQ) * 100);
+    const passed = session.passed !== undefined ? session.passed : (scorePct >= 50);
+    const timeSpent = session.time_spent_seconds || 0;
 
-      const primaryPayload: Record<string, any> = {
+    const primaryPayload = {
+      user_id: userId,
+      session_id: sessionId,
+      mode: session.mode || 'exam',
+      exam_type: session.exam_type || 'Schriftliche Prüfung',
+      total_questions: totalQ,
+      correct_count: correctC,
+      incorrect_count: incorrectC,
+      score_percent: scorePct,
+      points_earned: session.points_earned !== undefined ? session.points_earned : correctC,
+      max_points: session.max_points !== undefined ? session.max_points : totalQ,
+      passed: passed,
+      time_spent_seconds: timeSpent
+    };
+
+    // Buffer in localStorage
+    try {
+      const existingRecentRaw = localStorage.getItem('sachkunde_34a_recent_exam_sessions');
+      const existingRecent: any[] = existingRecentRaw ? JSON.parse(existingRecentRaw) : [];
+      existingRecent.unshift({ ...primaryPayload, created_at: new Date().toISOString() });
+      localStorage.setItem('sachkunde_34a_recent_exam_sessions', JSON.stringify(existingRecent.slice(0, 50)));
+    } catch {
+      // Ignore
+    }
+
+    const { error } = await supabase
+      .from('exam_sessions')
+      .insert([primaryPayload]);
+
+    if (!error) {
+      triggerSaveIndicator('Prüfungssitzung gespeichert');
+      return true;
+    } else {
+      console.warn('[Supabase exam_sessions primary insert warning]:', error.message || error);
+
+      // Fallback: minimal schema
+      const minimalPayload = {
         user_id: userId,
         session_id: sessionId,
         mode: session.mode || 'exam',
-        exam_type: session.exam_type || 'Schriftliche Prüfung',
-        total_questions: session.total_questions,
-        correct_count: session.correct_count,
-        incorrect_count: session.incorrect_count,
-        score_percent: session.score_percent,
-        points_earned: session.points_earned !== undefined ? session.points_earned : session.correct_count,
-        max_points: session.max_points !== undefined ? session.max_points : session.total_questions,
-        passed: session.passed,
-        time_spent_seconds: session.time_spent_seconds || 0,
-        category_breakdown: session.category_breakdown || null,
-        created_at: nowIso
+        total_questions: totalQ,
+        correct_count: correctC,
+        score_percent: scorePct,
+        passed: passed
       };
-
-      // Also store in localStorage buffer
-      try {
-        const existingRecentRaw = localStorage.getItem('sachkunde_34a_recent_exam_sessions');
-        const existingRecent: any[] = existingRecentRaw ? JSON.parse(existingRecentRaw) : [];
-        existingRecent.unshift({ ...primaryPayload, metadata: session.metadata });
-        localStorage.setItem('sachkunde_34a_recent_exam_sessions', JSON.stringify(existingRecent.slice(0, 50)));
-      } catch {
-        // Ignore quota limits
-      }
-
-      // 1. Insert into Supabase `exam_sessions` table
-      const { error } = await supabase
+      const { error: minError } = await supabase
         .from('exam_sessions')
-        .insert([primaryPayload]);
+        .insert([minimalPayload]);
 
-      if (error) {
-        // Fallback 1: minimal snake_case
-        const minimalPayload = {
-          user_id: userId,
-          session_id: sessionId,
-          mode: session.mode || 'exam',
-          total_questions: session.total_questions,
-          correct_count: session.correct_count,
-          score_percent: session.score_percent,
-          passed: session.passed,
-          created_at: nowIso
-        };
-        const { error: fallbackError } = await supabase
-          .from('exam_sessions')
-          .insert([minimalPayload]);
-
-        if (fallbackError) {
-          // Fallback 2: camelCase
-          const camelPayload = {
-            userId: userId,
-            sessionId: sessionId,
-            mode: session.mode || 'exam',
-            examType: session.exam_type || 'Schriftliche Prüfung',
-            totalQuestions: session.total_questions,
-            correctCount: session.correct_count,
-            incorrectCount: session.incorrect_count,
-            scorePercent: session.score_percent,
-            pointsEarned: session.points_earned !== undefined ? session.points_earned : session.correct_count,
-            maxPoints: session.max_points !== undefined ? session.max_points : session.total_questions,
-            passed: session.passed,
-            createdAt: nowIso
-          };
-          await (supabase
-            .from('exam_sessions')
-            .insert([camelPayload]) as any);
-        }
+      if (!minError) {
+        triggerSaveIndicator('Prüfungssitzung gespeichert');
+        return true;
       }
-    } catch (err) {
-      console.warn('[Analytics] Notice logging exam session to Supabase:', err);
     }
-  }, 0);
+  } catch (err) {
+    console.error('[Supabase exam_sessions exception]:', err);
+  }
+
+  return false;
 }
 
 /**
@@ -356,7 +332,7 @@ export class InteractionTracker {
     switched_answers: boolean;
   } {
     const now = Date.now();
-    const totalTime = Math.max(50, now - this.startTime);
+    const totalTime = Math.max(100, now - this.startTime);
     const firstClick = this.firstClickTime !== null ? this.firstClickTime : totalTime;
     const hasSwitched = this.switched || this.clickCount > 1;
 

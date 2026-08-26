@@ -188,32 +188,15 @@ export default function FachbegriffeTrainer({ translationLang = 'deaktiviert', o
     const correctList = trap.practiceExercise.correctIndices;
     const isPerfect = selected.length === correctList.length && selected.every(i => correctList.includes(i));
 
-    // Fire psychometric telemetry to Supabase question_attempts
+    // Fire telemetry to Supabase question_attempts
     logQuestionAttempt({
       session_id: sessionIdRef.current,
       mode: 'exam',
-      question_id: `trap_${trap.id}`,
-      topic: trap.category || 'Prüfungsdeutsch & Signalwörter',
-      selected_option_id: selected.length > 0 ? selected[0] : null,
-      selected_option_ids: selected,
-      correct_option_id: correctList.length > 0 ? correctList[0] : null,
-      correct_option_ids: correctList,
-      is_correct: isPerfect,
-      time_spent_ms: metrics.time_spent_ms,
-      time_to_first_click_ms: metrics.time_to_first_click_ms,
-      switched_answers: metrics.switched_answers,
-      decision_path: [
-        `Falle: ${trap.title}`,
-        `Signalwörter aktiviert: ${highlightSignals}`,
-        `Gewählte Optionen: ${selected.join(', ')}`,
-        `Korrekt: ${isPerfect}`
-      ],
-      metadata: {
-        trap_title: trap.title,
-        highlight_signals: highlightSignals,
-        question_text: trap.practiceExercise.question,
-        signal_words: trap.practiceExercise.signalWords
-      }
+      question_id: String(`trap_${trap.id}`),
+      topic: String(trap.category || 'Prüfungsdeutsch & Signalwörter'),
+      is_correct: Boolean(isPerfect),
+      time_spent_ms: Number(metrics.time_spent_ms || 1500),
+      switched_answers: Boolean(metrics.switched_answers || false)
     });
 
     // Record stats if provided

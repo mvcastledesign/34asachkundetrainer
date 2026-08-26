@@ -75,24 +75,11 @@ export default function Karteikartenmodus({ questions, translationLang = 'deakti
       logQuestionAttempt({
         session_id: sessionIdRef.current,
         mode: 'flashcards',
-        question_id: currentQuestion.id,
-        topic: currentQuestion.kategorie || 'Sachkunde § 34a',
-        selected_option_id: 1,
-        selected_option_ids: [1],
-        correct_option_id: 1,
-        correct_option_ids: [1],
+        question_id: String(currentQuestion.id || 'q_item'),
+        topic: String(currentQuestion.kategorie || 'Sachkunde § 34a'),
         is_correct: true,
-        time_spent_ms: metrics.time_spent_ms,
-        time_to_first_click_ms: metrics.time_to_first_click_ms,
-        switched_answers: metrics.switched_answers,
-        decision_path: [
-          `Karte ${currentIndex + 1} (${currentQuestion.kategorie})`,
-          'Karteikarte umgedreht (Lösung eingesehen)'
-        ],
-        metadata: {
-          category: selectedCategory,
-          index: currentIndex
-        }
+        time_spent_ms: Number(metrics.time_spent_ms || 1500),
+        switched_answers: Boolean(metrics.switched_answers || false)
       });
     }
     setIsFlipped(!isFlipped);
