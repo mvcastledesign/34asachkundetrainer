@@ -665,9 +665,9 @@ export default function App() {
         <Login onLoginSuccess={handleLoginSuccess} />
       ) : currentUser.role === 'dozent' ? (
         /* DOZENTEN & GESCHÄFTSFÜHRER B2B DASHBOARD */
-        <div className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10 space-y-4">
+        <div className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10 space-y-4 print:p-0 print:m-0 print:max-w-none print:space-y-0">
           {/* Dozent Top Navigation Bar */}
-          <div className="flex items-center justify-between p-4 bento-glass rounded-2xl border border-white/10">
+          <div className="flex items-center justify-between p-4 bento-glass rounded-2xl border border-white/10 print:hidden">
             <div className="flex items-center gap-2.5">
               <div className="p-2 bg-gradient-to-br from-[#dfb871] to-[#9a7836] rounded-xl text-slate-950 font-bold shadow-md">
                 <ShieldCheck className="w-5 h-5" />
@@ -700,7 +700,7 @@ export default function App() {
           />
 
           {/* Footer Disclaimer */}
-          <footer className="pt-8 pb-4 text-center border-t border-white/5 space-y-1">
+          <footer className="pt-8 pb-4 text-center border-t border-white/5 space-y-1 print:hidden">
             <p className="text-xs text-slate-500 font-sans">
               § 34a GewO Sachkunde-Vorbereitungsportal • Unabhängiges Prüfungstraining
             </p>

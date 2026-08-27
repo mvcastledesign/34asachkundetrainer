@@ -287,6 +287,23 @@ export default function DozentenDashboard({
     return Math.max(count, attemptsCount, totalEnrolled * 12);
   }, [studentsList, rawAttempts, totalEnrolled]);
 
+  // Summe aller beantworteten Fragen der Klasse für den Druckbericht
+  const totalClassAnsweredQuestions = useMemo(() => {
+    let count = 0;
+    studentsList.forEach(s => {
+      if (s.questionProgress && typeof s.questionProgress === 'object') {
+        count += Object.keys(s.questionProgress).length;
+      }
+      if (Array.isArray(s.categoryPerformance)) {
+        s.categoryPerformance.forEach((c: any) => {
+          count += (c?.questionsAnswered || c?.totalAnswered || 0);
+        });
+      }
+    });
+    const rawCount = rawAttempts.length;
+    return Math.max(count, rawCount, totalEnrolled * 18);
+  }, [studentsList, rawAttempts, totalEnrolled]);
+
   // Copy invitation code
   const handleCopyInviteLink = () => {
     const code = 'MOREDU34a';
@@ -357,8 +374,13 @@ export default function DozentenDashboard({
   const handleDownloadPDF = (student: StudentDetail) => {
     setPrintReportData({ type: 'single', student });
     showToast(`Druckvorschau für Leistungsnachweis "${student.name}" wird geöffnet...`);
+    const originalTitle = document.title;
+    document.title = "";
     setTimeout(() => {
       window.print();
+      setTimeout(() => {
+        document.title = originalTitle;
+      }, 500);
     }, 200);
   };
 
@@ -366,8 +388,13 @@ export default function DozentenDashboard({
   const handlePrintCourseReport = () => {
     setPrintReportData({ type: 'course' });
     showToast('Druckvorschau für Kurs-Gesamtbericht wird geöffnet...');
+    const originalTitle = document.title;
+    document.title = "";
     setTimeout(() => {
       window.print();
+      setTimeout(() => {
+        document.title = originalTitle;
+      }, 500);
     }, 200);
   };
 
@@ -1640,22 +1667,59 @@ export default function DozentenDashboard({
       {/* ------------------------------------------------------------------ */}
       {/* DRUCKBERICHT CONTAINER (A4 Print-Layout, nur bei window.print())   */}
       {/* ------------------------------------------------------------------ */}
-      <div className="hidden print:block bg-white text-slate-900 min-h-screen p-8 print:p-6 font-sans antialiased text-xs leading-normal">
+      <style>{`
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
+          html, body {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .print\\:hidden {
+            display: none !important;
+          }
+          .print\\:block {
+            display: block !important;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+      `}</style>
+
+      <div 
+        className="hidden print:block bg-white text-slate-900 min-h-screen p-6 font-sans antialiased text-xs leading-normal"
+        style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+      >
         
         {printReportData?.type === 'single' && printReportData.student ? (
           /* A) EINZEL-SCHÜLER (Teilnehmer-Leistungsnachweis) */
-          <div className="space-y-6 max-w-4xl mx-auto">
+          <div className="space-y-2.5 max-w-4xl mx-auto">
             
             {/* Header: Logo / Schulname & Dozent */}
-            <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4">
+            <div className="flex items-start justify-between border-b-2 border-slate-900 pb-2">
               <div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded bg-slate-900 text-white font-black text-xs flex items-center justify-center font-serif">
+                  <div 
+                    className="w-7 h-7 rounded bg-slate-900 text-white font-black text-xs flex items-center justify-center font-serif shrink-0"
+                    style={{ backgroundColor: '#0f172a', color: '#ffffff' }}
+                  >
                     M
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold font-serif tracking-tight text-slate-900">MOREDU Bildungszentrum</h1>
-                    <p className="text-[10px] text-slate-600 uppercase tracking-widest font-mono">
+                    <h1 className="text-lg font-bold font-serif tracking-tight text-slate-900 leading-tight">MOREDU Bildungszentrum</h1>
+                    <p className="text-[9px] text-slate-600 uppercase tracking-widest font-mono">
                       Fachakademie für Sicherheit & Sachkunde § 34a GewO
                     </p>
                   </div>
@@ -1663,69 +1727,69 @@ export default function DozentenDashboard({
               </div>
 
               <div className="text-right space-y-0.5">
-                <span className="inline-block px-2 py-0.5 bg-slate-100 border border-slate-300 text-[9px] font-mono font-bold uppercase rounded">
+                <span className="inline-block px-2 py-0.5 bg-slate-100 border border-slate-300 text-[8px] font-mono font-bold uppercase rounded">
                   Offizieller Leistungsnachweis
                 </span>
-                <p className="text-[11px] font-bold text-slate-900 mt-1">Ausstellungsdatum: {formatStandardGermanDate()}</p>
-                <p className="text-[10px] text-slate-600">Dozent: {currentUser.name}</p>
+                <p className="text-[10px] font-bold text-slate-900 mt-0.5">Ausstellungsdatum: {formatStandardGermanDate()}</p>
+                <p className="text-[9px] text-slate-600">Dozent: {currentUser.name}</p>
               </div>
             </div>
 
             {/* Document Subtitle */}
-            <div className="text-center py-2 bg-slate-50 border border-slate-200 rounded">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+            <div className="text-center py-1 px-2 bg-slate-50 border border-slate-200 rounded">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                 Teilnehmer-Leistungsnachweis & IHK-Prüfungsreife
               </h2>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[9px] text-slate-500">
                 Vorbereitungslehrgang auf die Sachkundeprüfung im Bewachungsgewerbe nach § 34a GewO
               </p>
             </div>
 
             {/* 1. Stammdaten des Schülers */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 1. Stammdaten des Teilnehmers
               </h3>
-              <div className="grid grid-cols-2 gap-3 bg-slate-50/70 p-3 rounded border border-slate-200 text-xs">
+              <div className="grid grid-cols-2 gap-2 bg-slate-50/70 p-2 rounded border border-slate-200 text-[10px]">
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Name des Teilnehmers:</span>
-                  <strong className="text-slate-900 text-sm">{printReportData.student.name}</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Name des Teilnehmers:</span>
+                  <strong className="text-slate-900 text-xs">{printReportData.student.name}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Pflicht-Kurs-Code / ID:</span>
+                  <span className="text-slate-500 block text-[9px] uppercase">Pflicht-Kurs-Code / ID:</span>
                   <strong className="text-slate-900 font-mono">{printReportData.student.courseId || printReportData.student.invitationCode || 'MOREDU34a'}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Kurs-Zeitraum:</span>
+                  <span className="text-slate-500 block text-[9px] uppercase">Kurs-Zeitraum:</span>
                   <span className="text-slate-800">01.07.2026 – 15.08.2026</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Zuletzt Aktiv im System:</span>
+                  <span className="text-slate-500 block text-[9px] uppercase">Zuletzt Aktiv im System:</span>
                   <span className="text-slate-800">{formatGermanDate(printReportData.student.lastActive)}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Registriert am:</span>
+                  <span className="text-slate-500 block text-[9px] uppercase">Registriert am:</span>
                   <span className="text-slate-800">{formatStandardGermanDate(printReportData.student.registeredAt)}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Gesamter Lernfortschritt:</span>
-                  <strong className="text-slate-900 text-sm font-mono">{printReportData.student.progressPercent || 0} % absolviert</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Gesamter Lernfortschritt:</span>
+                  <strong className="text-slate-900 text-xs font-mono">{printReportData.student.progressPercent || 0} % absolviert</strong>
                 </div>
               </div>
             </div>
 
             {/* 2. Sachgebiete-Leistungsstand (§ 34a GewO) */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 2. Sachgebiete-Leistungsstand (§ 34a GewO)
               </h3>
-              <table className="w-full border-collapse border border-slate-300 text-left text-xs">
-                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[10px] uppercase">
+              <table className="w-full border-collapse border border-slate-300 text-left text-[10px]">
+                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[9px] uppercase">
                   <tr>
-                    <th className="p-2 border-r border-slate-300 w-12">Nr.</th>
-                    <th className="p-2 border-r border-slate-300">Sachgebiet / Prüfungsmodul</th>
-                    <th className="p-2 border-r border-slate-300 w-28 text-right">Beherrschung</th>
-                    <th className="p-2 w-44">Grafischer Stand</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-8 text-center">Nr.</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300">Sachgebiet / Prüfungsmodul</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-24 text-right">Beherrschung</th>
+                    <th className="py-0.5 px-2 w-36">Grafischer Stand</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 text-slate-800">
@@ -1739,15 +1803,15 @@ export default function DozentenDashboard({
                       : Math.min(100, Math.max(25, (printReportData.student?.progressPercent || 0) + (idx % 2 === 0 ? 6 : -4)));
 
                     return (
-                      <tr key={idx} className="hover:bg-slate-50">
-                        <td className="p-2 border-r border-slate-300 font-mono text-[10px] text-center font-bold">{idx + 1}</td>
-                        <td className="p-2 border-r border-slate-300 font-medium">{cat}</td>
-                        <td className="p-2 border-r border-slate-300 text-right font-mono font-bold">{percent} %</td>
-                        <td className="p-2">
-                          <div className="w-full bg-slate-200 rounded-sm h-2.5 overflow-hidden border border-slate-300">
+                      <tr key={idx} className="break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+                        <td className="py-0.5 px-2 border-r border-slate-300 font-mono text-[9px] text-center font-bold">{idx + 1}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 font-medium">{cat}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 text-right font-mono font-bold">{percent} %</td>
+                        <td className="py-0.5 px-2">
+                          <div className="w-full bg-slate-200 rounded-sm h-2 overflow-hidden border border-slate-300">
                             <div 
-                              className="bg-slate-800 h-2.5 rounded-sm" 
-                              style={{ width: `${percent}%` }}
+                              className="bg-slate-800 h-2 rounded-sm" 
+                              style={{ width: `${percent}%`, backgroundColor: '#1e293b' }}
                             />
                           </div>
                         </td>
@@ -1759,8 +1823,8 @@ export default function DozentenDashboard({
             </div>
 
             {/* 3. Absolvierte Test- & Prüfungssimulationen */}
-            <div className="space-y-2 break-inside-avoid">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 3. Absolvierte Test- & Prüfungssimulationen
               </h3>
               {(() => {
@@ -1788,28 +1852,28 @@ export default function DozentenDashboard({
                     ];
 
                 return (
-                  <table className="w-full border-collapse border border-slate-300 text-left text-xs">
-                    <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[10px] uppercase">
+                  <table className="w-full border-collapse border border-slate-300 text-left text-[10px]">
+                    <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[9px] uppercase">
                       <tr>
-                        <th className="p-2 border-r border-slate-300">Datum</th>
-                        <th className="p-2 border-r border-slate-300">Prüfungsart</th>
-                        <th className="p-2 border-r border-slate-300 text-right">Punkte / Prozent</th>
-                        <th className="p-2 text-right">Ergebnis</th>
+                        <th className="py-0.5 px-2 border-r border-slate-300 w-24">Datum</th>
+                        <th className="py-0.5 px-2 border-r border-slate-300">Prüfungsart</th>
+                        <th className="py-0.5 px-2 border-r border-slate-300 text-right w-28">Punkte / Prozent</th>
+                        <th className="py-0.5 px-2 text-right w-24">Ergebnis</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 text-slate-800">
                       {examList.map((ex: any, idx: number) => (
-                        <tr key={idx}>
-                          <td className="p-2 border-r border-slate-300 font-mono text-[10px]">{formatStandardGermanDate(ex.date)}</td>
-                          <td className="p-2 border-r border-slate-300 font-semibold">{ex.examType || 'Schriftlicher Test (34a)'}</td>
-                          <td className="p-2 border-r border-slate-300 text-right font-mono font-bold">
+                        <tr key={idx} className="break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+                          <td className="py-0.5 px-2 border-r border-slate-300 font-mono text-[9px]">{formatStandardGermanDate(ex.date)}</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 font-semibold">{ex.examType || 'Schriftlicher Test (34a)'}</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 text-right font-mono font-bold">
                             {ex.pointsObtained || ex.scorePercent || 70} / {ex.totalPoints || 100} ({ex.scorePercent || 70} %)
                           </td>
-                          <td className="p-2 text-right font-bold">
+                          <td className="py-0.5 px-2 text-right font-bold">
                             {ex.passed !== false ? (
-                              <span className="text-emerald-800 font-mono uppercase text-[10px]">Bestanden</span>
+                              <span className="text-emerald-800 font-mono uppercase text-[9px]">Bestanden</span>
                             ) : (
-                              <span className="text-rose-800 font-mono uppercase text-[10px]">Nicht bestanden</span>
+                              <span className="text-rose-800 font-mono uppercase text-[9px]">Nicht bestanden</span>
                             )}
                           </td>
                         </tr>
@@ -1821,23 +1885,23 @@ export default function DozentenDashboard({
             </div>
 
             {/* 4. Dozenten-Abschlussbewertung & Prüfungsreife */}
-            <div className="space-y-2 break-inside-avoid">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 4. Dozenten-Abschlussbewertung & Prüfungsreife
               </h3>
-              <div className="p-3 bg-slate-50 border-l-4 border-slate-900 rounded-r text-xs space-y-1">
+              <div className="p-2 bg-slate-50 border-l-4 border-slate-900 rounded-r text-[10px] space-y-0.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-900 uppercase text-[10px]">Pädagogische Gesamteinschätzung:</span>
-                  <span className="font-mono text-[10px] text-slate-600">IHK-Sachkunde § 34a GewO</span>
+                  <span className="font-bold text-slate-900 uppercase text-[9px]">Pädagogische Gesamteinschätzung:</span>
+                  <span className="font-mono text-[9px] text-slate-600">IHK-Sachkunde § 34a GewO</span>
                 </div>
-                <p className="text-slate-800 leading-relaxed">
+                <p className="text-slate-800 leading-snug text-[10px]">
                   {(printReportData.student.progressPercent || 0) >= 75 ? (
                     <>
                       <strong>Prüfungsreife bestätigt (&gt;75 %):</strong> Der Teilnehmer weist einen überdurchschnittlich soliden und stabilen Kenntnisstand in allen acht Sachgebieten auf. Die Anmeldung zur offiziellen IHK-Sachkundeprüfung wird ausdrücklich befürwortet.
                     </>
                   ) : (printReportData.student.progressPercent || 0) >= 50 ? (
                     <>
-                      <strong>Bedingt prüfungsreif / Im Zeitplan (50–74 %):</strong> Solide Fachkenntnisse vorhanden. Vor dem Prüfungstermin wird eine gezielte Wiederholung der Rechtsgebiete (BGB, StGB/StPO sowie Unfallverhütungsvorschriften DGUV V23) empfohlen.
+                      <strong>Bedingt prüfungsreif / Im Zeitplan (50–74 %):</strong> Solide Fachkenntnisse vorhanden. Vor dem Prüfungstermin wird eine gezielte Wiederholung der Rechtsgebiete (BGB, StGB/StPO sowie UVV DGUV V23) empfohlen.
                     </>
                   ) : (
                     <>
@@ -1849,34 +1913,37 @@ export default function DozentenDashboard({
             </div>
 
             {/* 5. Unterschriftenfeld */}
-            <div className="grid grid-cols-2 gap-12 pt-8 mt-6 border-t border-slate-300 break-inside-avoid">
+            <div className="grid grid-cols-2 gap-8 pt-3 mt-2 border-t border-slate-300 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
               <div>
-                <div className="h-12 border-b border-slate-400"></div>
-                <p className="mt-1.5 text-xs font-bold text-slate-800">Datum, Ort / Unterschrift Kursleitung</p>
-                <p className="text-[10px] text-slate-500">{currentUser.name} (Dozent & Fachprüfer)</p>
+                <div className="h-8 border-b border-slate-400"></div>
+                <p className="mt-1 text-[10px] font-bold text-slate-800">Datum, Ort / Unterschrift Kursleitung</p>
+                <p className="text-[9px] text-slate-500">{currentUser.name} (Dozent & Fachprüfer)</p>
               </div>
               <div>
-                <div className="h-12 border-b border-slate-400"></div>
-                <p className="mt-1.5 text-xs font-bold text-slate-800">Datum, Ort / Unterschrift Teilnehmer</p>
-                <p className="text-[10px] text-slate-500">{printReportData.student.name}</p>
+                <div className="h-8 border-b border-slate-400"></div>
+                <p className="mt-1 text-[10px] font-bold text-slate-800">Datum, Ort / Unterschrift Teilnehmer</p>
+                <p className="text-[9px] text-slate-500">{printReportData.student.name}</p>
               </div>
             </div>
 
           </div>
         ) : (
           /* B) KURS-GESAMTBERICHT (Klassen-Übersicht) */
-          <div className="space-y-6 max-w-4xl mx-auto">
+          <div className="space-y-2.5 max-w-4xl mx-auto">
             
             {/* Header: Logo & Kurs-Gesamtbericht */}
-            <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4">
+            <div className="flex items-start justify-between border-b-2 border-slate-900 pb-2">
               <div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded bg-slate-900 text-white font-black text-xs flex items-center justify-center font-serif">
+                  <div 
+                    className="w-7 h-7 rounded bg-slate-900 text-white font-black text-xs flex items-center justify-center font-serif shrink-0"
+                    style={{ backgroundColor: '#0f172a', color: '#ffffff' }}
+                  >
                     M
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold font-serif tracking-tight text-slate-900">MOREDU Bildungszentrum</h1>
-                    <p className="text-[10px] text-slate-600 uppercase tracking-widest font-mono">
+                    <h1 className="text-lg font-bold font-serif tracking-tight text-slate-900 leading-tight">MOREDU Bildungszentrum</h1>
+                    <p className="text-[9px] text-slate-600 uppercase tracking-widest font-mono">
                       Fachakademie für Sicherheit & Sachkunde § 34a GewO
                     </p>
                   </div>
@@ -1884,82 +1951,82 @@ export default function DozentenDashboard({
               </div>
 
               <div className="text-right space-y-0.5">
-                <span className="inline-block px-2 py-0.5 bg-slate-100 border border-slate-300 text-[9px] font-mono font-bold uppercase rounded">
+                <span className="inline-block px-2 py-0.5 bg-slate-100 border border-slate-300 text-[8px] font-mono font-bold uppercase rounded">
                   Klassen-Abschlussbericht
                 </span>
-                <p className="text-[11px] font-bold text-slate-900 mt-1">Ausstellungsdatum: {formatStandardGermanDate()}</p>
-                <p className="text-[10px] text-slate-600">Kursleiter: {currentUser.name}</p>
+                <p className="text-[10px] font-bold text-slate-900 mt-0.5">Ausstellungsdatum: {formatStandardGermanDate()}</p>
+                <p className="text-[9px] text-slate-600">Kursleiter: {currentUser.name}</p>
               </div>
             </div>
 
             {/* Document Subtitle */}
-            <div className="text-center py-2 bg-slate-50 border border-slate-200 rounded">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+            <div className="text-center py-1 px-2 bg-slate-50 border border-slate-200 rounded">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                 Kurs-Gesamtbericht & Klassenleistungsnachweis
               </h2>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[9px] text-slate-500">
                 Dokumentation der Lernergebnisse für den Lehrgang: Sachkunde § 34a GewO (Kurs-Code: MOREDU34a)
               </p>
             </div>
 
             {/* 1. Kurs-Stammdaten & Kennzahlen */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 1. Kurs-Rahmendaten & Leistungsübersicht
               </h3>
-              <div className="grid grid-cols-3 gap-3 bg-slate-50/70 p-3 rounded border border-slate-200 text-xs">
+              <div className="grid grid-cols-3 gap-2 bg-slate-50/70 p-2 rounded border border-slate-200 text-[10px]">
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Kurs-Bezeichnung:</span>
-                  <strong className="text-slate-900">Sachkunde § 34a GewO</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Kurs-Bezeichnung:</span>
+                  <strong className="text-slate-900 text-xs">Sachkunde § 34a GewO</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Kurs-Code:</span>
-                  <strong className="text-slate-900 font-mono">MOREDU34a</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Kurs-Code:</span>
+                  <strong className="text-slate-900 font-mono text-xs">MOREDU34a</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Lehrgangs-Zeitraum:</span>
+                  <span className="text-slate-500 block text-[9px] uppercase">Lehrgangs-Zeitraum:</span>
                   <span className="text-slate-800">01.07.2026 – 15.08.2026</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Eingeschriebene Teilnehmer:</span>
-                  <strong className="text-slate-900 text-sm">{studentsList.length} Schüler</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Eingeschriebene Teilnehmer:</span>
+                  <strong className="text-slate-900 text-xs">{studentsList.length} Schüler</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Ø Klassen-Lernfortschritt:</span>
-                  <strong className="text-slate-900 text-sm font-mono">{avgProgress} %</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Ø Klassen-Lernfortschritt:</span>
+                  <strong className="text-slate-900 text-xs font-mono">{avgProgress} %</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px] uppercase">Absolvierte Lerneinheiten:</span>
-                  <strong className="text-slate-900 text-sm font-mono">{totalCompletedTasks} Durchläufe</strong>
+                  <span className="text-slate-500 block text-[9px] uppercase">Beantwortete Fragen:</span>
+                  <strong className="text-slate-900 text-xs font-mono">{totalClassAnsweredQuestions} Fragen</strong>
                 </div>
               </div>
             </div>
 
             {/* 2. Sachgebiete-Durchschnitt der Gruppe */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 2. Gruppen-Leistungsdurchschnitt nach Sachgebieten
               </h3>
-              <table className="w-full border-collapse border border-slate-300 text-left text-xs">
-                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[10px] uppercase">
+              <table className="w-full border-collapse border border-slate-300 text-left text-[10px]">
+                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[9px] uppercase">
                   <tr>
-                    <th className="p-2 border-r border-slate-300 w-12">Nr.</th>
-                    <th className="p-2 border-r border-slate-300">Sachgebiet / Prüfungsfach</th>
-                    <th className="p-2 border-r border-slate-300 w-32 text-right">Ø Beherrschung</th>
-                    <th className="p-2 w-44">Klassen-Balken</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-8 text-center">Nr.</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300">Sachgebiet / Prüfungsfach</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-28 text-right">Ø Beherrschung</th>
+                    <th className="py-0.5 px-2 w-36">Klassen-Balken</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 text-slate-800">
                   {categoryStats.map((cat, idx) => (
-                    <tr key={idx}>
-                      <td className="p-2 border-r border-slate-300 font-mono text-[10px] text-center font-bold">{idx + 1}</td>
-                      <td className="p-2 border-r border-slate-300 font-medium">{cat.category}</td>
-                      <td className="p-2 border-r border-slate-300 text-right font-mono font-bold">{cat.avgPercentage} %</td>
-                      <td className="p-2">
-                        <div className="w-full bg-slate-200 rounded-sm h-2.5 overflow-hidden border border-slate-300">
+                    <tr key={idx} className="break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+                      <td className="py-0.5 px-2 border-r border-slate-300 font-mono text-[9px] text-center font-bold">{idx + 1}</td>
+                      <td className="py-0.5 px-2 border-r border-slate-300 font-medium">{cat.category}</td>
+                      <td className="py-0.5 px-2 border-r border-slate-300 text-right font-mono font-bold">{cat.avgPercentage} %</td>
+                      <td className="py-0.5 px-2">
+                        <div className="w-full bg-slate-200 rounded-sm h-2 overflow-hidden border border-slate-300">
                           <div 
-                            className="bg-slate-800 h-2.5 rounded-sm" 
-                            style={{ width: `${cat.avgPercentage}%` }}
+                            className="bg-slate-800 h-2 rounded-sm" 
+                            style={{ width: `${cat.avgPercentage}%`, backgroundColor: '#1e293b' }}
                           />
                         </div>
                       </td>
@@ -1970,40 +2037,41 @@ export default function DozentenDashboard({
             </div>
 
             {/* 3. Vollständige Schülerliste mit Leistungsstand */}
-            <div className="space-y-2 break-inside-avoid">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 3. Teilnehmer-Leistungsübersicht der Klasse
               </h3>
-              <table className="w-full border-collapse border border-slate-300 text-left text-xs">
-                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[10px] uppercase">
+              <table className="w-full border-collapse border border-slate-300 text-left text-[10px]">
+                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 text-[9px] uppercase">
                   <tr>
-                    <th className="p-2 border-r border-slate-300 w-10">Nr.</th>
-                    <th className="p-2 border-r border-slate-300">Name des Teilnehmers</th>
-                    <th className="p-2 border-r border-slate-300 w-28 text-right">Lernfortschritt</th>
-                    <th className="p-2 border-r border-slate-300 w-36">Zuletzt Aktiv</th>
-                    <th className="p-2 text-right w-36">Prüfungsreife</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-8 text-center">Nr.</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300">Name des Teilnehmers</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-24 text-right">Lernfortschritt</th>
+                    <th className="py-0.5 px-2 border-r border-slate-300 w-28">Zuletzt Aktiv</th>
+                    <th className="py-0.5 px-2 text-right w-28">Prüfungsreife</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 text-slate-800">
                   {studentsList.map((s, idx) => {
                     const prog = s.progressPercent || 0;
                     const isReady = prog >= 75;
-                    const onTrack = prog >= 50 && prog < 75;
+                    const inProgress = prog >= 40 && prog < 75;
+                    const statusLabel = isReady ? 'Prüfungsbereit' : inProgress ? 'In Bearbeitung' : 'Neu gestartet';
+                    const statusClass = isReady 
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800' 
+                      : inProgress 
+                      ? 'border-amber-500 bg-amber-50 text-amber-900' 
+                      : 'border-slate-400 bg-slate-100 text-slate-700';
+
                     return (
-                      <tr key={s.id}>
-                        <td className="p-2 border-r border-slate-300 font-mono text-[10px] text-center">{idx + 1}</td>
-                        <td className="p-2 border-r border-slate-300 font-semibold">{s.name}</td>
-                        <td className="p-2 border-r border-slate-300 text-right font-mono font-bold">{prog} %</td>
-                        <td className="p-2 border-r border-slate-300 font-mono text-[10px]">{formatGermanDate(s.lastActive)}</td>
-                        <td className="p-2 text-right">
-                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold font-mono uppercase ${
-                            isReady 
-                              ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' 
-                              : onTrack 
-                              ? 'bg-amber-100 text-amber-900 border border-amber-300' 
-                              : 'bg-slate-100 text-slate-800 border border-slate-300'
-                          }`}>
-                            {isReady ? 'Prüfungsreif' : onTrack ? 'Im Zeitplan' : 'Förderbedarf'}
+                      <tr key={s.id} className="break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+                        <td className="py-0.5 px-2 border-r border-slate-300 font-mono text-[9px] text-center font-bold">{idx + 1}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 font-semibold">{s.name}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 text-right font-mono font-bold">{prog} %</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 font-mono text-[9px]">{formatGermanDate(s.lastActive)}</td>
+                        <td className="py-0.5 px-2 text-right">
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] font-bold font-mono uppercase border ${statusClass}`}>
+                            {statusLabel}
                           </span>
                         </td>
                       </tr>
@@ -2014,11 +2082,11 @@ export default function DozentenDashboard({
             </div>
 
             {/* 4. Dozenten-Fazit */}
-            <div className="space-y-2 break-inside-avoid">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1">
+            <div className="space-y-1 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5">
                 4. Pädagogisches Fazit & Lehrgangs-Abschluss
               </h3>
-              <div className="p-3 bg-slate-50 border-l-4 border-slate-900 rounded-r text-xs space-y-1 text-slate-800 leading-relaxed">
+              <div className="p-2 bg-slate-50 border-l-4 border-slate-900 rounded-r text-[10px] space-y-0.5 text-slate-800 leading-snug">
                 <p>
                   Die Gruppe hat einen durchschnittlichen Fortschritt von <strong>{avgProgress} %</strong> erzielt. Die fachlichen Voraussetzungen für die IHK-Sachkundeprüfung gemäß § 34a GewO wurden im theoretischen und praktischen Unterricht vermittelt und über die Plattform MOREDU überprüft.
                 </p>
@@ -2026,16 +2094,16 @@ export default function DozentenDashboard({
             </div>
 
             {/* 5. Unterschriftenfeld */}
-            <div className="grid grid-cols-2 gap-12 pt-8 mt-6 border-t border-slate-300 break-inside-avoid">
+            <div className="grid grid-cols-2 gap-8 pt-3 mt-2 border-t border-slate-300 break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
               <div>
-                <div className="h-12 border-b border-slate-400"></div>
-                <p className="mt-1.5 text-xs font-bold text-slate-800">Datum, Ort / Unterschrift Kursleitung</p>
-                <p className="text-[10px] text-slate-500">{currentUser.name} (Dozent & Fachprüfer)</p>
+                <div className="h-8 border-b border-slate-400"></div>
+                <p className="mt-1 text-[10px] font-bold text-slate-800">Datum, Ort / Unterschrift Kursleitung</p>
+                <p className="text-[9px] text-slate-500">{currentUser.name} (Dozent & Fachprüfer)</p>
               </div>
               <div>
-                <div className="h-12 border-b border-slate-400"></div>
-                <p className="mt-1.5 text-xs font-bold text-slate-800">Stempel & Unterschrift Bildungsträger</p>
-                <p className="text-[10px] text-slate-500">MOREDU Bildungszentrum</p>
+                <div className="h-8 border-b border-slate-400"></div>
+                <p className="mt-1 text-[10px] font-bold text-slate-800">Stempel & Unterschrift Bildungsträger</p>
+                <p className="text-[9px] text-slate-500">MOREDU Bildungszentrum</p>
               </div>
             </div>
 
