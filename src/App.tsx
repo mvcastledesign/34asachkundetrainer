@@ -466,6 +466,8 @@ export default function App() {
             user_id: currentUser.id,
             mode: 'exam',
             exam_type: 'Prüfungssimulation § 34a',
+            scoreAchieved: item.richtig,
+            scoreMax: item.anzahl,
             total_questions: item.anzahl,
             correct_count: item.richtig,
             incorrect_count: item.falsch,
@@ -475,6 +477,21 @@ export default function App() {
             passed: (item.richtig / item.anzahl) >= 0.5
           });
         }
+      } else if (item.typ === 'Prüfung') {
+        logExamSession({
+          user_id: currentUser?.id || '13',
+          mode: 'exam',
+          exam_type: 'Prüfungssimulation § 34a',
+          scoreAchieved: item.richtig,
+          scoreMax: item.anzahl,
+          total_questions: item.anzahl,
+          correct_count: item.richtig,
+          incorrect_count: item.falsch,
+          score_percent: item.anzahl > 0 ? Math.round((item.richtig / item.anzahl) * 100) : 0,
+          points_earned: item.richtig,
+          max_points: item.anzahl,
+          passed: item.anzahl > 0 ? (item.richtig / item.anzahl) >= 0.5 : true
+        });
       }
 
       return updated;

@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface RawRiddleItem {
   id: number;
@@ -309,6 +309,12 @@ export default function LegalConceptGuesser({
       setIsAnswered(false);
     } else {
       setIsCompleted(true);
+      logExamSession({
+        mode: 'riddle',
+        scoreAchieved: correctCount,
+        scoreMax: totalQuestions,
+        passed: (correctCount / totalQuestions) >= 0.5
+      });
     }
   };
 

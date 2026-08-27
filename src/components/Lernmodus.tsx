@@ -110,7 +110,7 @@ export default function Lernmodus({
       // Fire telemetry to Supabase question_attempts
       logQuestionAttempt({
         session_id: sessionIdRef.current,
-        mode: 'flashcards',
+        mode: 'learning',
         question_id: String(currentQuestion.id || 'q_item'),
         topic: String(currentQuestion.kategorie || '§ 34a Sachgebiete'),
         is_correct: Boolean(isCorrect),

@@ -130,10 +130,13 @@ export default function Pruefungsmodus({
     });
 
     const passed = (correctCount / examQuestions.length) >= 0.5;
+    const durationSec = Math.max(0, (timeLimit * 60) - timeLeft);
     logExamSession({
       session_id: sessionIdRef.current,
       mode: 'exam',
       exam_type: 'Mündliche Prüfung Simulation (§ 34a)',
+      scoreAchieved: correctCount,
+      scoreMax: examQuestions.length,
       total_questions: examQuestions.length,
       correct_count: correctCount,
       incorrect_count: incorrectCount,
@@ -141,7 +144,8 @@ export default function Pruefungsmodus({
       points_earned: correctCount,
       max_points: examQuestions.length,
       passed,
-      time_spent_seconds: (timeLimit * 60) - timeLeft
+      durationSeconds: durationSec,
+      time_spent_seconds: durationSec
     });
   };
 

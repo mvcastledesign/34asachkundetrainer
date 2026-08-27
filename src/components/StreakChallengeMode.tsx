@@ -19,7 +19,7 @@ import { UserProfile } from '../types/auth.ts';
 import { supabase } from '../lib/supabase.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface StreakChallengeModeProps {
   questions?: Question[];
@@ -372,7 +372,7 @@ export default function StreakChallengeMode({
     // Fire-and-forget Attempt Diagnostic Tracking to Supabase question_attempts
     logQuestionAttempt({
       session_id: sessionIdRef.current,
-      mode: 'riddle',
+      mode: 'streak',
       question_id: String(currentQuestion.id || 'streak_item'),
       topic: String(currentQuestion.category || '§ 34a GewO / Schnellquiz'),
       is_correct: Boolean(isCorrect),
@@ -407,6 +407,13 @@ export default function StreakChallengeMode({
     } else {
       // FEHLER -> GAME OVER
       setFailedQuestion(currentQuestion);
+
+      logExamSession({
+        mode: 'streak',
+        scoreAchieved: streak,
+        scoreMax: Math.max(streak, 10),
+        passed: streak >= 5
+      });
 
       if (onRecordHistory) {
         onRecordHistory({

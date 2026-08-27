@@ -191,7 +191,7 @@ export default function FachbegriffeTrainer({ translationLang = 'deaktiviert', o
     // Fire telemetry to Supabase question_attempts
     logQuestionAttempt({
       session_id: sessionIdRef.current,
-      mode: 'exam',
+      mode: 'glossary',
       question_id: String(`trap_${trap.id}`),
       topic: String(trap.category || 'Prüfungsdeutsch & Signalwörter'),
       is_correct: Boolean(isPerfect),

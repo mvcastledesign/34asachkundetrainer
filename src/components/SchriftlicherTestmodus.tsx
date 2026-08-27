@@ -412,10 +412,13 @@ export default function SchriftlicherTestmodus({
 
     // Log complete session to Supabase exam_sessions table
     const resultStats = calculateResultStats();
+    const durationSec = Math.max(0, totalExamSecondsRef.current - timeLeft);
     logExamSession({
       session_id: sessionIdRef.current,
       mode: 'exam',
       exam_type: subMode === 'ihk' ? 'IHK 120 Fragen (82 Pkt.)' : subMode === 'quick' ? 'Schnelltest (30 Fragen)' : `Kategorietest: ${selectedCategory || 'Thema'}`,
+      scoreAchieved: resultStats.points,
+      scoreMax: resultStats.maxPoints,
       total_questions: totalQuestions,
       correct_count: resultStats.fullyCorrectCount,
       incorrect_count: totalQuestions - resultStats.fullyCorrectCount,
@@ -423,7 +426,8 @@ export default function SchriftlicherTestmodus({
       points_earned: resultStats.points,
       max_points: resultStats.maxPoints,
       passed: resultStats.isPassed,
-      time_spent_seconds: Math.max(0, totalExamSecondsRef.current - timeLeft),
+      durationSeconds: durationSec,
+      time_spent_seconds: durationSec,
       category_breakdown: resultStats.categoryStats,
       metadata: {
         submode: subMode,

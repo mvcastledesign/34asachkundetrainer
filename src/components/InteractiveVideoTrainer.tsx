@@ -12,7 +12,7 @@ import {
 import { ALL_SCENARIOS, SCENARIO_DATA } from '../data/videoScenarios.ts';
 import { ScenarioScene, ScenarioAnswer, InteractiveScenarioData } from '../types/videoScenario.ts';
 import TranslationView from './TranslationView.tsx';
-import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface InteractiveVideoTrainerProps {
   translationLang?: string;
@@ -242,6 +242,12 @@ export default function InteractiveVideoTrainer({
         } else {
           // Alle Szenen erfolgreich gemeistert!
           setIsCompleted(true);
+          logExamSession({
+            mode: 'video',
+            scoreAchieved: firstTryCorrectCount + 1,
+            scoreMax: scenes.length,
+            passed: true
+          });
         }
       } else {
         // Falsche Antwort: Loop wieder starten und Feedback einblenden
@@ -277,7 +283,7 @@ export default function InteractiveVideoTrainer({
     // Fire-and-Forget Logging to Supabase question_attempts
     logQuestionAttempt({
       session_id: sessionIdRef.current,
-      mode: 'scenario',
+      mode: 'video',
       question_id: String(`video_${activeScenario.id}_scene_${currentScene.id}`),
       topic: String(currentScene.topic || 'Recht & Deeskalation (§ 34a GewO)'),
       is_correct: Boolean(answer.is_correct),

@@ -33,18 +33,24 @@ export interface QuestionAttemptData {
 export interface ExamSessionData {
   user_id?: string | number;
   session_id?: string;
-  mode?: string;
-  exam_type?: string;
-  total_questions: number;
-  correct_count: number;
+  mode: string;
+  scoreAchieved?: number;
+  scoreMax?: number;
+  passed: boolean;
+  durationSeconds?: number;
+  // Optional extra properties for backwards compatibility:
+  total_questions?: number;
+  correct_count?: number;
   incorrect_count?: number;
-  score_percent: number;
+  score_percent?: number;
   points_earned?: number;
   max_points?: number;
-  passed: boolean;
+  passed_status?: boolean;
   time_spent_seconds?: number;
+  exam_type?: string;
   category_breakdown?: any;
   metadata?: Record<string, any>;
+  [key: string]: any;
 }
 
 // Active session storage per mode
@@ -208,44 +214,67 @@ export async function logQuestionAttempt(attempt: QuestionAttemptData): Promise<
 
 /**
  * Standard logExamSession:
- * Synchronizes completed exam sessions into Supabase `exam_sessions` table.
+ * Synchronizes completed exam/quiz sessions into Supabase `exam_sessions` table.
  */
-export async function logExamSession(session: ExamSessionData): Promise<boolean> {
+export async function logExamSession(data: {
+  mode: string;
+  scoreAchieved?: number;
+  scoreMax?: number;
+  passed: boolean;
+  durationSeconds?: number;
+  user_id?: string | number;
+  session_id?: string;
+  total_questions?: number;
+  correct_count?: number;
+  incorrect_count?: number;
+  score_percent?: number;
+  points_earned?: number;
+  max_points?: number;
+  time_spent_seconds?: number;
+  exam_type?: string;
+  category_breakdown?: any;
+  metadata?: Record<string, any>;
+  [key: string]: any;
+}): Promise<boolean> {
   try {
-    const userId = String(session.user_id || getActiveUserId() || '13');
-    const sessionId = session.session_id || getOrCreateSessionId(session.mode || 'exam');
-    const totalQ = session.total_questions || 1;
-    const correctC = session.correct_count || 0;
-    const incorrectC = session.incorrect_count !== undefined ? session.incorrect_count : Math.max(0, totalQ - correctC);
-    const scorePct = session.score_percent !== undefined ? session.score_percent : Math.round((correctC / totalQ) * 100);
-    const passed = session.passed !== undefined ? session.passed : (scorePct >= 50);
-    const timeSpent = session.time_spent_seconds || 0;
+    const userId = String(data.user_id || getActiveUserId() || '13');
+    const scoreAchieved = data.scoreAchieved !== undefined 
+      ? data.scoreAchieved 
+      : (data.points_earned !== undefined ? data.points_earned : (data.correct_count || 0));
+    const scoreMax = data.scoreMax !== undefined 
+      ? data.scoreMax 
+      : (data.max_points !== undefined ? data.max_points : (data.total_questions || 1));
+    const durationSeconds = data.durationSeconds !== undefined 
+      ? data.durationSeconds 
+      : (data.time_spent_seconds || 0);
+    const passed = Boolean(data.passed);
 
+    // Primary payload matching requested schema:
+    // { user_id, mode, score_achieved, score_max, passed, duration_seconds }
     const primaryPayload = {
       user_id: userId,
-      session_id: sessionId,
-      mode: session.mode || 'exam',
-      exam_type: session.exam_type || 'Schriftliche Prüfung',
-      total_questions: totalQ,
-      correct_count: correctC,
-      incorrect_count: incorrectC,
-      score_percent: scorePct,
-      points_earned: session.points_earned !== undefined ? session.points_earned : correctC,
-      max_points: session.max_points !== undefined ? session.max_points : totalQ,
+      mode: data.mode,
+      score_achieved: scoreAchieved,
+      score_max: scoreMax,
       passed: passed,
-      time_spent_seconds: timeSpent
+      duration_seconds: durationSeconds
     };
 
-    // Buffer in localStorage
+    // Buffer in localStorage for inspector & offline resilience
     try {
       const existingRecentRaw = localStorage.getItem('sachkunde_34a_recent_exam_sessions');
       const existingRecent: any[] = existingRecentRaw ? JSON.parse(existingRecentRaw) : [];
-      existingRecent.unshift({ ...primaryPayload, created_at: new Date().toISOString() });
+      existingRecent.unshift({
+        ...primaryPayload,
+        session_id: data.session_id,
+        created_at: new Date().toISOString()
+      });
       localStorage.setItem('sachkunde_34a_recent_exam_sessions', JSON.stringify(existingRecent.slice(0, 50)));
     } catch {
       // Ignore
     }
 
+    // Attempt insert with primary schema
     const { error } = await supabase
       .from('exam_sessions')
       .insert([primaryPayload]);
@@ -254,23 +283,44 @@ export async function logExamSession(session: ExamSessionData): Promise<boolean>
       triggerSaveIndicator('Prüfungssitzung gespeichert');
       return true;
     } else {
-      console.warn('[Supabase exam_sessions primary insert warning]:', error.message || error);
+      console.warn('[Supabase exam_sessions primary insert notice]:', error.message || error);
 
-      // Fallback: minimal schema
-      const minimalPayload = {
+      // Fallback 1: in case user_id is integer in Postgres DDL
+      const numUserId = parseInt(userId, 10);
+      if (!isNaN(numUserId)) {
+        const altPayload = {
+          ...primaryPayload,
+          user_id: numUserId
+        };
+        const { error: altError } = await supabase
+          .from('exam_sessions')
+          .insert([altPayload]);
+        if (!altError) {
+          triggerSaveIndicator('Prüfungssitzung gespeichert');
+          return true;
+        }
+      }
+
+      // Fallback 2: alternative schema with total_questions / correct_count / score_percent / session_id
+      const altSchemaPayload = {
         user_id: userId,
-        session_id: sessionId,
-        mode: session.mode || 'exam',
-        total_questions: totalQ,
-        correct_count: correctC,
-        score_percent: scorePct,
-        passed: passed
+        session_id: data.session_id || getOrCreateSessionId(data.mode || 'exam'),
+        mode: data.mode,
+        exam_type: data.exam_type || data.mode,
+        total_questions: scoreMax,
+        correct_count: scoreAchieved,
+        incorrect_count: Math.max(0, scoreMax - scoreAchieved),
+        score_percent: scoreMax > 0 ? Math.round((scoreAchieved / scoreMax) * 100) : 0,
+        points_earned: scoreAchieved,
+        max_points: scoreMax,
+        passed: passed,
+        time_spent_seconds: durationSeconds
       };
-      const { error: minError } = await supabase
+      const { error: altSchemaError } = await supabase
         .from('exam_sessions')
-        .insert([minimalPayload]);
+        .insert([altSchemaPayload]);
 
-      if (!minError) {
+      if (!altSchemaError) {
         triggerSaveIndicator('Prüfungssitzung gespeichert');
         return true;
       }

@@ -23,7 +23,7 @@ import {
 import { INITIAL_FALLBEISPIELE, Fallbeispiel } from '../initialFallbeispiele.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface FallbeispieleModusProps {
   translationLang?: string;
@@ -101,6 +101,13 @@ export default function FallbeispieleModus({
       setShowExplanation(userAnswers[cases[currentIndex + 1]?.id] !== undefined);
     } else {
       setIsFinished(true);
+      const correctCount = cases.filter(c => userAnswers[c.id] === c.correct).length;
+      logExamSession({
+        mode: 'scenario',
+        scoreAchieved: correctCount,
+        scoreMax: cases.length,
+        passed: (correctCount / cases.length) >= 0.5
+      });
     }
   };
 
