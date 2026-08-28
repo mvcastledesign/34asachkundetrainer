@@ -134,47 +134,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Helper to load students from localStorage with seed default
-  const getRegisteredStudents = (): StudentDetail[] => {
-    const savedStudentsStr = localStorage.getItem('sachkunde_34a_registered_students');
-    let registeredStudents: StudentDetail[] = [];
-    if (savedStudentsStr) {
-      try {
-        registeredStudents = JSON.parse(savedStudentsStr);
-      } catch {
-        registeredStudents = [];
-      }
-    }
-
-    // Seed default student if empty
-    if (registeredStudents.length === 0) {
-      const defaultStudent: StudentDetail = {
-        id: 'usr-demo-max',
-        name: 'Maximilian Schulze',
-        vorname: 'Maximilian',
-        nachname: 'Schulze',
-        password: 'demo123',
-        securityQuestion: 'In welcher Stadt bist du geboren?',
-        securityAnswer: 'berlin',
-        avatarInitials: 'MS',
-        courseId: 'SK-2026-A',
-        courseName: 'Aktueller Kurs: Sachkunde § 34a (Sommer 2026)',
-        progressPercent: 65,
-        successRatePercent: 82,
-        status: 'pruefungssicher',
-        lastActive: 'Vor 10 Min.',
-        registeredAt: '10.05.2026',
-        invitationCode: 'SK-2026-A',
-        categoryPerformance: [],
-        examHistory: []
-      };
-      registeredStudents = [defaultStudent];
-      localStorage.setItem('sachkunde_34a_registered_students', JSON.stringify(registeredStudents));
-    }
-
-    return registeredStudents;
-  };
-
   // Submit LOGIN with automatic role detection
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

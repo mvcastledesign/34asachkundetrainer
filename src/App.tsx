@@ -34,8 +34,7 @@ import {
 import { Question, UserProgressMap, LernhistorieItem, KATEGORIEN } from './types.ts';
 import { UserProfile } from './types/auth.ts';
 import { INITIAL_QUESTIONS } from './initialQuestions.ts';
-import { DEMO_USERS } from './data/mockAuthData.ts';
-import { updateStudentProgressInSupabase, fetchStudentsFromSupabase } from './lib/supabase.ts';
+import { updateStudentProgressInSupabase, fetchStudentsFromSupabase, cleanupLocalStudentData } from './lib/supabase.ts';
 import { logExamSession } from './lib/analytics.ts';
 
 // Feature components
@@ -339,6 +338,12 @@ export default function App() {
           localStorage.setItem(`sachkunde_34a_progress_${found.id}`, JSON.stringify(qProg));
           localStorage.setItem('sachkunde_34a_progress', JSON.stringify(qProg));
         }
+      } else {
+        // Student record was removed or does not exist in Supabase
+        if (currentUser.id) {
+          cleanupLocalStudentData(currentUser.id);
+        }
+        handleLogout();
       }
     };
 

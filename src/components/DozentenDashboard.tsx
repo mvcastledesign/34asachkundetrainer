@@ -46,7 +46,8 @@ import {
   Activity,
   Plus,
   RotateCcw,
-  Scale
+  Scale,
+  AlertCircle
 } from 'lucide-react';
 import { UserProfile, StudentDetail } from '../types/auth.ts';
 import { Question, KATEGORIEN } from '../types.ts';
@@ -56,7 +57,8 @@ import {
   supabase, 
   fetchStudentsFromSupabase, 
   updateStudentPasswordInSupabase,
-  deleteStudentFromSupabase
+  deleteStudentFromSupabase,
+  cleanupLocalStudentData
 } from '../lib/supabase.ts';
 
 export interface CourseCohort {
@@ -604,21 +606,35 @@ export default function DozentenDashboard({
   const [activeTab, setActiveTab] = useState<'students' | 'analytics' | 'manage_questions'>('students');
 
   // Custom created courses with LocalStorage persistence
+  const [permanentlyDeletedCourseIds, setPermanentlyDeletedCourseIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('moredu_permanently_deleted_courses');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Could not read moredu_permanently_deleted_courses from localStorage', e);
+    }
+    return [];
+  });
+
   const [courses, setCourses] = useState<CourseCohort[]>(() => {
     try {
+      const savedPerm = localStorage.getItem('moredu_permanently_deleted_courses');
+      const permDeleted: string[] = savedPerm ? JSON.parse(savedPerm) : [];
+
       const saved = localStorage.getItem('moredu_custom_courses');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
           // Merge defaults with saved custom courses (prevent duplicates by ID)
           const map = new Map<string, CourseCohort>();
-          DEFAULT_COURSES.forEach(c => map.set(c.id.toUpperCase(), c));
+          DEFAULT_COURSES.filter(c => !permDeleted.includes(c.id.toUpperCase())).forEach(c => map.set(c.id.toUpperCase(), c));
           parsed.forEach(c => {
-            if (c && c.id) map.set(c.id.toUpperCase(), c);
+            if (c && c.id && !permDeleted.includes(c.id.toUpperCase())) map.set(c.id.toUpperCase(), c);
           });
           return Array.from(map.values());
         }
       }
+      return DEFAULT_COURSES.filter(c => !permDeleted.includes(c.id.toUpperCase()));
     } catch (e) {
       console.warn('Could not read moredu_custom_courses from localStorage', e);
     }
@@ -663,11 +679,14 @@ export default function DozentenDashboard({
   // Modal State for Course Archiving Confirmation
   const [courseToArchive, setCourseToArchive] = useState<CourseCohort | null>(null);
 
+  // Modal State for Permanent Course Deletion Confirmation
+  const [courseToPermanentDelete, setCourseToPermanentDelete] = useState<CourseCohort | null>(null);
+
   // Modal State for Course Archive Overview & Restore
   const [showArchiveModal, setShowArchiveModal] = useState<boolean>(false);
 
-  // Selected course cohort ID: 'SK-2026-A' by default, or 'ALL' for overview
-  const [selectedCourseId, setSelectedCourseId] = useState<string>('SK-2026-A');
+  // Selected course cohort ID: 'ALL' by default for aggregated overview, or specific cohort ID
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('ALL');
   const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
   const courseDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -721,18 +740,20 @@ export default function DozentenDashboard({
   // Dynamically resolve all raw courses including any from students list
   const allKnownCourses = useMemo(() => {
     const courseMap = new Map<string, CourseCohort>();
-    // First register all courses from state
+    // First register all courses from state (excluding permanently deleted)
     courses.forEach(c => {
-      courseMap.set(c.id.toUpperCase(), c);
+      if (!permanentlyDeletedCourseIds.includes(c.id.toUpperCase())) {
+        courseMap.set(c.id.toUpperCase(), c);
+      }
     });
 
-    // Then register any course code found in students list
+    // Then register any course code found in students list (if not permanently deleted)
     studentsList.forEach(s => {
       const rawId = (s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode;
       if (rawId && typeof rawId === 'string' && rawId.trim()) {
         const code = rawId.trim();
         const codeUpper = code.toUpperCase();
-        if (!courseMap.has(codeUpper)) {
+        if (!permanentlyDeletedCourseIds.includes(codeUpper) && !courseMap.has(codeUpper)) {
           courseMap.set(codeUpper, {
             id: code,
             name: `Sachkunde § 34a (${code})`,
@@ -744,7 +765,7 @@ export default function DozentenDashboard({
     });
 
     return Array.from(courseMap.values());
-  }, [courses, studentsList]);
+  }, [courses, studentsList, permanentlyDeletedCourseIds]);
 
   // Active (non-archived) courses
   const availableCourses = useMemo(() => {
@@ -755,6 +776,18 @@ export default function DozentenDashboard({
   const archivedCourses = useMemo(() => {
     return allKnownCourses.filter(c => archivedCourseIds.includes(c.id.toUpperCase()));
   }, [allKnownCourses, archivedCourseIds]);
+
+  // Ensure active cohort selection is always valid and never archived or deleted
+  useEffect(() => {
+    if (selectedCourseId !== 'ALL') {
+      const isArchived = archivedCourseIds.includes(selectedCourseId.toUpperCase());
+      const isPermanentlyDeleted = permanentlyDeletedCourseIds.includes(selectedCourseId.toUpperCase());
+      const isValid = availableCourses.some(c => c.id.toUpperCase() === selectedCourseId.toUpperCase());
+      if (isArchived || isPermanentlyDeleted || (!isValid && availableCourses.length > 0)) {
+        setSelectedCourseId('ALL');
+      }
+    }
+  }, [archivedCourseIds, permanentlyDeletedCourseIds, availableCourses, selectedCourseId]);
 
   // Handler: Quick set end date +4, +6, +8 weeks from start date
   const handleAddWeeksToEndDate = (weeks: number) => {
@@ -809,6 +842,72 @@ export default function DozentenDashboard({
     }
 
     showToast(`Kurs ${courseName ? `"${courseName}"` : courseId} erfolgreich wiederhergestellt!`);
+  };
+
+  // Handler: Permanently delete course from state and Supabase
+  const handlePermanentDeleteCourse = async (course: CourseCohort) => {
+    const cleanId = course.id.toUpperCase();
+
+    // 1. Remove from courses state
+    const updatedCourses = courses.filter(c => c.id.toUpperCase() !== cleanId);
+    setCourses(updatedCourses);
+
+    // 2. Remove from archivedCourseIds state
+    const updatedArchivedIds = archivedCourseIds.filter(id => id.toUpperCase() !== cleanId);
+    setArchivedCourseIds(updatedArchivedIds);
+
+    // 3. Add to permanently deleted IDs list
+    const updatedPermanentlyDeleted = Array.from(new Set([...permanentlyDeletedCourseIds, cleanId]));
+    setPermanentlyDeletedCourseIds(updatedPermanentlyDeleted);
+
+    // 4. Update localStorage
+    try {
+      localStorage.setItem('moredu_custom_courses', JSON.stringify(updatedCourses));
+      localStorage.setItem('moredu_archived_courses', JSON.stringify(updatedArchivedIds));
+      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedArchivedIds));
+      localStorage.setItem('moredu_permanently_deleted_courses', JSON.stringify(updatedPermanentlyDeleted));
+    } catch (err) {
+      console.warn('Could not update localStorage after permanent delete', err);
+    }
+
+    // 5. If currently selected course was this course, reset to 'ALL'
+    if (selectedCourseId.toUpperCase() === cleanId) {
+      setSelectedCourseId('ALL');
+    }
+
+    // 6. Delete linked records and students in Supabase if any
+    try {
+      try {
+        await (supabase as any).from('courses').delete().eq('id', course.id);
+      } catch {
+        // Table might not exist, proceed
+      }
+
+      const studentsWithCourse = studentsList.filter(s => {
+        const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || '').trim().toUpperCase();
+        return sCourse === cleanId;
+      });
+
+      if (studentsWithCourse.length > 0) {
+        for (const s of studentsWithCourse) {
+          try {
+            await supabase.from('students').delete().eq('id', s.id);
+            cleanupLocalStudentData(s.id);
+          } catch (e) {
+            console.warn('Could not delete linked student from Supabase:', e);
+          }
+        }
+        setStudentsList(prev => prev.filter(s => {
+          const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || '').trim().toUpperCase();
+          return sCourse !== cleanId;
+        }));
+      }
+    } catch (err) {
+      console.warn('Error during Supabase course deletion cleanup:', err);
+    }
+
+    setCourseToPermanentDelete(null);
+    showToast(`Kurs "${course.name}" (${course.id}) wurde endgültig und unwiderruflich gelöscht.`);
   };
 
   // Handler: Create and persist a new course / cohort
@@ -1317,13 +1416,17 @@ export default function DozentenDashboard({
         .eq('id', studentToDelete.id);
 
       if (error) {
+        console.error("Löschfehler Supabase:", error);
         setIsDeleting(false);
-        alert(`Fehler beim Löschen des Schülers in Supabase: ${error.message}`);
+        alert("Fehler beim Löschen in der Datenbank: " + error.message);
         showToast(`Fehler beim Löschen: ${error.message}`);
         return;
       }
 
-      // 3. Update local React state ONLY after Supabase successfully confirmed deletion
+      // 3. Remove from all local storage keys so no stale caches persist
+      cleanupLocalStudentData(studentId);
+
+      // 4. Update local React state ONLY after Supabase successfully confirmed deletion
       setStudentsList(prev => prev.filter(s => String(s.id) !== studentId));
       setRawAttempts(prev => prev.filter(a => String(a.user_id || (a as any).userId) !== studentId));
       setExamSessions(prev => prev.filter(s => String(s.user_id || (s as any).userId) !== studentId));
@@ -1336,7 +1439,7 @@ export default function DozentenDashboard({
       setStudentToDelete(null);
     } catch (err: any) {
       console.error('Failed to delete student from Supabase:', err);
-      alert(`Unerwarteter Fehler beim Löschen des Schülers: ${err?.message || 'Verbindung fehlgeschlagen'}`);
+      alert("Fehler beim Löschen in der Datenbank: " + (err?.message || 'Verbindung fehlgeschlagen'));
       showToast(`Fehler beim Löschen: ${err?.message || 'Unbekannter Fehler'}`);
     } finally {
       setIsDeleting(false);
@@ -3188,14 +3291,25 @@ export default function DozentenDashboard({
                           )}
                         </div>
 
-                        <div className="shrink-0 flex items-center justify-end">
+                        <div className="shrink-0 flex items-center justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => handleRestoreCourse(course.id, course.name)}
-                            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#dfb871]/20 to-[#dfb871]/10 hover:from-[#dfb871]/30 hover:to-[#dfb871]/20 border border-[#dfb871]/40 hover:border-[#dfb871] text-[#dfb871] font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#dfb871]/20 to-[#dfb871]/10 hover:from-[#dfb871]/30 hover:to-[#dfb871]/20 border border-[#dfb871]/40 hover:border-[#dfb871] text-[#dfb871] font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                             title={`Kurs "${course.name}" wieder in die aktive Auswahlliste aufnehmen`}
                           >
-                            <span>🔄 Wiederherstellen</span>
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Wiederherstellen</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setCourseToPermanentDelete(course)}
+                            className="px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 hover:border-rose-500/60 text-rose-300 font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                            title={`Kurs "${course.name}" (${course.id}) unwiderruflich und endgültig aus Datenbank und System löschen`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                            <span className="hidden sm:inline">Endgültig löschen</span>
                           </button>
                         </div>
                       </div>
@@ -3206,13 +3320,66 @@ export default function DozentenDashboard({
 
               {/* Footer */}
               <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono shrink-0">
-                <span>Supabase-Datenbestand: 100% gesichert</span>
+                <span>Supabase-Datenbestand: Synchronisiert</span>
                 <button
                   type="button"
                   onClick={() => setShowArchiveModal(false)}
                   className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Schließen
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 11. IN-APP CONFIRMATION MODAL: KURS ENDGÜLTIG LÖSCHEN */}
+        {courseToPermanentDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
+            <div className="w-full max-w-md bg-slate-950 border border-rose-500/40 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative bento-glass">
+              {/* Header */}
+              <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl border border-rose-500/30">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">Kurs unwiderruflich löschen?</h3>
+                  <p className="text-xs text-rose-400/80 font-mono">Endgültiges Löschen aus Datenbank & State</p>
+                </div>
+              </div>
+
+              {/* Message Body */}
+              <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
+                <p>
+                  Möchten Sie den archivierten Kurs <strong className="text-white">„{courseToPermanentDelete.name}“</strong> (Code: <span className="font-mono text-rose-300 font-bold">{courseToPermanentDelete.id}</span>) wirklich unwiderruflich löschen?
+                </p>
+                <div className="p-3.5 bg-rose-500/10 border border-rose-500/25 rounded-2xl text-[11px] text-rose-200/90 space-y-1.5">
+                  <p className="font-bold flex items-center gap-1.5 text-rose-300">
+                    <AlertCircle className="w-3.5 h-3.5" /> Wichtiger Hinweis:
+                  </p>
+                  <p>
+                    Dieser Vorgang entfernt den Kurs vollständig aus der Supabase-Datenbank, der Kohorten-Liste und dem Speicher. Der Kurs kann danach nicht mehr wiederhergestellt werden.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setCourseToPermanentDelete(null)}
+                  className="bg-white/5 hover:bg-white/10 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Abbrechen
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePermanentDeleteCourse(courseToPermanentDelete)}
+                  className="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer shadow-lg shadow-rose-600/30 flex items-center gap-2 active:scale-95"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Ja, endgültig löschen</span>
                 </button>
               </div>
             </div>

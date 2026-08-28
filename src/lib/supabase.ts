@@ -159,6 +159,69 @@ export async function createStudentInSupabase(data: {
 }
 
 /**
+ * Clean up all local storage and session cache keys for a deleted student
+ */
+export function cleanupLocalStudentData(studentId: string): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    const sId = String(studentId);
+
+    // 1. Remove per-student stored metrics and progress
+    localStorage.removeItem(`sachkunde_34a_progress_${sId}`);
+    localStorage.removeItem(`sachkunde_34a_history_${sId}`);
+    localStorage.removeItem(`sachkunde_34a_study_duration_${sId}`);
+
+    // 2. Remove from active user storage if it was the deleted user
+    const currentRaw = localStorage.getItem('sachkunde_34a_current_user');
+    if (currentRaw) {
+      try {
+        const u = JSON.parse(currentRaw);
+        if (u && (String(u.id) === sId || String(u.id) === studentId)) {
+          localStorage.removeItem('sachkunde_34a_current_user');
+        }
+      } catch {}
+    }
+
+    const currentSessionRaw = sessionStorage.getItem('sachkunde_34a_current_user');
+    if (currentSessionRaw) {
+      try {
+        const u = JSON.parse(currentSessionRaw);
+        if (u && (String(u.id) === sId || String(u.id) === studentId)) {
+          sessionStorage.removeItem('sachkunde_34a_current_user');
+        }
+      } catch {}
+    }
+
+    // 3. Clean any legacy or cached student arrays
+    const arrayKeys = [
+      'sachkunde_34a_registered_students',
+      'sachkunde_students',
+      'student_records',
+      'sachkunde_users'
+    ];
+
+    arrayKeys.forEach(key => {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          const list = JSON.parse(raw);
+          if (Array.isArray(list)) {
+            const filtered = list.filter((item: any) => item && String(item.id) !== sId);
+            if (filtered.length === 0) {
+              localStorage.removeItem(key);
+            } else {
+              localStorage.setItem(key, JSON.stringify(filtered));
+            }
+          }
+        } catch {}
+      }
+    });
+  } catch (err) {
+    console.warn('Could not cleanup local student data:', err);
+  }
+}
+
+/**
  * Delete a student from Supabase `students` table along with linked records
  */
 export async function deleteStudentFromSupabase(
@@ -187,9 +250,12 @@ export async function deleteStudentFromSupabase(
       .eq('id', studentId);
 
     if (error) {
-      console.error('Error deleting student from Supabase:', error);
+      console.error('Löschfehler Supabase:', error);
       return { success: false, error: error.message };
     }
+
+    // 3. Clean up local browser cache
+    cleanupLocalStudentData(studentId);
 
     return { success: true, error: null };
   } catch (err: any) {
