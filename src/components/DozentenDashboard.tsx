@@ -863,6 +863,23 @@ export default function DozentenDashboard({
     });
   }, [studentsList, selectedCourseId]);
 
+  // Set of student IDs belonging to the active course cohort
+  const courseStudentIds = useMemo(() => {
+    return new Set(courseStudents.map(s => String(s.id)));
+  }, [courseStudents]);
+
+  // Telemetry attempts strictly filtered by course students
+  const courseRawAttempts = useMemo(() => {
+    if (selectedCourseId === 'ALL') return rawAttempts;
+    return rawAttempts.filter(a => courseStudentIds.has(String(a.user_id || (a as any).userId)));
+  }, [rawAttempts, courseStudentIds, selectedCourseId]);
+
+  // Exam sessions strictly filtered by course students
+  const courseExamSessions = useMemo(() => {
+    if (selectedCourseId === 'ALL') return examSessions;
+    return examSessions.filter(s => courseStudentIds.has(String(s.user_id || (s as any).userId)));
+  }, [examSessions, courseStudentIds, selectedCourseId]);
+
   // Load students from Supabase
   const loadStudents = async () => {
     setLoadingStudents(true);
@@ -981,9 +998,9 @@ export default function DozentenDashboard({
       }
     });
 
-    const attemptsCount = rawAttempts.length;
-    return Math.max(count, attemptsCount, totalEnrolled * 12);
-  }, [courseStudents, rawAttempts, totalEnrolled]);
+    const attemptsCount = courseRawAttempts.length;
+    return Math.max(count, attemptsCount);
+  }, [courseStudents, courseRawAttempts]);
 
   // Summe aller beantworteten Fragen der Klasse für den Druckbericht
   const totalClassAnsweredQuestions = useMemo(() => {
@@ -998,9 +1015,9 @@ export default function DozentenDashboard({
         });
       }
     });
-    const rawCount = rawAttempts.length;
-    return Math.max(count, rawCount, totalEnrolled * 18);
-  }, [courseStudents, rawAttempts, totalEnrolled]);
+    const rawCount = courseRawAttempts.length;
+    return Math.max(count, rawCount);
+  }, [courseStudents, courseRawAttempts]);
 
   // Aggregation of the 10 training modes across the whole class/cohort
   const class10ModeStats = useMemo(() => {
@@ -1019,7 +1036,7 @@ export default function DozentenDashboard({
       ];
     }
 
-    const allStudentStats = courseStudents.map(s => getStudent10ModeStats(s, rawAttempts, examSessions));
+    const allStudentStats = courseStudents.map(s => getStudent10ModeStats(s, courseRawAttempts, courseExamSessions));
 
     let totalLernQ = 0;
     let totalSim = 0;
@@ -1048,8 +1065,8 @@ export default function DozentenDashboard({
     });
 
     const classAvgSuccess = courseStudents.length > 0
-      ? Math.round(courseStudents.reduce((acc, s) => acc + (s.successRatePercent || s.progressPercent || 70), 0) / courseStudents.length)
-      : 72;
+      ? Math.round(courseStudents.reduce((acc, s) => acc + (s.successRatePercent || s.progressPercent || 0), 0) / courseStudents.length)
+      : 0;
 
     return [
       {
@@ -1173,7 +1190,7 @@ export default function DozentenDashboard({
         borderClass: 'border-violet-500/20'
       }
     ];
-  }, [courseStudents, rawAttempts, examSessions]);
+  }, [courseStudents, courseRawAttempts, courseExamSessions]);
 
   // Copy invitation code for active course
   const handleCopyInviteLink = () => {
@@ -1276,15 +1293,26 @@ export default function DozentenDashboard({
   // KACHEL A: Kognitiver Zöger- & Rate-Index (Unsicherheit)
   // Analysiert Versuche mit time_spent_ms > 25000 oder switched_answers: true
   const hesitationStats = useMemo(() => {
-    const totalAttempts = rawAttempts.length;
-    const hesitantAttempts = rawAttempts.filter(a => (a.time_spent_ms && a.time_spent_ms > 25000) || a.switched_answers);
+    const totalAttempts = courseRawAttempts.length;
+    if (totalAttempts === 0) {
+      return {
+        totalHesitant: 0,
+        guessedCorrect: 0,
+        guessedIncorrect: 0,
+        switchedCount: 0,
+        rateIndexPercent: 0,
+        topTopics: []
+      };
+    }
+
+    const hesitantAttempts = courseRawAttempts.filter(a => (a.time_spent_ms && a.time_spent_ms > 25000) || a.switched_answers);
     const count = hesitantAttempts.length;
 
     // Correct despite hesitation (probable guess / "Trügerisches Wissen")
     const guessedCorrect = hesitantAttempts.filter(a => a.is_correct).length;
     // Incorrect with long hesitation (deep knowledge gap)
     const guessedIncorrect = hesitantAttempts.filter(a => !a.is_correct).length;
-    const switchedCount = rawAttempts.filter(a => a.switched_answers).length;
+    const switchedCount = courseRawAttempts.filter(a => a.switched_answers).length;
 
     // Calculate topics most affected by hesitation
     const topicCounts: Record<string, number> = {};
@@ -1298,49 +1326,52 @@ export default function DozentenDashboard({
       .slice(0, 3)
       .map(([name, val]) => ({ name, count: val }));
 
-    const fallbackGuessed = Math.max(guessedCorrect, totalAttempts === 0 ? 8 : 0);
-    const fallbackCount = Math.max(count, totalAttempts === 0 ? 14 : 0);
-
     return {
-      totalHesitant: fallbackCount,
-      guessedCorrect: fallbackGuessed,
-      guessedIncorrect: Math.max(guessedIncorrect, totalAttempts === 0 ? 6 : 0),
-      switchedCount: Math.max(switchedCount, totalAttempts === 0 ? 5 : 0),
-      rateIndexPercent: totalAttempts > 0 ? Math.round((fallbackCount / totalAttempts) * 100) : 22,
-      topTopics: topHesitantTopics.length > 0 ? topHesitantTopics : [
-        { name: 'Straf- und Strafverfahrensrecht (§§ 127 StPO, 32 StGB)', count: 6 },
-        { name: 'Bürgerliches Gesetzbuch (§§ 227–229, 859 BGB)', count: 5 },
-        { name: 'Gewerberecht & Bewachungsverordnung (§ 34a GewO)', count: 3 }
-      ]
+      totalHesitant: count,
+      guessedCorrect: guessedCorrect,
+      guessedIncorrect: guessedIncorrect,
+      switchedCount: switchedCount,
+      rateIndexPercent: totalAttempts > 0 ? Math.round((count / totalAttempts) * 100) : 0,
+      topTopics: topHesitantTopics
     };
-  }, [rawAttempts]);
+  }, [courseRawAttempts]);
 
   // KACHEL B: Flüchtigkeits- & Impulsklick-Detektor
   // Analysiert falsche Antworten mit time_spent_ms < 3000 (< 3 Sekunden)
   const impulseStats = useMemo(() => {
-    const allIncorrect = rawAttempts.filter(a => !a.is_correct);
+    const allIncorrect = courseRawAttempts.filter(a => !a.is_correct);
     const totalIncorrect = allIncorrect.length;
     
+    if (totalIncorrect === 0) {
+      return {
+        impulseCount: 0,
+        totalIncorrect: 0,
+        impulseRatio: 0,
+        avgImpulseSeconds: '0.0',
+        advice: 'Keine Flüchtigkeitsfehler erfasst. Alle Aufgaben wurden sorgfältig bearbeitet.'
+      };
+    }
+
     // Fast wrong answers (< 3 seconds)
     const impulseIncorrect = allIncorrect.filter(a => a.time_spent_ms && a.time_spent_ms < 3000);
     const impulseCount = impulseIncorrect.length;
 
-    const impulseRatio = totalIncorrect > 0 ? Math.round((impulseCount / totalIncorrect) * 100) : 34;
+    const impulseRatio = totalIncorrect > 0 ? Math.round((impulseCount / totalIncorrect) * 100) : 0;
     const avgImpulseTime = impulseIncorrect.length > 0 
       ? (impulseIncorrect.reduce((acc, a) => acc + (a.time_spent_ms || 1800), 0) / (impulseIncorrect.length * 1000)).toFixed(1)
-      : '1.9';
+      : '0.0';
 
     return {
-      impulseCount: Math.max(impulseCount, totalIncorrect === 0 ? 11 : 0),
-      totalIncorrect: Math.max(totalIncorrect, totalIncorrect === 0 ? 29 : 0),
+      impulseCount: impulseCount,
+      totalIncorrect: totalIncorrect,
       impulseRatio: impulseRatio,
       avgImpulseSeconds: avgImpulseTime,
       advice: 'Über 30 % der Fehler entstehen in den ersten 3 Sekunden durch unvollständiges Lesen der Fragestellung (z. B. Übersehen von Negationen).'
     };
-  }, [rawAttempts]);
+  }, [courseRawAttempts]);
 
   // KACHEL C: Signalwort- & Prüfungsfallen-Radar
-  // Analysiert, wie oft bei IHK-Fallen ("NICHT", "KEIN", "ZWEI Antworten", "AUSSCHLIESSLICH") gescheitert wird
+  // Analysiert, wie oft bei Fallen ("NICHT", "KEIN", "ZWEI Antworten", "AUSSCHLIESSLICH") gescheitert wird
   const trapStats = useMemo(() => {
     // Categories of traps
     const traps = [
@@ -1379,27 +1410,24 @@ export default function DozentenDashboard({
 
       const qIds = new Set(matchingQuestions.map(q => String(q.id)));
 
-      // Match with telemetry attempts
-      const trapAttempts = rawAttempts.filter(a => qIds.has(String(a.question_id)));
+      // Match with telemetry attempts for this course
+      const trapAttempts = courseRawAttempts.filter(a => qIds.has(String(a.question_id)));
       const trapFailures = trapAttempts.filter(a => !a.is_correct).length;
-      
       const countTotal = trapAttempts.length;
+
       const failureRate = countTotal > 0 
         ? Math.round((trapFailures / countTotal) * 100) 
-        : (trap.id === 'negation' ? 58 : trap.id === 'multi' ? 47 : 62);
-
-      const displayFailures = countTotal > 0 ? trapFailures : (trap.id === 'negation' ? 14 : trap.id === 'multi' ? 9 : 12);
-      const displayTotal = countTotal > 0 ? countTotal : (trap.id === 'negation' ? 24 : trap.id === 'multi' ? 19 : 20);
+        : 0;
 
       return {
         ...trap,
-        questionCount: matchingQuestions.length || (trap.id === 'negation' ? 18 : 12),
-        failures: displayFailures,
-        totalTested: displayTotal,
+        questionCount: matchingQuestions.length,
+        failures: trapFailures,
+        totalTested: countTotal,
         failureRate: failureRate
       };
     });
-  }, [questions, rawAttempts]);
+  }, [questions, courseRawAttempts]);
 
   // KACHEL D: § 34a Sachgebiete Leistungsübersicht & Lernmodi
   // 1. Sachgebiete
@@ -1426,7 +1454,7 @@ export default function DozentenDashboard({
         }
       });
 
-      const categoryAttempts = rawAttempts.filter(a => a.topic && a.topic.toLowerCase().includes(cat.toLowerCase().slice(0, 8)));
+      const categoryAttempts = courseRawAttempts.filter(a => a.topic && a.topic.toLowerCase().includes(cat.toLowerCase().slice(0, 8)));
       if (categoryAttempts.length > 0) {
         const correctAttempts = categoryAttempts.filter(a => a.is_correct).length;
         const livePct = Math.round((correctAttempts / categoryAttempts.length) * 100);
@@ -1439,7 +1467,7 @@ export default function DozentenDashboard({
         }
       }
 
-      const avgPct = studentCount > 0 ? Math.round(totalPct / studentCount) : (totalAns > 0 ? 68 : 55);
+      const avgPct = studentCount > 0 ? Math.round(totalPct / studentCount) : 0;
 
       return {
         category: cat,
@@ -1447,7 +1475,7 @@ export default function DozentenDashboard({
         questionsAnswered: totalAns
       };
     });
-  }, [courseStudents, rawAttempts]);
+  }, [courseStudents, courseRawAttempts]);
 
   // 2. Lernmodi Grid (Schriftlicher Test, Fallbeispiele, Video-Trainer, Karteikarten, "Was bin ich?"-Rätsel, Streak)
   const learningModesStats = useMemo(() => {
@@ -1455,7 +1483,7 @@ export default function DozentenDashboard({
       {
         id: 'exam',
         title: 'Schriftlicher Test',
-        subtitle: 'IHK-Prüfungsmodus mit Punktegewichtung',
+        subtitle: 'Prüfungsmodus mit Punktegewichtung',
         icon: FileText,
         color: 'text-amber-400',
         bg: 'bg-amber-500/10 border-amber-500/20',
@@ -1512,12 +1540,12 @@ export default function DozentenDashboard({
       let sessionsCount = 0;
       let totalScore = 0;
 
-      examSessions.forEach(session => {
+      courseExamSessions.forEach(session => {
         if (session.mode && mode.keys.some(k => session.mode.toLowerCase().includes(k.toLowerCase()))) {
           sessionsCount += 1;
           const score = typeof session.score_achieved === 'number' && typeof session.score_max === 'number' && session.score_max > 0
             ? Math.round((session.score_achieved / session.score_max) * 100)
-            : 70;
+            : (typeof (session as any).score_percent === 'number' ? (session as any).score_percent : 0);
           totalScore += score;
         }
       });
@@ -1527,25 +1555,28 @@ export default function DozentenDashboard({
         history.forEach((ex: any) => {
           if (ex && ex.examType && mode.keys.some(k => ex.examType.toLowerCase().includes(k.toLowerCase()))) {
             sessionsCount += 1;
-            totalScore += typeof ex.scorePercent === 'number' ? ex.scorePercent : 65;
+            totalScore += typeof ex.scorePercent === 'number' ? ex.scorePercent : 0;
           }
         });
       });
 
-      const attemptMatches = rawAttempts.filter(a => a.mode && mode.keys.some(k => a.mode!.toLowerCase().includes(k.toLowerCase())));
+      const attemptMatches = courseRawAttempts.filter(a => a.mode && mode.keys.some(k => a.mode!.toLowerCase().includes(k.toLowerCase())));
       if (attemptMatches.length > 0) {
         sessionsCount += Math.ceil(attemptMatches.length / 4);
+        const correctAttempts = attemptMatches.filter(a => a.is_correct).length;
+        const liveScore = Math.round((correctAttempts / attemptMatches.length) * 100);
+        totalScore += liveScore;
       }
 
-      const avgScore = sessionsCount > 0 ? Math.min(100, Math.round(totalScore / sessionsCount)) : (attemptMatches.length > 0 ? 74 : 70);
+      const avgScore = sessionsCount > 0 ? Math.min(100, Math.round(totalScore / sessionsCount)) : 0;
 
       return {
         ...mode,
-        count: Math.max(sessionsCount, attemptMatches.length > 0 ? 1 : 0),
+        count: sessionsCount,
         avgScore: avgScore
       };
     });
-  }, [examSessions, courseStudents, rawAttempts]);
+  }, [courseExamSessions, courseStudents, courseRawAttempts]);
 
   return (
     <>
@@ -2198,7 +2229,7 @@ export default function DozentenDashboard({
                 <div className="flex items-center gap-3 self-start md:self-center shrink-0">
                   <div className="bg-slate-950/80 px-4 py-2 rounded-xl border border-white/10 text-right">
                     <span className="text-[10px] font-mono text-slate-500 uppercase block">Ausgewertete Antworten</span>
-                    <span className="text-sm font-mono font-bold text-white">{totalCompletedTasks} Datensätze</span>
+                    <span className="text-sm font-mono font-bold text-white">{courseRawAttempts.length} Datensätze</span>
                   </div>
                 </div>
               </section>
