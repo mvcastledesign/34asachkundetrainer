@@ -169,7 +169,7 @@ export function getStudent10ModeStats(
       icon: BookOpen,
       emoji: '📖',
       value: lernmodusVal,
-      shortValue: `${solvedQ} Fragen`,
+      shortValue: solvedQ === 1 ? '1 Frage' : `${solvedQ} Fragen`,
       rawCount: solvedQ,
       colorClass: 'text-indigo-400',
       bgClass: 'bg-indigo-500/10',
@@ -182,7 +182,7 @@ export function getStudent10ModeStats(
       icon: Award,
       emoji: '🎖️',
       value: simVal,
-      shortValue: `${simCount} absolviert`,
+      shortValue: simCount === 1 ? '1 Simulation' : `${simCount} Simulationen`,
       rawCount: simCount,
       colorClass: 'text-amber-400',
       bgClass: 'bg-amber-500/10',
@@ -195,7 +195,7 @@ export function getStudent10ModeStats(
       icon: FileText,
       emoji: '📝',
       value: writtenVal,
-      shortValue: `${writtenCount} ${writtenCount === 1 ? 'Test' : 'Tests'}`,
+      shortValue: writtenCount === 1 ? '1 Test' : `${writtenCount} Tests`,
       rawCount: writtenCount,
       colorClass: 'text-emerald-400',
       bgClass: 'bg-emerald-500/10',
@@ -208,7 +208,7 @@ export function getStudent10ModeStats(
       icon: Video,
       emoji: '🎬',
       value: videoVal,
-      shortValue: `${videoCount} Szenarien`,
+      shortValue: videoCount === 1 ? '1 Szenario' : `${videoCount} Szenarien`,
       rawCount: videoCount,
       colorClass: 'text-fuchsia-400',
       bgClass: 'bg-fuchsia-500/10',
@@ -221,7 +221,7 @@ export function getStudent10ModeStats(
       icon: Scale,
       emoji: '⚖️',
       value: caseVal,
-      shortValue: `${caseCount} ${caseCount === 1 ? 'Fall' : 'Fälle'}`,
+      shortValue: caseCount === 1 ? '1 Fall' : `${caseCount} Fälle`,
       rawCount: caseCount,
       colorClass: 'text-cyan-400',
       bgClass: 'bg-cyan-500/10',
@@ -234,7 +234,7 @@ export function getStudent10ModeStats(
       icon: Layers,
       emoji: '🗂️',
       value: flashcardVal,
-      shortValue: `${flashcardCount} Karten`,
+      shortValue: flashcardCount === 1 ? '1 Karte' : `${flashcardCount} Karten`,
       rawCount: flashcardCount,
       colorClass: 'text-sky-400',
       bgClass: 'bg-sky-500/10',
@@ -247,7 +247,7 @@ export function getStudent10ModeStats(
       icon: GraduationCap,
       emoji: '📚',
       value: vocabVal,
-      shortValue: `${vocabCount} Begriffe`,
+      shortValue: vocabCount === 1 ? '1 Begriff' : `${vocabCount} Begriffe`,
       rawCount: vocabCount,
       colorClass: 'text-teal-400',
       bgClass: 'bg-teal-500/10',
@@ -260,7 +260,7 @@ export function getStudent10ModeStats(
       icon: RotateCcw,
       emoji: '🔁',
       value: errorVal,
-      shortValue: `${errorFixedCount} behoben`,
+      shortValue: errorFixedCount === 1 ? '1 behoben' : `${errorFixedCount} behoben`,
       rawCount: errorFixedCount,
       colorClass: 'text-rose-400',
       bgClass: 'bg-rose-500/10',
@@ -286,7 +286,7 @@ export function getStudent10ModeStats(
       icon: HelpCircle,
       emoji: '❓',
       value: riddleVal,
-      shortValue: `${riddleCount} gelöst`,
+      shortValue: riddleCount === 1 ? '1 gelöst' : `${riddleCount} gelöst`,
       rawCount: riddleCount,
       colorClass: 'text-violet-400',
       bgClass: 'bg-violet-500/10',
@@ -2594,26 +2594,21 @@ export default function DozentenDashboard({
                         <span className="text-[10px] font-mono text-slate-500">Live-Metriken</span>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {student10Modes.map((mode) => {
                           const IconComponent = mode.icon;
                           return (
                             <div 
                               key={mode.id}
-                              className="p-2.5 flex flex-col justify-between min-h-[68px] bg-[#121620]/90 border border-white/5 hover:border-[#dfb871]/30 transition-all rounded-xl shadow-inner"
+                              className="p-3 bg-[#121620]/90 border border-white/5 rounded-xl flex items-center justify-between hover:border-white/10 transition-colors"
                             >
-                              <div className="flex items-start justify-between gap-1">
-                                <span className="text-[11px] font-medium text-slate-300 leading-tight flex items-center gap-1">
-                                  <span className="text-xs shrink-0">{mode.emoji}</span>
-                                  <span>{mode.shortName}</span>
-                                </span>
-                                <div className={`p-1 rounded-md ${mode.bgClass} ${mode.colorClass} shrink-0`}>
-                                  <IconComponent className="w-3 h-3" />
-                                </div>
+                              <div className="flex items-center gap-2 text-xs font-medium text-slate-300">
+                                <IconComponent className={`w-3.5 h-3.5 ${mode.colorClass} shrink-0`} />
+                                <span>{mode.shortName}</span>
                               </div>
-                              <p className="text-xs font-mono font-semibold text-[#dfb871] pt-1">
+                              <span className="text-xs font-mono font-bold text-[#dfb871] shrink-0">
                                 {mode.shortValue || mode.value}
-                              </p>
+                              </span>
                             </div>
                           );
                         })}
