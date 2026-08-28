@@ -1241,21 +1241,53 @@ export default function DozentenDashboard({
     if (!studentToDelete) return;
     setIsDeleting(true);
 
-    const result = await deleteStudentFromSupabase(studentToDelete.id);
-    setIsDeleting(false);
+    try {
+      const studentId = String(studentToDelete.id);
 
-    if (!result.success) {
-      showToast(`Fehler beim Löschen: ${result.error}`);
-      return;
+      // 1. Clean up linked exam sessions and question attempts to prevent leftover data
+      try {
+        await supabase.from('exam_sessions').delete().eq('user_id', studentId);
+      } catch (e) {
+        console.warn('Could not delete exam_sessions in background:', e);
+      }
+
+      try {
+        await supabase.from('question_attempts').delete().eq('user_id', studentId);
+      } catch (e) {
+        console.warn('Could not delete question_attempts in background:', e);
+      }
+
+      // 2. Perform real asynchronous delete call in Supabase
+      const { error } = await supabase
+        .from('students')
+        .delete()
+        .eq('id', studentToDelete.id);
+
+      if (error) {
+        setIsDeleting(false);
+        alert(`Fehler beim Löschen des Schülers in Supabase: ${error.message}`);
+        showToast(`Fehler beim Löschen: ${error.message}`);
+        return;
+      }
+
+      // 3. Update local React state ONLY after Supabase successfully confirmed deletion
+      setStudentsList(prev => prev.filter(s => String(s.id) !== studentId));
+      setRawAttempts(prev => prev.filter(a => String(a.user_id || (a as any).userId) !== studentId));
+      setExamSessions(prev => prev.filter(s => String(s.user_id || (s as any).userId) !== studentId));
+
+      if (selectedStudent && String(selectedStudent.id) === studentId) {
+        setSelectedStudent(null);
+      }
+
+      showToast(`Schüler "${studentToDelete.name}" wurde dauerhaft aus Supabase gelöscht.`);
+      setStudentToDelete(null);
+    } catch (err: any) {
+      console.error('Failed to delete student from Supabase:', err);
+      alert(`Unerwarteter Fehler beim Löschen des Schülers: ${err?.message || 'Verbindung fehlgeschlagen'}`);
+      showToast(`Fehler beim Löschen: ${err?.message || 'Unbekannter Fehler'}`);
+    } finally {
+      setIsDeleting(false);
     }
-
-    setStudentsList(prev => prev.filter(s => s.id !== studentToDelete.id));
-    if (selectedStudent && selectedStudent.id === studentToDelete.id) {
-      setSelectedStudent(null);
-    }
-
-    showToast(`Schüler "${studentToDelete.name}" wurde dauerhaft aus Supabase gelöscht.`);
-    setStudentToDelete(null);
   };
 
   // Real PDF / Print generation for single student
@@ -2112,7 +2144,7 @@ export default function DozentenDashboard({
                             <Users className="w-8 h-8 text-slate-600 mx-auto" />
                             <p className="text-xs font-semibold text-slate-300">Keine Schüler für die aktuelle Auswahl gefunden.</p>
                             <p className="text-[11px] text-slate-500">
-                              Schüler können sich mit dem Kurs-Code <strong className="text-[#dfb871] font-mono">MOREDU34a</strong> registrieren.
+                              Schüler können sich mit dem jeweiligen Kurs-Code (z. B. <strong className="text-[#dfb871] font-mono">{selectedCourseId === 'ALL' ? 'SK-2026-A' : selectedCourseId}</strong>) registrieren.
                             </p>
                           </div>
                         </td>

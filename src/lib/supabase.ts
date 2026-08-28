@@ -159,12 +159,28 @@ export async function createStudentInSupabase(data: {
 }
 
 /**
- * Delete a student from Supabase `students` table
+ * Delete a student from Supabase `students` table along with linked records
  */
 export async function deleteStudentFromSupabase(
   studentId: string
 ): Promise<{ success: boolean; error: string | null }> {
   try {
+    const sId = String(studentId);
+
+    // 1. Delete associated exam_sessions and question_attempts first
+    try {
+      await supabase.from('exam_sessions').delete().eq('user_id', sId);
+    } catch (err) {
+      console.warn('Could not clean up exam_sessions for student:', err);
+    }
+
+    try {
+      await supabase.from('question_attempts').delete().eq('user_id', sId);
+    } catch (err) {
+      console.warn('Could not clean up question_attempts for student:', err);
+    }
+
+    // 2. Delete student record from students table
     const { error } = await supabase
       .from('students')
       .delete()

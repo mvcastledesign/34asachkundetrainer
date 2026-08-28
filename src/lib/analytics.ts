@@ -57,20 +57,10 @@ export interface ExamSessionData {
 const activeSessions: Record<string, string> = {};
 
 /**
- * Triggers the visual mobile & desktop feedback toast when Supabase successfully records data
+ * Silent indicator: saving operates purely in the background without UI feedback
  */
-export function triggerSaveIndicator(message: string = 'Gespeichert'): void {
-  try {
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('supabase-sync-success', {
-          detail: { message, timestamp: Date.now() }
-        })
-      );
-    }
-  } catch {
-    // Ignore in non-browser environments
-  }
+export function triggerSaveIndicator(_message: string = 'Gespeichert'): void {
+  // Silent background sync - no visible badges, popups, or UI interruption
 }
 
 /**

@@ -24,6 +24,12 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return [...array].sort(() => Math.random() - 0.5);
 };
 
+// Helper to sanitize option texts from any internal prefixes or IDs
+const cleanOptionText = (text: string): string => {
+  if (!text) return '';
+  return text.replace(/^\d+_(correct|wrong|neutral)[:\s_-]*/i, '').trim();
+};
+
 export default function InteractiveVideoTrainer({
   translationLang = 'deaktiviert',
   onRecordHistory
@@ -414,22 +420,27 @@ export default function InteractiveVideoTrainer({
           </div>
 
           {/* Antwort-Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-            {shuffledAnswers.map((answer) => (
-              <button
-                key={answer.id}
-                onClick={() => handleSelectAnswer(answer)}
-                disabled={isProcessing}
-                className="w-full text-left py-2 px-3 sm:py-2.5 sm:px-3.5 rounded-lg sm:rounded-xl bg-white/[0.04] hover:bg-[#dfb871]/15 border border-white/10 hover:border-[#dfb871]/40 text-slate-200 hover:text-white transition-all cursor-pointer select-none active:scale-[0.98] group flex items-start gap-2 shadow-sm disabled:opacity-50"
-              >
-                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-[#dfb871]/10 text-[#dfb871] border border-[#dfb871]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#dfb871] group-hover:text-slate-950 transition-colors">
-                  <span className="text-[10px] sm:text-xs font-mono font-bold">{answer.id}</span>
-                </div>
-                <span className="text-xs sm:text-sm font-medium leading-tight break-words whitespace-normal min-w-0 flex-1">
-                  {answer.text}
-                </span>
-              </button>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            {shuffledAnswers.map((answer, idx) => {
+              const optionLetter = String.fromCharCode(65 + idx); // 'A', 'B', etc.
+              const cleanText = cleanOptionText(answer.text);
+
+              return (
+                <button
+                  key={answer.id || idx}
+                  onClick={() => handleSelectAnswer(answer)}
+                  disabled={isProcessing}
+                  className="w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-900/80 hover:bg-[#dfb871]/15 border border-white/10 hover:border-[#dfb871]/50 text-slate-200 hover:text-white transition-all cursor-pointer select-none active:scale-[0.98] group flex items-start gap-3 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <div className="w-6 h-6 rounded-lg bg-[#dfb871]/10 text-[#dfb871] border border-[#dfb871]/30 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#dfb871] group-hover:text-slate-950 font-bold text-xs font-mono transition-colors shadow-sm">
+                    {optionLetter}
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-slate-100 group-hover:text-white leading-relaxed break-words whitespace-normal min-w-0 flex-1">
+                    {cleanText}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       );
@@ -451,8 +462,8 @@ export default function InteractiveVideoTrainer({
               <span className="text-[9px] sm:text-[10px] font-mono text-[#dfb871] font-bold uppercase tracking-wider">
                 Interaktiver Video-Trainer § 34a
               </span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-slate-400 bg-white/5 px-1.5 py-0.2 rounded">
-                Seamless Dual-Player
+              <span className="text-[9px] sm:text-[10px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded border border-white/5">
+                Interaktives Video-Szenario
               </span>
             </div>
             <h2 className="text-sm sm:text-lg font-bold font-display text-white truncate max-w-[200px] sm:max-w-md">

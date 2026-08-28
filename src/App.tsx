@@ -56,7 +56,6 @@ import LegalConceptGuesser from './components/LegalConceptGuesser.tsx';
 import StreakChallengeMode from './components/StreakChallengeMode.tsx';
 import FachbegriffeTrainer from './components/FachbegriffeTrainer.tsx';
 import CustomDropdown from './components/CustomDropdown.tsx';
-import SupabaseSyncToast from './components/SupabaseSyncToast.tsx';
 
 const languageOptions = [
   { value: 'deaktiviert', label: 'Deaktiviert (Nur Deutsch)' },
@@ -652,9 +651,6 @@ export default function App() {
       {/* Luxurious background noise & spot radiance overlay */}
       <div className="obsidian-overlay" />
 
-      {/* Visual Feedback for Supabase saving on Mobile & Desktop */}
-      <SupabaseSyncToast />
-
       {/* RENDER LOGIN IF NOT LOGGED IN */}
       {!currentUser ? (
         <Login onLoginSuccess={handleLoginSuccess} />
@@ -832,7 +828,7 @@ export default function App() {
             {/* Dynamic page contents block */}
             <main className="flex-1 bg-[#05060b]/40 p-5 md:p-8 space-y-6 overflow-y-auto overflow-x-hidden max-w-full relative z-10">
               {/* Main Layout Header (Time Tracking & stats summary ticker) */}
-              <section className="bento-glass p-4 md:p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-40 bento-glow-green">
+              <section className="bento-glass p-4 md:p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-40 border border-white/10 shadow-lg">
                 <div>
                   <span className="text-[10px] font-mono text-[#dfb871] tracking-wider uppercase font-extrabold">§ 34a GewO Sachkunde</span>
                   <p className="text-sm font-display font-semibold text-white mt-0.5">Willkommen zurück, {currentUser.name}</p>
