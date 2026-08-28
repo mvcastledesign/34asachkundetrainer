@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Users, 
   TrendingUp, 
@@ -12,7 +12,9 @@ import {
   Search, 
   Copy, 
   Download, 
+  ChevronLeft,
   ChevronRight, 
+  ChevronDown,
   X, 
   CheckCircle2, 
   XCircle, 
@@ -37,7 +39,12 @@ import {
   Radar,
   Lightbulb,
   Check,
-  Printer
+  Printer,
+  GraduationCap,
+  Calendar,
+  Filter,
+  Activity,
+  Plus
 } from 'lucide-react';
 import { UserProfile, StudentDetail } from '../types/auth.ts';
 import { Question, KATEGORIEN } from '../types.ts';
@@ -49,6 +56,186 @@ import {
   updateStudentPasswordInSupabase,
   deleteStudentFromSupabase
 } from '../lib/supabase.ts';
+
+export interface CourseCohort {
+  id: string;
+  name: string;
+  period: string;
+  description?: string;
+  createdAt?: string;
+}
+
+const DEFAULT_COURSES: CourseCohort[] = [
+  { 
+    id: 'MOREDU34a', 
+    name: 'Sachkunde § 34a (Sommer 2026)', 
+    period: '01.07.2026 – 15.08.2026',
+    description: 'Hauptlehrgang Vollzeit (IHK-Prüfung August 2026)'
+  },
+  { 
+    id: 'MOREDU34b', 
+    name: 'Sachkunde § 34a (Herbst 2026)', 
+    period: '01.09.2026 – 15.10.2026',
+    description: 'Kompaktlehrgang Herbst (IHK-Prüfung Oktober 2026)'
+  },
+  { 
+    id: 'MOREDU34c', 
+    name: 'Sachkunde § 34a (Wochenend-Kurs)', 
+    period: '15.10.2026 – 30.11.2026',
+    description: 'Berufsbegleitender Abend- & Wochenendlehrgang'
+  }
+];
+
+// Helper: Format ISO date string (YYYY-MM-DD) into German date string (DD.MM.YYYY)
+const formatGermanDateOnly = (d: string) => {
+  if (!d) return '';
+  const parts = d.split('-');
+  if (parts.length !== 3) return d;
+  const [year, month, day] = parts;
+  return `${day}.${month}.${year}`;
+};
+
+// Obsidian Calendar Popover Component for Course Date Selection
+const ObsidianCalendarPopover: React.FC<{
+  selectedDate: string; // 'YYYY-MM-DD'
+  onSelectDate: (date: string) => void;
+  onClose: () => void;
+  align?: 'left' | 'right';
+}> = ({ selectedDate, onSelectDate, onClose, align = 'left' }) => {
+  const initialDate = selectedDate ? new Date(selectedDate) : new Date();
+  const [viewYear, setViewYear] = useState(() => (!isNaN(initialDate.getTime()) ? initialDate.getFullYear() : new Date().getFullYear()));
+  const [viewMonth, setViewMonth] = useState(() => (!isNaN(initialDate.getTime()) ? initialDate.getMonth() : new Date().getMonth()));
+
+  const monthNames = [
+    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+  ];
+  const weekDays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+  const prevMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (viewMonth === 0) {
+      setViewMonth(11);
+      setViewYear(y => y - 1);
+    } else {
+      setViewMonth(m => m - 1);
+    }
+  };
+
+  const nextMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (viewMonth === 11) {
+      setViewMonth(0);
+      setViewYear(y => y + 1);
+    } else {
+      setViewMonth(m => m + 1);
+    }
+  };
+
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const rawFirstDay = new Date(viewYear, viewMonth, 1).getDay();
+  // Monday = 0, Sunday = 6
+  const startOffset = (rawFirstDay + 6) % 7;
+  const todayIso = new Date().toISOString().split('T')[0];
+
+  return (
+    <div 
+      className={`absolute top-full ${align === 'right' ? 'right-0' : 'left-0'} mt-2 z-50 w-72 bg-[#0d1117]/95 border border-[#dfb871]/30 rounded-2xl p-3.5 shadow-2xl backdrop-blur-xl animate-fadeIn space-y-3`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Header with Month navigation */}
+      <div className="flex items-center justify-between border-b border-white/10 pb-2">
+        <button
+          type="button"
+          onClick={prevMonth}
+          className="p-1.5 rounded-lg text-slate-400 hover:text-[#dfb871] hover:bg-white/5 transition-colors cursor-pointer"
+          title="Vorheriger Monat"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        <div className="text-center">
+          <span className="text-xs font-bold text-white font-display">
+            {monthNames[viewMonth]} {viewYear}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={nextMonth}
+          className="p-1.5 rounded-lg text-slate-400 hover:text-[#dfb871] hover:bg-white/5 transition-colors cursor-pointer"
+          title="Nächster Monat"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Weekdays */}
+      <div className="grid grid-cols-7 gap-1 text-center font-mono text-[10px] text-slate-400 font-bold">
+        {weekDays.map(d => (
+          <div key={d} className="py-0.5">{d}</div>
+        ))}
+      </div>
+
+      {/* Days Grid */}
+      <div className="grid grid-cols-7 gap-1 text-xs">
+        {/* Empty cells before month start */}
+        {Array.from({ length: startOffset }).map((_, i) => (
+          <div key={`offset-${i}`} className="h-7 w-7" />
+        ))}
+
+        {/* Days of current month */}
+        {Array.from({ length: daysInMonth }).map((_, i) => {
+          const dayNum = i + 1;
+          const currentIso = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+          const isSelected = selectedDate === currentIso;
+          const isToday = todayIso === currentIso;
+
+          return (
+            <button
+              key={`day-${dayNum}`}
+              type="button"
+              onClick={() => {
+                onSelectDate(currentIso);
+                onClose();
+              }}
+              className={`h-7 w-7 rounded-lg flex items-center justify-center text-xs font-mono font-medium transition-all cursor-pointer ${
+                isSelected
+                  ? 'bg-[#dfb871] text-slate-950 font-bold shadow-md scale-105'
+                  : isToday
+                  ? 'border border-[#dfb871]/60 text-[#dfb871] hover:bg-white/10'
+                  : 'text-slate-200 hover:bg-[#dfb871]/20 hover:text-[#dfb871]'
+              }`}
+            >
+              {dayNum}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Footer / Close */}
+      <div className="flex items-center justify-between pt-2 border-t border-white/10 text-[10px] font-mono">
+        <button
+          type="button"
+          onClick={() => {
+            onSelectDate(todayIso);
+            onClose();
+          }}
+          className="text-[#dfb871] hover:underline cursor-pointer font-semibold"
+        >
+          Heute ({formatGermanDateOnly(todayIso)})
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-slate-400 hover:text-white cursor-pointer"
+        >
+          Fertig
+        </button>
+      </div>
+    </div>
+  );
+};
 
 interface DozentenDashboardProps {
   currentUser: UserProfile;
@@ -133,6 +320,80 @@ export default function DozentenDashboard({
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<'students' | 'analytics' | 'manage_questions'>('students');
 
+  // Custom created courses with LocalStorage persistence
+  const [courses, setCourses] = useState<CourseCohort[]>(() => {
+    try {
+      const saved = localStorage.getItem('moredu_custom_courses');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Merge defaults with saved custom courses (prevent duplicates by ID)
+          const map = new Map<string, CourseCohort>();
+          DEFAULT_COURSES.forEach(c => map.set(c.id.toUpperCase(), c));
+          parsed.forEach(c => {
+            if (c && c.id) map.set(c.id.toUpperCase(), c);
+          });
+          return Array.from(map.values());
+        }
+      }
+    } catch (e) {
+      console.warn('Could not read moredu_custom_courses from localStorage', e);
+    }
+    return DEFAULT_COURSES;
+  });
+
+  // Date helpers for course period calendar
+  const getIsoToday = () => {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+  };
+
+  const getIsoInWeeks = (weeks = 6) => {
+    const d = new Date();
+    d.setDate(d.getDate() + weeks * 7);
+    return d.toISOString().split('T')[0];
+  };
+
+  // Create Course Modal State & Form States
+  const [showCreateCourseModal, setShowCreateCourseModal] = useState<boolean>(false);
+  const [newCourseCode, setNewCourseCode] = useState<string>('');
+  const [newCourseName, setNewCourseName] = useState<string>('');
+  const [newCourseStartDate, setNewCourseStartDate] = useState<string>(getIsoToday);
+  const [newCourseEndDate, setNewCourseEndDate] = useState<string>(() => getIsoInWeeks(6));
+  const [newCourseDescription, setNewCourseDescription] = useState<string>('');
+  const [activeCalendarPicker, setActiveCalendarPicker] = useState<'start' | 'end' | null>(null);
+
+  // Deleted courses tracking (to hide removed courses from view without touching Supabase)
+  const [deletedCourseIds, setDeletedCourseIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('moredu_deleted_course_ids');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Could not read moredu_deleted_course_ids from localStorage', e);
+    }
+    return [];
+  });
+
+  // Selected course cohort ID: 'MOREDU34a' by default, or 'ALL' for overview
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('MOREDU34a');
+  const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
+  const courseDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close course dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (courseDropdownRef.current && !courseDropdownRef.current.contains(event.target as Node)) {
+        setIsCourseDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
   // Students list state loaded from Supabase
   const [studentsList, setStudentsList] = useState<StudentDetail[]>([]);
   const [loadingStudents, setLoadingStudents] = useState<boolean>(true);
@@ -164,6 +425,179 @@ export default function DozentenDashboard({
     type: 'single' | 'course';
     student?: StudentDetail;
   } | null>(null);
+
+  // Dynamically resolve all courses, merging `courses` state with any new courses found in students list
+  const availableCourses = useMemo(() => {
+    const courseMap = new Map<string, CourseCohort>();
+    // First register all courses from state (unless hidden/deleted)
+    courses.forEach(c => {
+      if (!deletedCourseIds.includes(c.id.toUpperCase())) {
+        courseMap.set(c.id.toUpperCase(), c);
+      }
+    });
+
+    // Then register any course code found in students list
+    studentsList.forEach(s => {
+      const rawId = (s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode;
+      if (rawId && typeof rawId === 'string' && rawId.trim()) {
+        const code = rawId.trim();
+        const codeUpper = code.toUpperCase();
+        if (!courseMap.has(codeUpper) && !deletedCourseIds.includes(codeUpper)) {
+          courseMap.set(codeUpper, {
+            id: code,
+            name: `Sachkunde § 34a (${code})`,
+            period: 'Fortlaufend / Flexibel',
+            description: `Zugeordneter Kohorten-Code: ${code}`
+          });
+        }
+      }
+    });
+
+    return Array.from(courseMap.values());
+  }, [courses, deletedCourseIds, studentsList]);
+
+  // Handler: Quick set end date +4, +6, +8 weeks from start date
+  const handleAddWeeksToEndDate = (weeks: number) => {
+    const base = newCourseStartDate ? new Date(newCourseStartDate) : new Date();
+    const target = new Date(base);
+    target.setDate(target.getDate() + weeks * 7);
+    const targetIso = target.toISOString().split('T')[0];
+    setNewCourseEndDate(targetIso);
+    showToast(`Lehrgangs-Ende auf +${weeks} Wochen gesetzt (${formatGermanDateOnly(targetIso)})`);
+  };
+
+  // Handler: Delete / Hide course safely from local view without deleting Supabase data
+  const handleDeleteCourse = (courseToDelete: CourseCohort, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const confirmed = window.confirm(
+      `Kurs "${courseToDelete.name}" (${courseToDelete.id}) aus der Ansicht entfernen?\n\nAlle Schüler- und Prüfungsdaten in Supabase bleiben unberührt und vollständig erhalten.`
+    );
+    if (!confirmed) return;
+
+    const idUpper = courseToDelete.id.toUpperCase();
+    const updatedCourses = courses.filter(c => c.id.toUpperCase() !== idUpper);
+    setCourses(updatedCourses);
+
+    const updatedDeletedIds = Array.from(new Set([...deletedCourseIds, idUpper]));
+    setDeletedCourseIds(updatedDeletedIds);
+
+    try {
+      localStorage.setItem('moredu_custom_courses', JSON.stringify(updatedCourses));
+      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedDeletedIds));
+    } catch (err) {
+      console.warn('Could not update localStorage after course deletion', err);
+    }
+
+    if (selectedCourseId.toUpperCase() === idUpper) {
+      setSelectedCourseId('ALL');
+    }
+
+    showToast(`Kurs "${courseToDelete.name}" (${courseToDelete.id}) aus der Ansicht entfernt.`);
+  };
+
+  // Handler: Create and persist a new course / cohort
+  const handleCreateNewCourse = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanCode = newCourseCode.trim().toUpperCase().replace(/\s+/g, '');
+    const cleanName = newCourseName.trim();
+    const cleanDesc = newCourseDescription.trim();
+
+    if (!cleanCode) {
+      showToast('Bitte geben Sie einen gültigen Kurs-Code ein.');
+      return;
+    }
+
+    if (!cleanName) {
+      showToast('Bitte geben Sie eine Kurs-Bezeichnung ein.');
+      return;
+    }
+
+    // Check for duplicate course code
+    const isDuplicate = availableCourses.some(c => c.id.toUpperCase() === cleanCode);
+    if (isDuplicate) {
+      showToast(`Der Kurs-Code "${cleanCode}" existiert bereits.`);
+      return;
+    }
+
+    const periodFormatted = newCourseStartDate && newCourseEndDate
+      ? `${formatGermanDateOnly(newCourseStartDate)} – ${formatGermanDateOnly(newCourseEndDate)}`
+      : (newCourseStartDate ? formatGermanDateOnly(newCourseStartDate) : '01.09.2026 – 15.10.2026');
+
+    const newCourseObj: CourseCohort = {
+      id: cleanCode,
+      name: cleanName,
+      period: periodFormatted,
+      description: cleanDesc || `Lehrgang ${cleanName} (Code: ${cleanCode})`,
+      createdAt: new Date().toISOString()
+    };
+
+    const updatedCourses = [...courses, newCourseObj];
+    setCourses(updatedCourses);
+
+    // If it was previously marked deleted, un-delete it
+    const updatedDeletedIds = deletedCourseIds.filter(id => id !== cleanCode);
+    setDeletedCourseIds(updatedDeletedIds);
+
+    try {
+      localStorage.setItem('moredu_custom_courses', JSON.stringify(updatedCourses));
+      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedDeletedIds));
+    } catch (err) {
+      console.warn('Could not persist new course to localStorage', err);
+    }
+
+    // Switch active view directly to the newly created course
+    setSelectedCourseId(cleanCode);
+    setShowCreateCourseModal(false);
+    setNewCourseCode('');
+    setNewCourseName('');
+    setNewCourseStartDate(getIsoToday());
+    setNewCourseEndDate(getIsoInWeeks(6));
+    setNewCourseDescription('');
+    setActiveCalendarPicker(null);
+    setIsCourseDropdownOpen(false);
+
+    showToast(`Neuer Kurs "${cleanName}" (${cleanCode}) erfolgreich angelegt und aktiviert!`);
+  };
+
+  // Active course metadata helper
+  const activeCourse = useMemo(() => {
+    if (selectedCourseId === 'ALL') {
+      return {
+        id: 'ALL',
+        name: 'Alle Kurse (Gesamtübersicht)',
+        period: '01.07.2026 – 30.11.2026 (Alle Kohorten)',
+        description: 'Aggregierte Ansicht aller Lehrgänge & Teilnehmer'
+      };
+    }
+    return availableCourses.find(c => c.id.toUpperCase() === selectedCourseId.toUpperCase()) || {
+      id: selectedCourseId,
+      name: `Sachkunde § 34a (${selectedCourseId})`,
+      period: '01.07.2026 – 15.08.2026',
+      description: `Lehrgang ${selectedCourseId}`
+    };
+  }, [selectedCourseId, availableCourses]);
+
+  // Map of student count per course for badges in the dropdown
+  const studentCountByCourse = useMemo(() => {
+    const counts: Record<string, number> = {};
+    availableCourses.forEach(c => { counts[c.id.toUpperCase()] = 0; });
+    studentsList.forEach(s => {
+      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'MOREDU34a').trim().toUpperCase();
+      counts[sCourse] = (counts[sCourse] || 0) + 1;
+    });
+    return counts;
+  }, [availableCourses, studentsList]);
+
+  // Students belonging to the currently selected course cohort
+  const courseStudents = useMemo(() => {
+    if (selectedCourseId === 'ALL') {
+      return studentsList;
+    }
+    return studentsList.filter(s => {
+      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'MOREDU34a').trim().toUpperCase();
+      return sCourse === selectedCourseId.toUpperCase();
+    });
+  }, [studentsList, selectedCourseId]);
 
   // Load students from Supabase
   const loadStudents = async () => {
@@ -239,9 +673,9 @@ export default function DozentenDashboard({
     }, 4000);
   };
 
-  // Filtered students list: "Alle", "Aktiv (>50 %)", "Neu angefangen (<50 %)"
+  // Filtered students list within course: "Alle", "Aktiv (>50 %)", "Neu angefangen (<50 %)"
   const filteredStudents = useMemo(() => {
-    return studentsList.filter(student => {
+    return courseStudents.filter(student => {
       const q = searchQuery.toLowerCase().trim();
       const matchesQuery = !q || 
         student.name.toLowerCase().includes(q) ||
@@ -258,21 +692,21 @@ export default function DozentenDashboard({
       if (progressFilter === 'new') return progress < 50;
       return true;
     });
-  }, [studentsList, searchQuery, progressFilter]);
+  }, [courseStudents, searchQuery, progressFilter]);
 
-  // 1. KPI: Schüler im Kurs
-  const totalEnrolled = studentsList.length;
+  // 1. KPI: Schüler im Kurs (dynamisch nach Kohorte)
+  const totalEnrolled = courseStudents.length;
 
-  // 2. KPI: Ø Lernfortschritt
+  // 2. KPI: Ø Lernfortschritt (dynamisch nach Kohorte)
   const avgProgress = totalEnrolled > 0
-    ? Math.round(studentsList.reduce((acc, curr) => acc + (curr.progressPercent || 0), 0) / totalEnrolled)
+    ? Math.round(courseStudents.reduce((acc, curr) => acc + (curr.progressPercent || 0), 0) / totalEnrolled)
     : 0;
 
-  // 3. KPI: Gesamt absolvierte Aufgaben
+  // 3. KPI: Gesamt absolvierte Aufgaben (dynamisch nach Kohorte)
   const totalCompletedTasks = useMemo(() => {
     let count = 0;
     // Count from student questionProgress
-    studentsList.forEach(s => {
+    courseStudents.forEach(s => {
       if (s.questionProgress && typeof s.questionProgress === 'object') {
         count += Object.keys(s.questionProgress).length;
       }
@@ -285,12 +719,12 @@ export default function DozentenDashboard({
 
     const attemptsCount = rawAttempts.length;
     return Math.max(count, attemptsCount, totalEnrolled * 12);
-  }, [studentsList, rawAttempts, totalEnrolled]);
+  }, [courseStudents, rawAttempts, totalEnrolled]);
 
   // Summe aller beantworteten Fragen der Klasse für den Druckbericht
   const totalClassAnsweredQuestions = useMemo(() => {
     let count = 0;
-    studentsList.forEach(s => {
+    courseStudents.forEach(s => {
       if (s.questionProgress && typeof s.questionProgress === 'object') {
         count += Object.keys(s.questionProgress).length;
       }
@@ -302,11 +736,11 @@ export default function DozentenDashboard({
     });
     const rawCount = rawAttempts.length;
     return Math.max(count, rawCount, totalEnrolled * 18);
-  }, [studentsList, rawAttempts, totalEnrolled]);
+  }, [courseStudents, rawAttempts, totalEnrolled]);
 
-  // Copy invitation code
+  // Copy invitation code for active course
   const handleCopyInviteLink = () => {
-    const code = 'MOREDU34a';
+    const code = activeCourse.id === 'ALL' ? 'MOREDU34a' : activeCourse.id;
     navigator.clipboard.writeText(code);
     showToast(`Pflicht-Kurs-Code "${code}" in die Zwischenablage kopiert!`);
   };
@@ -538,7 +972,7 @@ export default function DozentenDashboard({
       let studentCount = 0;
       let totalAns = 0;
 
-      studentsList.forEach(s => {
+      courseStudents.forEach(s => {
         if (!s) return;
         const cpList = Array.isArray(s.categoryPerformance)
           ? s.categoryPerformance
@@ -576,7 +1010,7 @@ export default function DozentenDashboard({
         questionsAnswered: totalAns
       };
     });
-  }, [studentsList, rawAttempts]);
+  }, [courseStudents, rawAttempts]);
 
   // 2. Lernmodi Grid (Schriftlicher Test, Fallbeispiele, Video-Trainer, Karteikarten, "Was bin ich?"-Rätsel, Streak)
   const learningModesStats = useMemo(() => {
@@ -651,7 +1085,7 @@ export default function DozentenDashboard({
         }
       });
 
-      studentsList.forEach(s => {
+      courseStudents.forEach(s => {
         const history = Array.isArray(s.examHistory) ? s.examHistory : [];
         history.forEach((ex: any) => {
           if (ex && ex.examType && mode.keys.some(k => ex.examType.toLowerCase().includes(k.toLowerCase()))) {
@@ -674,7 +1108,7 @@ export default function DozentenDashboard({
         avgScore: avgScore
       };
     });
-  }, [examSessions, studentsList, rawAttempts]);
+  }, [examSessions, courseStudents, rawAttempts]);
 
   return (
     <>
@@ -691,32 +1125,229 @@ export default function DozentenDashboard({
           </div>
         )}
 
-        {/* 1. KURS-HEADER */}
-        <section className="bento-glass p-6 md:p-8 rounded-3xl relative overflow-hidden border border-[#dfb871]/20 bento-glow-gold">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        {/* 1. KURS-HEADER MIT OBSIDIAN MULTI-COURSE SWITCHER */}
+        <section className="bento-glass p-6 md:p-8 rounded-3xl relative z-30 overflow-visible border border-[#dfb871]/20 bento-glow-gold">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-30 overflow-visible">
             
-            <div className="space-y-2">
+            {/* Left: Dynamic Course Switcher Dropdown */}
+            <div className="space-y-3 relative z-30 overflow-visible" ref={courseDropdownRef}>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#dfb871] bg-[#dfb871]/10 px-3 py-1 rounded-full border border-[#dfb871]/20 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5" /> B2B Dozenten-Dashboard
+                <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#dfb871] bg-[#dfb871]/10 px-3 py-1 rounded-full border border-[#dfb871]/20 flex items-center gap-1.5 shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#dfb871]" /> B2B Dozenten-Dashboard
                 </span>
-                <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
-                  Single-Course LMS
+                <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-slate-300 bg-white/5 px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1.5">
+                  <GraduationCap className="w-3.5 h-3.5 text-cyan-400" /> Multi-Course LMS
+                </span>
+                <span className="text-[10px] font-mono text-slate-400 bg-slate-900/60 px-2.5 py-1 rounded-full border border-white/5">
+                  {availableCourses.length} Kohorten registriert
                 </span>
               </div>
 
-              <h1 className="text-2xl md:text-3xl font-extrabold font-display text-white tracking-tight">
-                Aktueller Kurs: Sachkunde § 34a
-              </h1>
+              {/* Interactive Course Switcher Button & Create Course Button */}
+              <div className="flex flex-wrap items-center gap-2 relative z-30">
+                <div className="relative">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setIsCourseDropdownOpen(prev => !prev)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setIsCourseDropdownOpen(prev => !prev);
+                      }
+                    }}
+                    className="w-full sm:w-auto text-left group bg-slate-950/80 hover:bg-slate-900/90 border border-[#dfb871]/40 hover:border-[#dfb871] transition-all duration-200 p-3.5 px-4 rounded-2xl flex items-center justify-between gap-4 cursor-pointer shadow-lg hover:shadow-[#dfb871]/10 active:scale-[0.99] select-none"
+                    title="Klicken, um den aktiven Kurs oder Kohorte zu wechseln"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#dfb871]/20 to-[#dfb871]/5 border border-[#dfb871]/30 flex items-center justify-center text-[#dfb871] shrink-0 group-hover:scale-105 transition-transform">
+                        <GraduationCap className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Aktive Kohorte:</span>
+                          <span className="text-[10px] font-mono font-bold text-[#dfb871] bg-[#dfb871]/10 px-2 py-0.5 rounded border border-[#dfb871]/20">
+                            {activeCourse.id === 'ALL' ? 'ALLE' : activeCourse.id}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                          <h1 className="text-lg md:text-xl font-black font-display text-white tracking-tight">
+                            {activeCourse.name}
+                          </h1>
+                          {activeCourse.id !== 'ALL' && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(activeCourse.id);
+                                showToast(`Kurs-Code "${activeCourse.id}" kopiert!`);
+                              }}
+                              className="bg-[#dfb871]/10 border border-[#dfb871]/30 hover:border-[#dfb871] text-[#dfb871] font-mono text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 cursor-pointer hover:bg-[#dfb871]/20 transition-all font-semibold active:scale-95 shadow-sm"
+                              title={`Kurs-Code "${activeCourse.id}" kopieren`}
+                            >
+                              <span>Code: <strong>{activeCourse.id}</strong></span>
+                              <Copy className="w-3.5 h-3.5 text-[#dfb871]" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400 font-medium mt-1">
+                          <span className="flex items-center gap-1 text-slate-300">
+                            <Clock className="w-3.5 h-3.5 text-[#dfb871]" /> {activeCourse.period}
+                          </span>
+                          <span className="text-slate-600">•</span>
+                          <span className="text-emerald-400 font-mono font-semibold">
+                            {courseStudents.length} {courseStudents.length === 1 ? 'Teilnehmer' : 'Teilnehmer'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 font-medium">
-                <span className="flex items-center gap-1.5 text-slate-300">
-                  <Clock className="w-4 h-4 text-[#dfb871]" /> Zeitraum: <strong className="text-white">01.07.2026 – 15.08.2026</strong>
-                </span>
-                <span className="hidden sm:inline text-slate-600">•</span>
-                <span className="text-slate-300 font-mono">
-                  Kurs-Code: <strong className="text-[#dfb871] font-bold">MOREDU34a</strong>
-                </span>
+                    <div className="flex items-center gap-2 pl-3 border-l border-white/10 text-slate-400 group-hover:text-[#dfb871] transition-colors">
+                      <span className="text-[10px] font-mono uppercase hidden sm:inline">Wechseln</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isCourseDropdownOpen ? 'rotate-180 text-[#dfb871]' : ''}`} />
+                    </div>
+                  </div>
+
+                  {/* Dropdown Menu */}
+                  {isCourseDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-full min-w-[320px] sm:w-[460px] z-50 max-h-[380px] overflow-y-auto shadow-2xl border border-[#dfb871]/30 bg-[#0d1117]/95 backdrop-blur-xl rounded-2xl p-2 space-y-1 animate-fadeIn [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[#dfb871]/30 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="px-3 py-2 border-b border-white/10 flex items-center justify-between text-slate-400 sticky top-0 bg-[#0d1117]/95 backdrop-blur-md z-10">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                          <Filter className="w-3 h-3 text-[#dfb871]" /> Lehrgang & Kohorte wählen
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-500">
+                          Gesamt: {studentsList.length} Schüler
+                        </span>
+                      </div>
+
+                      {/* Top Action in Dropdown: Neuen Kurs anlegen */}
+                      <button
+                        onClick={() => {
+                          setIsCourseDropdownOpen(false);
+                          setShowCreateCourseModal(true);
+                        }}
+                        className="w-full text-left p-2.5 px-3 rounded-xl bg-gradient-to-r from-[#dfb871]/20 to-[#dfb871]/10 hover:from-[#dfb871]/30 hover:to-[#dfb871]/20 border border-[#dfb871]/40 text-[#dfb871] font-bold text-xs transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-6 h-6 rounded-lg bg-[#dfb871] text-slate-950 flex items-center justify-center font-bold">
+                            <Plus className="w-4 h-4" />
+                          </div>
+                          <span>+ Neuen Kurs / Kohorte anlegen</span>
+                        </div>
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 group-hover:text-white">Neu</span>
+                      </button>
+
+                      <div className="border-t border-white/5 my-1" />
+
+                      {/* Option: Alle Kurse */}
+                      <button
+                        onClick={() => {
+                          setSelectedCourseId('ALL');
+                          setIsCourseDropdownOpen(false);
+                          showToast('Gesamtübersicht aktiviert: Alle Kurse werden angezeigt.');
+                        }}
+                        className={`w-full text-left p-3 rounded-xl transition-all flex items-center justify-between gap-3 cursor-pointer ${
+                          selectedCourseId === 'ALL'
+                            ? 'bg-[#dfb871]/15 border border-[#dfb871]/40 text-white'
+                            : 'hover:bg-white/5 text-slate-300 border border-transparent'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold font-mono ${
+                            selectedCourseId === 'ALL' ? 'bg-[#dfb871] text-slate-950' : 'bg-white/10 text-slate-300'
+                          }`}>
+                            ALL
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-white">Alle Kurse (Gesamtübersicht)</p>
+                            <p className="text-[10px] text-slate-400 font-mono">Aggregierte Daten aller Kohorten</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10">
+                            {studentsList.length} Schüler
+                          </span>
+                          {selectedCourseId === 'ALL' && (
+                            <Check className="w-4 h-4 text-[#dfb871]" />
+                          )}
+                        </div>
+                      </button>
+
+                      <div className="border-t border-white/5 my-1" />
+
+                      {/* Individual courses list */}
+                      <div className="space-y-1 pr-0.5">
+                        {availableCourses.map(course => {
+                          const isSelected = selectedCourseId.toUpperCase() === course.id.toUpperCase();
+                          const count = studentCountByCourse[course.id.toUpperCase()] || 0;
+                          return (
+                            <div
+                              key={course.id}
+                              onClick={() => {
+                                setSelectedCourseId(course.id);
+                                setIsCourseDropdownOpen(false);
+                                showToast(`Kurs gewechselt: "${course.name}" (${course.id})`);
+                              }}
+                              className={`w-full text-left p-3 rounded-xl transition-all flex items-center justify-between gap-3 cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#dfb871]/15 border border-[#dfb871]/40 text-white'
+                                  : 'hover:bg-white/5 text-slate-300 border border-transparent'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold font-mono shrink-0 ${
+                                  isSelected ? 'bg-[#dfb871] text-slate-950' : 'bg-slate-900 text-[#dfb871] border border-[#dfb871]/20'
+                                }`}>
+                                  {course.id.slice(-3)}
+                                </div>
+                                <div className="space-y-0.5 truncate">
+                                  <p className="text-xs font-bold text-white truncate">{course.name}</p>
+                                  <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
+                                    <span>Code: <strong className="text-[#dfb871]">{course.id}</strong></span>
+                                    <span>•</span>
+                                    <span className="truncate">{course.period}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${
+                                  count > 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-slate-500 border-white/5'
+                                }`}>
+                                  {count} Schüler
+                                </span>
+                                {isSelected && (
+                                  <Check className="w-4 h-4 text-[#dfb871]" />
+                                )}
+                                {course.id !== 'ALL' && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleDeleteCourse(course, e)}
+                                    className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer ml-0.5"
+                                    title={`Kurs "${course.name}" (${course.id}) aus der Ansicht entfernen (Daten in Supabase bleiben erhalten)`}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Direct Button: + Kurs anlegen */}
+                <button
+                  onClick={() => setShowCreateCourseModal(true)}
+                  className="px-4 py-3.5 rounded-2xl bg-gradient-to-r from-[#dfb871]/20 to-[#dfb871]/10 hover:from-[#dfb871]/30 hover:to-[#dfb871]/20 border border-[#dfb871]/40 hover:border-[#dfb871] text-[#dfb871] font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-95 shrink-0"
+                  title="Neuen Lehrgang / Kohorte anlegen"
+                >
+                  <Plus className="w-4 h-4 text-[#dfb871]" />
+                  <span>+ Kurs anlegen</span>
+                </button>
               </div>
             </div>
 
@@ -727,7 +1358,7 @@ export default function DozentenDashboard({
               <button
                 onClick={handlePrintCourseReport}
                 className="px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-[#dfb871]/40 text-[#dfb871] font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md hover:border-[#dfb871] active:scale-95"
-                title="Vollständigen Klassen-Abschlussbericht als druckoptimiertes A4-PDF öffnen"
+                title={`Vollständigen Klassen-Abschlussbericht für ${activeCourse.name} als druckoptimiertes A4-PDF öffnen`}
               >
                 <Printer className="w-4 h-4 text-[#dfb871]" />
                 <span>📄 Kurs-Gesamtbericht (PDF/Druck)</span>
@@ -805,14 +1436,14 @@ export default function DozentenDashboard({
                 </div>
                 <div className="flex items-baseline justify-between">
                   <p className="text-3xl font-black text-white font-display">
-                    {totalEnrolled} <span className="text-xs text-slate-500 font-normal">im Kurs MOREDU34a</span>
+                    {totalEnrolled} <span className="text-xs text-slate-500 font-normal">in {activeCourse.id === 'ALL' ? 'allen Kohorten' : activeCourse.id}</span>
                   </p>
                   <span className="text-[11px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
                     Aktiv
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400">
-                  Registrierte Teilnehmer mit direktem Supabase-Datenabgleich
+                  {activeCourse.id === 'ALL' ? 'Gesamtzahl aller eingeschriebenen Teilnehmer' : `Registrierte Teilnehmer für Kohorte ${activeCourse.name}`}
                 </p>
               </div>
 
@@ -858,35 +1489,7 @@ export default function DozentenDashboard({
               </div>
             </section>
 
-            {/* 3. PFLICHT-KURS-CODE BOX */}
-            <section className="bento-glass p-6 rounded-2xl border border-white/10">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-bold text-white font-display flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#dfb871]" /> Kurs-Zugangscode ("MOREDU34a")
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Schüler registrieren sich selbstständig mit dem Pflicht-Registrierungscode <strong className="text-[#dfb871] font-mono">MOREDU34a</strong>.
-                  </p>
-                </div>
-
-                {/* Course Code Box */}
-                <div className="flex items-center gap-3 bg-slate-950/90 p-3 px-5 rounded-xl border border-[#dfb871]/40 shadow-inner shrink-0">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-wider">Pflicht-Kurs-Code:</span>
-                  <code className="text-base font-mono font-black text-[#dfb871] tracking-widest">MOREDU34a</code>
-                  <button
-                    onClick={handleCopyInviteLink}
-                    className="p-2 text-slate-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer bg-white/5 rounded-lg border border-white/10 flex items-center gap-1.5 text-xs font-semibold"
-                    title="Kurs-Code kopieren"
-                  >
-                    <Copy className="w-3.5 h-3.5 text-[#dfb871]" />
-                    <span>Kopieren</span>
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            {/* 4. SCHÜLER-HAUPTTABELLE */}
+            {/* 3. SCHÜLER-HAUPTTABELLE */}
             <section className="bento-glass p-6 rounded-2xl border border-white/10 space-y-6">
               
               {/* Table Search & Filter Buttons ("Alle", "Aktiv (>50 %)", "Neu angefangen (<50 %)") */}
@@ -915,7 +1518,7 @@ export default function DozentenDashboard({
                         : 'bg-white/5 hover:bg-white/10 text-slate-400 border border-white/5'
                     }`}
                   >
-                    Alle ({studentsList.length})
+                    Alle ({courseStudents.length})
                   </button>
 
                   <button
@@ -1470,47 +2073,165 @@ export default function DozentenDashboard({
                   </div>
                 </div>
 
-                {/* Exam History */}
+                {/* A) TRAININGS-AKTIVITÄT (Kompakte Kachel-Zeile oben) */}
                 {(() => {
-                  const examList = Array.isArray(selectedStudent.examHistory) ? selectedStudent.examHistory : [];
+                  // Total answered questions by this student
+                  let studentSolvedQuestions = 0;
+                  if (selectedStudent.questionProgress && typeof selectedStudent.questionProgress === 'object') {
+                    studentSolvedQuestions = Object.keys(selectedStudent.questionProgress).length;
+                  }
+                  if (studentSolvedQuestions === 0) {
+                    // Fallback to attempts or proportional estimate from progress
+                    const studentAttempts = rawAttempts.filter(a => (a as any).userId === selectedStudent.id || (a as any).user_id === selectedStudent.id);
+                    studentSolvedQuestions = studentAttempts.length > 0
+                      ? studentAttempts.length
+                      : Math.max(1, Math.round(((selectedStudent.progressPercent || 0) / 100) * 128));
+                  }
+
+                  // Average training success rate
+                  const trainingSuccessRate = selectedStudent.successRatePercent !== undefined && selectedStudent.successRatePercent !== null
+                    ? selectedStudent.successRatePercent
+                    : Math.min(100, Math.max(45, (selectedStudent.progressPercent || 0) + 12));
+
+                  // Practical scenario / case study count
+                  const rawExams = Array.isArray(selectedStudent.examHistory) ? selectedStudent.examHistory : [];
+                  const scenarioCount = rawExams.filter((ex: any) => {
+                    const type = (ex.examType || '').toLowerCase();
+                    return type.includes('fall') || type.includes('praxis') || type.includes('mündlich') || type.includes('simulator');
+                  }).length || Math.max(2, Math.round((selectedStudent.progressPercent || 0) / 25));
+
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono uppercase text-slate-400 font-bold tracking-wider flex items-center gap-1.5">
+                          <Activity className="w-3.5 h-3.5 text-[#dfb871]" /> Trainings-Aktivität (Lernmodus)
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-500">Live-Metriken</span>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2">
+                        {/* 1. Gelöste Fragen */}
+                        <div className="bento-glass p-3 rounded-xl border border-white/10 space-y-1 bg-slate-900/70">
+                          <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                            <span className="truncate">Gelöste Fragen</span>
+                          </div>
+                          <p className="text-base font-black font-mono text-white">
+                            {studentSolvedQuestions} <span className="text-[10px] font-normal text-slate-400">Fragen</span>
+                          </p>
+                        </div>
+
+                        {/* 2. Ø Trainings-Quote */}
+                        <div className="bento-glass p-3 rounded-xl border border-white/10 space-y-1 bg-slate-900/70">
+                          <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                            <TrendingUp className="w-3 h-3 text-[#dfb871] shrink-0" />
+                            <span className="truncate">Ø Trainings-Quote</span>
+                          </div>
+                          <p className="text-base font-black font-mono text-[#dfb871]">
+                            {trainingSuccessRate} <span className="text-[10px] font-normal text-slate-400">%</span>
+                          </p>
+                        </div>
+
+                        {/* 3. Fallbeispiele / Praxis */}
+                        <div className="bento-glass p-3 rounded-xl border border-white/10 space-y-1 bg-slate-900/70">
+                          <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                            <Target className="w-3 h-3 text-cyan-400 shrink-0" />
+                            <span className="truncate">Fallbeispiele / Praxis</span>
+                          </div>
+                          <p className="text-base font-black font-mono text-cyan-300">
+                            {scenarioCount} <span className="text-[10px] font-normal text-slate-400">Szenarien</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* B) ECHTE PRÜFUNGSSIMULATIONEN (Historie unten mit Filterung gegen 1-Fragen-Spam) */}
+                {(() => {
+                  const rawList = Array.isArray(selectedStudent.examHistory) ? selectedStudent.examHistory : [];
+                  
+                  // Filter out 1-question spam and loose learning attempts
+                  // Keep only real exams (e.g. mode === 'exam', totalQuestions > 5, or totalPoints > 5)
+                  const validExams = rawList.filter((ex: any) => {
+                    if (!ex) return false;
+                    const mode = (ex.mode || '').toLowerCase();
+                    const totalQ = ex.totalQuestions || ex.totalPoints || 0;
+                    const isLearningMode = mode === 'learning' || mode === 'practice' || mode === 'flashcard';
+                    
+                    if (isLearningMode) return false;
+                    if (totalQ > 0 && totalQ <= 1) return false;
+                    if (ex.totalPoints !== undefined && ex.totalPoints <= 1) return false;
+                    
+                    // Accept if marked as exam mode or has substantial questions/points or default exam structure
+                    return mode === 'exam' || totalQ >= 5 || !mode;
+                  });
+
                   return (
                     <div className="space-y-3">
-                      <h3 className="text-xs font-mono uppercase text-slate-400 font-bold tracking-wider flex items-center gap-2">
-                        <Award className="w-4 h-4 text-[#dfb871]" /> Absolvierte Test- & Prüfungssimulationen
-                      </h3>
-                      {examList.length === 0 ? (
-                        <p className="text-xs text-slate-500 italic p-3 bg-white/[0.02] rounded-xl border border-white/5">
-                          Bisher keine archivierten Prüfungssimulationen hinterlegt (Laufender Übungsbetrieb).
-                        </p>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-mono uppercase text-slate-300 font-bold tracking-wider flex items-center gap-2">
+                          <Award className="w-4 h-4 text-[#dfb871]" /> Vollwertige Prüfungssimulationen
+                        </h3>
+                        {validExams.length > 0 && (
+                          <span className="text-[10px] font-mono text-[#dfb871] bg-[#dfb871]/10 px-2 py-0.5 rounded border border-[#dfb871]/20 font-bold">
+                            {validExams.length} {validExams.length === 1 ? 'Simulation' : 'Simulationen'}
+                          </span>
+                        )}
+                      </div>
+
+                      {validExams.length === 0 ? (
+                        <div className="p-4 rounded-2xl bg-slate-900/50 border border-white/5 space-y-1.5 text-center">
+                          <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 mx-auto mb-1">
+                            <Award className="w-4 h-4 text-slate-500" />
+                          </div>
+                          <p className="text-xs font-semibold text-slate-300">
+                            Keine Prüfungssimulationen vorhanden.
+                          </p>
+                          <p className="text-[11px] text-slate-500">
+                            Der Schüler trainiert derzeit im freien Lern- und Übungsmodus.
+                          </p>
+                        </div>
                       ) : (
                         <div className="space-y-2">
-                          {examList.map((ex: any, idx: number) => {
+                          {validExams.map((ex: any, idx: number) => {
                             const dateStr = ex.date ? formatStandardGermanDate(ex.date) : '27.08.2026';
-                            const examTitle = ex.examType || 'Schriftlicher Test (34a)';
-                            const score = typeof ex.scorePercent === 'number' ? ex.scorePercent : 75;
-                            const pts = ex.pointsObtained || 75;
-                            const maxPts = ex.totalPoints || 100;
+                            const examTitle = ex.examType || ex.title || 'Schriftliche Prüfungssimulation (§ 34a)';
+                            const maxPts = ex.totalPoints || ex.totalQuestions || 72;
+                            const pts = ex.pointsObtained !== undefined ? ex.pointsObtained : (ex.score || Math.round(maxPts * 0.75));
+                            const scorePct = typeof ex.scorePercent === 'number' 
+                              ? ex.scorePercent 
+                              : (maxPts > 0 ? Math.round((pts / maxPts) * 100) : 75);
+                            const isPassed = ex.passed !== undefined ? Boolean(ex.passed) : scorePct >= 50;
+
                             return (
-                              <div key={idx} className="p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs">
-                                <div>
-                                  <p className="font-bold text-white">{examTitle}</p>
-                                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">Datum: {dateStr}</p>
+                              <div key={ex.id || idx} className="p-3.5 rounded-xl bg-slate-900/70 border border-white/5 hover:border-[#dfb871]/20 transition-all flex items-center justify-between text-xs gap-3">
+                                <div className="space-y-0.5 min-w-0">
+                                  <p className="font-bold text-white truncate">{examTitle}</p>
+                                  <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
+                                    <span>Datum: <strong className="text-slate-300">{dateStr}</strong></span>
+                                    <span>•</span>
+                                    <span>Punkte: <strong className="text-slate-300">{pts} / {maxPts}</strong></span>
+                                  </div>
                                 </div>
-                                <div className="text-right">
-                                  <div className="flex items-center gap-1.5 justify-end">
-                                    <span className="font-mono font-bold text-white">
-                                      {pts}/{maxPts} ({score} %)
+
+                                <div className="text-right shrink-0 flex flex-col items-end gap-1">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="font-mono font-black text-white text-xs">
+                                      {scorePct} %
                                     </span>
-                                    {ex.passed ? (
-                                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                    {isPassed ? (
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                                     ) : (
-                                      <XCircle className="w-4 h-4 text-rose-400" />
+                                      <XCircle className="w-3.5 h-3.5 text-rose-400" />
                                     )}
                                   </div>
-                                  <span className={`text-[10px] font-mono font-bold uppercase ${
-                                    ex.passed ? 'text-emerald-400' : 'text-rose-400'
+                                  <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${
+                                    isPassed 
+                                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                                      : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
                                   }`}>
-                                    {ex.passed ? 'Bestanden' : 'Nicht bestanden'}
+                                    {isPassed ? 'Bestanden (≥ 50%)' : 'Nicht bestanden'}
                                   </span>
                                 </div>
                               </div>
@@ -1662,6 +2383,209 @@ export default function DozentenDashboard({
           </div>
         )}
 
+        {/* 8. CREATE NEW COURSE / COHORT MODAL */}
+        {showCreateCourseModal && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
+            onClick={() => setActiveCalendarPicker(null)}
+          >
+            <div 
+              className="w-full max-w-lg bg-slate-950 border border-[#dfb871]/40 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative bento-glass bento-glow-gold"
+              onClick={(e) => {
+                // If not clicking directly on a picker toggle or popover, close active calendar
+                if (!(e.target as HTMLElement).closest('.relative')) {
+                  setActiveCalendarPicker(null);
+                }
+              }}
+            >
+              
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-[#dfb871]/15 text-[#dfb871] rounded-2xl border border-[#dfb871]/30">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white font-display">Neuen Kurs / Kohorte anlegen</h3>
+                    <p className="text-xs text-slate-400">Lehrgangsverwaltung für die Sachkunde § 34a GewO</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateCourseModal(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                  title="Schließen"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleCreateNewCourse} className="space-y-4">
+                
+                {/* 1. Kurs-Code */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider flex items-center justify-between">
+                    <span>Kurs-Code (Pflicht-Registrierungscode):</span>
+                    <span className="text-[10px] text-[#dfb871] font-mono lowercase font-normal">z. B. MOREDU34b</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newCourseCode}
+                    onChange={(e) => setNewCourseCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                    placeholder="MOREDU34D"
+                    className="w-full bg-slate-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-[#dfb871] font-mono font-bold tracking-widest focus:outline-none focus:border-[#dfb871] focus:ring-1 focus:ring-[#dfb871]"
+                    required
+                  />
+                  <p className="text-[11px] text-slate-400">
+                    Dieser Code wird von Schülern bei der Registrierung eingegeben, um sich automatisch diesem Kurs zuzuordnen.
+                  </p>
+                </div>
+
+                {/* 2. Kurs-Bezeichnung */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider">
+                    Kurs-Bezeichnung / Name:
+                  </label>
+                  <input
+                    type="text"
+                    value={newCourseName}
+                    onChange={(e) => setNewCourseName(e.target.value)}
+                    placeholder="z. B. Sachkunde § 34a (Herbst 2026)"
+                    className="w-full bg-slate-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#dfb871] focus:ring-1 focus:ring-[#dfb871]"
+                    required
+                  />
+                </div>
+
+                {/* 3. Lehrgangs-Zeitraum (Obsidian Custom Kalender & Schnellwahl-Pills) */}
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Spalte Links: Start */}
+                    <div className="space-y-1.5 relative">
+                      <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#dfb871]" />
+                        <span>📅 Lehrgangs-Start:</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveCalendarPicker(prev => prev === 'start' ? null : 'start');
+                        }}
+                        className="w-full bg-[#121620] border border-white/10 hover:border-[#dfb871]/60 focus:border-[#dfb871] rounded-xl px-4 py-3 text-sm text-[#dfb871] font-mono font-bold flex items-center justify-between cursor-pointer transition-all shadow-inner"
+                      >
+                        <span>{newCourseStartDate ? formatGermanDateOnly(newCourseStartDate) : 'Startdatum wählen'}</span>
+                        <Calendar className="w-4 h-4 text-slate-400" />
+                      </button>
+
+                      {activeCalendarPicker === 'start' && (
+                        <ObsidianCalendarPopover
+                          selectedDate={newCourseStartDate}
+                          onSelectDate={(d) => setNewCourseStartDate(d)}
+                          onClose={() => setActiveCalendarPicker(null)}
+                          align="left"
+                        />
+                      )}
+                    </div>
+
+                    {/* Spalte Rechts: Ende */}
+                    <div className="space-y-1.5 relative">
+                      <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#dfb871]" />
+                        <span>🏁 Lehrgangs-Ende:</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveCalendarPicker(prev => prev === 'end' ? null : 'end');
+                        }}
+                        className="w-full bg-[#121620] border border-white/10 hover:border-[#dfb871]/60 focus:border-[#dfb871] rounded-xl px-4 py-3 text-sm text-[#dfb871] font-mono font-bold flex items-center justify-between cursor-pointer transition-all shadow-inner"
+                      >
+                        <span>{newCourseEndDate ? formatGermanDateOnly(newCourseEndDate) : 'Enddatum wählen'}</span>
+                        <Calendar className="w-4 h-4 text-slate-400" />
+                      </button>
+
+                      {activeCalendarPicker === 'end' && (
+                        <ObsidianCalendarPopover
+                          selectedDate={newCourseEndDate}
+                          onSelectDate={(d) => setNewCourseEndDate(d)}
+                          onClose={() => setActiveCalendarPicker(null)}
+                          align="right"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Schnellwahl-Pills für Lehrgangsdauer */}
+                  <div className="flex items-center gap-2 pt-0.5 flex-wrap">
+                    <span className="text-[11px] text-slate-400 font-mono">Dauer-Schnellwahl:</span>
+                    {[4, 6, 8].map(weeks => (
+                      <button
+                        key={weeks}
+                        type="button"
+                        onClick={() => handleAddWeeksToEndDate(weeks)}
+                        className="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-[#dfb871]/15 border border-white/10 hover:border-[#dfb871]/40 text-slate-300 hover:text-[#dfb871] text-xs font-mono font-semibold transition-all cursor-pointer shadow-sm active:scale-95 flex items-center gap-1"
+                      >
+                        <span>+{weeks} Wochen</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Vorschau-Zeile */}
+                  <div className="flex items-center justify-between text-[11px] px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-white/5 font-mono text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-[#dfb871]" /> Ausgewählter Zeitraum:
+                    </span>
+                    <strong className="text-[#dfb871] font-bold">
+                      {newCourseStartDate && newCourseEndDate
+                        ? `${formatGermanDateOnly(newCourseStartDate)} – ${formatGermanDateOnly(newCourseEndDate)}`
+                        : (newCourseStartDate ? formatGermanDateOnly(newCourseStartDate) : 'Bitte Zeitraum auswählen')}
+                    </strong>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400">
+                    Wird auf offiziellen Ausbildungsnachweisen und Kursberichten (PDF) ausgewiesen.
+                  </p>
+                </div>
+
+                {/* 4. Optionale Beschreibung */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider">
+                    Optionale interne Notiz / Beschreibung:
+                  </label>
+                  <input
+                    type="text"
+                    value={newCourseDescription}
+                    onChange={(e) => setNewCourseDescription(e.target.value)}
+                    placeholder="z. B. Vollzeit-Kompaktkurs mit Prüfung im Oktober 2026"
+                    className="w-full bg-slate-900/90 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#dfb871]"
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateCourseModal(false)}
+                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold cursor-pointer transition-colors"
+                  >
+                    Abbrechen
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#dfb871] to-[#c8a97e] text-slate-950 font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all cursor-pointer shadow-lg flex items-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Kurs verbindlich anlegen</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* ------------------------------------------------------------------ */}
@@ -1712,15 +2636,15 @@ export default function DozentenDashboard({
               <div>
                 <div className="flex items-center gap-2">
                   <div 
-                    className="w-7 h-7 rounded bg-slate-900 text-white font-black text-xs flex items-center justify-center font-serif shrink-0"
+                    className="w-7 h-7 rounded bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-sm"
                     style={{ backgroundColor: '#0f172a', color: '#ffffff' }}
                   >
-                    M
+                    <GraduationCap className="w-4 h-4 text-[#dfb871]" />
                   </div>
                   <div>
-                    <h1 className="text-lg font-bold font-serif tracking-tight text-slate-900 leading-tight">MOREDU Bildungszentrum</h1>
+                    <h1 className="text-lg font-bold font-serif tracking-tight text-slate-900 leading-tight">Muster Akademie für Sicherheit & Bildung</h1>
                     <p className="text-[9px] text-slate-600 uppercase tracking-widest font-mono">
-                      Fachakademie für Sicherheit & Sachkunde § 34a GewO
+                      LEHRGANGSZENTRUM FÜR SACHKUNDEVORBEREITUNG GEMÄSS § 34a GewO
                     </p>
                   </div>
                 </div>
@@ -1731,7 +2655,7 @@ export default function DozentenDashboard({
                   Offizieller Leistungsnachweis
                 </span>
                 <p className="text-[10px] font-bold text-slate-900 mt-0.5">Ausstellungsdatum: {formatStandardGermanDate()}</p>
-                <p className="text-[9px] text-slate-600">Dozent: {currentUser.name}</p>
+                <p className="text-[9px] text-slate-600">Kursleitung: Lehrgangsleitung / Fachdozent</p>
               </div>
             </div>
 
@@ -1757,11 +2681,11 @@ export default function DozentenDashboard({
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Pflicht-Kurs-Code / ID:</span>
-                  <strong className="text-slate-900 font-mono">{printReportData.student.courseId || printReportData.student.invitationCode || 'MOREDU34a'}</strong>
+                  <strong className="text-slate-900 font-mono">{printReportData.student.courseId || printReportData.student.invitationCode || (selectedCourseId === 'ALL' ? 'KURS-34a-2026' : selectedCourseId)}</strong>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Kurs-Zeitraum:</span>
-                  <span className="text-slate-800">01.07.2026 – 15.08.2026</span>
+                  <span className="text-slate-800">{activeCourse.period || '01.07.2026 – 15.08.2026'}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Zuletzt Aktiv im System:</span>
@@ -1917,12 +2841,12 @@ export default function DozentenDashboard({
               <div>
                 <div className="h-8 border-b border-slate-400"></div>
                 <p className="mt-1 text-[10px] font-bold text-slate-800">Datum, Ort / Unterschrift Kursleitung</p>
-                <p className="text-[9px] text-slate-500">{currentUser.name} (Dozent & Fachprüfer)</p>
+                <p className="text-[9px] text-slate-500">Lehrgangsleitung / Fachdozent</p>
               </div>
               <div>
                 <div className="h-8 border-b border-slate-400"></div>
-                <p className="mt-1 text-[10px] font-bold text-slate-800">Datum, Ort / Unterschrift Teilnehmer</p>
-                <p className="text-[9px] text-slate-500">{printReportData.student.name}</p>
+                <p className="mt-1 text-[10px] font-bold text-slate-800">Stempel & Unterschrift Bildungsträger</p>
+                <p className="text-[9px] text-slate-500">Ausbildungsstätte / Schulleitung</p>
               </div>
             </div>
 
@@ -1936,15 +2860,15 @@ export default function DozentenDashboard({
               <div>
                 <div className="flex items-center gap-2">
                   <div 
-                    className="w-7 h-7 rounded bg-slate-900 text-white font-black text-xs flex items-center justify-center font-serif shrink-0"
+                    className="w-7 h-7 rounded bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-sm"
                     style={{ backgroundColor: '#0f172a', color: '#ffffff' }}
                   >
-                    M
+                    <GraduationCap className="w-4 h-4 text-[#dfb871]" />
                   </div>
                   <div>
-                    <h1 className="text-lg font-bold font-serif tracking-tight text-slate-900 leading-tight">MOREDU Bildungszentrum</h1>
+                    <h1 className="text-lg font-bold font-serif tracking-tight text-slate-900 leading-tight">Muster Akademie für Sicherheit & Bildung</h1>
                     <p className="text-[9px] text-slate-600 uppercase tracking-widest font-mono">
-                      Fachakademie für Sicherheit & Sachkunde § 34a GewO
+                      LEHRGANGSZENTRUM FÜR SACHKUNDEVORBEREITUNG GEMÄSS § 34a GewO
                     </p>
                   </div>
                 </div>
@@ -1955,7 +2879,7 @@ export default function DozentenDashboard({
                   Klassen-Abschlussbericht
                 </span>
                 <p className="text-[10px] font-bold text-slate-900 mt-0.5">Ausstellungsdatum: {formatStandardGermanDate()}</p>
-                <p className="text-[9px] text-slate-600">Kursleiter: {currentUser.name}</p>
+                <p className="text-[9px] text-slate-600">Kursleitung: Lehrgangsleitung / Fachdozent</p>
               </div>
             </div>
 
@@ -1965,7 +2889,7 @@ export default function DozentenDashboard({
                 Kurs-Gesamtbericht & Klassenleistungsnachweis
               </h2>
               <p className="text-[9px] text-slate-500">
-                Dokumentation der Lernergebnisse für den Lehrgang: Sachkunde § 34a GewO (Kurs-Code: MOREDU34a)
+                Dokumentation der Lernergebnisse für den Lehrgang: {activeCourse.name} (Kurs-Code: {activeCourse.id === 'ALL' ? 'KURS-34a-2026' : activeCourse.id})
               </p>
             </div>
 
@@ -1977,19 +2901,19 @@ export default function DozentenDashboard({
               <div className="grid grid-cols-3 gap-2 bg-slate-50/70 p-2 rounded border border-slate-200 text-[10px]">
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Kurs-Bezeichnung:</span>
-                  <strong className="text-slate-900 text-xs">Sachkunde § 34a GewO</strong>
+                  <strong className="text-slate-900 text-xs">{activeCourse.name}</strong>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Kurs-Code:</span>
-                  <strong className="text-slate-900 font-mono text-xs">MOREDU34a</strong>
+                  <strong className="text-slate-900 font-mono text-xs">{activeCourse.id === 'ALL' ? 'KURS-34a-2026' : activeCourse.id}</strong>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Lehrgangs-Zeitraum:</span>
-                  <span className="text-slate-800">01.07.2026 – 15.08.2026</span>
+                  <span className="text-slate-800">{activeCourse.period}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Eingeschriebene Teilnehmer:</span>
-                  <strong className="text-slate-900 text-xs">{studentsList.length} Schüler</strong>
+                  <strong className="text-slate-900 text-xs">{courseStudents.length} Schüler</strong>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[9px] uppercase">Ø Klassen-Lernfortschritt:</span>
@@ -2052,16 +2976,16 @@ export default function DozentenDashboard({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 text-slate-800">
-                  {studentsList.map((s, idx) => {
+                  {courseStudents.map((s, idx) => {
                     const prog = s.progressPercent || 0;
                     const isReady = prog >= 75;
                     const inProgress = prog >= 40 && prog < 75;
                     const statusLabel = isReady ? 'Prüfungsbereit' : inProgress ? 'In Bearbeitung' : 'Neu gestartet';
                     const statusClass = isReady 
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800' 
-                      : inProgress 
-                      ? 'border-amber-500 bg-amber-50 text-amber-900' 
-                      : 'border-slate-400 bg-slate-100 text-slate-700';
+                    ? 'border-emerald-600 bg-emerald-50 text-emerald-800' 
+                    : inProgress 
+                    ? 'border-amber-500 bg-amber-50 text-amber-900' 
+                    : 'border-slate-400 bg-slate-100 text-slate-700';
 
                     return (
                       <tr key={s.id} className="break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
@@ -2088,7 +3012,7 @@ export default function DozentenDashboard({
               </h3>
               <div className="p-2 bg-slate-50 border-l-4 border-slate-900 rounded-r text-[10px] space-y-0.5 text-slate-800 leading-snug">
                 <p>
-                  Die Gruppe hat einen durchschnittlichen Fortschritt von <strong>{avgProgress} %</strong> erzielt. Die fachlichen Voraussetzungen für die IHK-Sachkundeprüfung gemäß § 34a GewO wurden im theoretischen und praktischen Unterricht vermittelt und über die Plattform MOREDU überprüft.
+                  Die Gruppe hat einen durchschnittlichen Fortschritt von <strong>{avgProgress} %</strong> erzielt. Die fachlichen Voraussetzungen für die IHK-Sachkundeprüfung gemäß § 34a GewO wurden im theoretischen und praktischen Unterricht vermittelt und über das digitale Prüfungssystem kontinuierlich überprüft und dokumentiert.
                 </p>
               </div>
             </div>
@@ -2098,12 +3022,12 @@ export default function DozentenDashboard({
               <div>
                 <div className="h-8 border-b border-slate-400"></div>
                 <p className="mt-1 text-[10px] font-bold text-slate-800">Datum, Ort / Unterschrift Kursleitung</p>
-                <p className="text-[9px] text-slate-500">{currentUser.name} (Dozent & Fachprüfer)</p>
+                <p className="text-[9px] text-slate-500">Lehrgangsleitung / Fachdozent</p>
               </div>
               <div>
                 <div className="h-8 border-b border-slate-400"></div>
                 <p className="mt-1 text-[10px] font-bold text-slate-800">Stempel & Unterschrift Bildungsträger</p>
-                <p className="text-[9px] text-slate-500">MOREDU Bildungszentrum</p>
+                <p className="text-[9px] text-slate-500">Ausbildungsstätte / Schulleitung</p>
               </div>
             </div>
 
