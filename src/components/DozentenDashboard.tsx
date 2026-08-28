@@ -74,6 +74,7 @@ export interface ModeItemDetail {
   icon: any;
   emoji: string;
   value: string;
+  shortValue?: string;
   rawCount?: number;
   colorClass: string;
   bgClass: string;
@@ -168,6 +169,7 @@ export function getStudent10ModeStats(
       icon: BookOpen,
       emoji: '📖',
       value: lernmodusVal,
+      shortValue: `${solvedQ} Fragen`,
       rawCount: solvedQ,
       colorClass: 'text-indigo-400',
       bgClass: 'bg-indigo-500/10',
@@ -176,10 +178,11 @@ export function getStudent10ModeStats(
     {
       id: 'pruefung',
       name: 'Prüfungs-Simulation',
-      shortName: 'Prüfungs-Simulation',
+      shortName: 'Simulation',
       icon: Award,
       emoji: '🎖️',
       value: simVal,
+      shortValue: `${simCount} absolviert`,
       rawCount: simCount,
       colorClass: 'text-amber-400',
       bgClass: 'bg-amber-500/10',
@@ -188,10 +191,11 @@ export function getStudent10ModeStats(
     {
       id: 'schriftlich',
       name: 'Schriftlicher Test (§ 34a)',
-      shortName: 'Schriftlicher Test',
+      shortName: 'Schriftl. Test',
       icon: FileText,
       emoji: '📝',
       value: writtenVal,
+      shortValue: `${writtenCount} ${writtenCount === 1 ? 'Test' : 'Tests'}`,
       rawCount: writtenCount,
       colorClass: 'text-emerald-400',
       bgClass: 'bg-emerald-500/10',
@@ -200,10 +204,11 @@ export function getStudent10ModeStats(
     {
       id: 'video',
       name: 'Video-Szenario-Trainer',
-      shortName: 'Video-Szenarien',
+      shortName: 'Video-Fälle',
       icon: Video,
       emoji: '🎬',
       value: videoVal,
+      shortValue: `${videoCount} Szenarien`,
       rawCount: videoCount,
       colorClass: 'text-fuchsia-400',
       bgClass: 'bg-fuchsia-500/10',
@@ -216,6 +221,7 @@ export function getStudent10ModeStats(
       icon: Scale,
       emoji: '⚖️',
       value: caseVal,
+      shortValue: `${caseCount} ${caseCount === 1 ? 'Fall' : 'Fälle'}`,
       rawCount: caseCount,
       colorClass: 'text-cyan-400',
       bgClass: 'bg-cyan-500/10',
@@ -228,6 +234,7 @@ export function getStudent10ModeStats(
       icon: Layers,
       emoji: '🗂️',
       value: flashcardVal,
+      shortValue: `${flashcardCount} Karten`,
       rawCount: flashcardCount,
       colorClass: 'text-sky-400',
       bgClass: 'bg-sky-500/10',
@@ -240,6 +247,7 @@ export function getStudent10ModeStats(
       icon: GraduationCap,
       emoji: '📚',
       value: vocabVal,
+      shortValue: `${vocabCount} Begriffe`,
       rawCount: vocabCount,
       colorClass: 'text-teal-400',
       bgClass: 'bg-teal-500/10',
@@ -248,10 +256,11 @@ export function getStudent10ModeStats(
     {
       id: 'fehler',
       name: 'Fehler-Wiederholung',
-      shortName: 'Fehler-Wiederholung',
+      shortName: 'Fehler-Trainer',
       icon: RotateCcw,
       emoji: '🔁',
       value: errorVal,
+      shortValue: `${errorFixedCount} behoben`,
       rawCount: errorFixedCount,
       colorClass: 'text-rose-400',
       bgClass: 'bg-rose-500/10',
@@ -260,10 +269,11 @@ export function getStudent10ModeStats(
     {
       id: 'streak',
       name: 'Endlos-Streak-Challenge',
-      shortName: 'Endlos-Streak',
+      shortName: 'Streak-Rekord',
       icon: Flame,
       emoji: '🔥',
       value: streakVal,
+      shortValue: `Rekord: ${streakRecord}`,
       rawCount: streakRecord,
       colorClass: 'text-orange-400',
       bgClass: 'bg-orange-500/10',
@@ -272,10 +282,11 @@ export function getStudent10ModeStats(
     {
       id: 'raetsel',
       name: '„Was bin ich?“ Rätsel',
-      shortName: '„Was bin ich?“',
+      shortName: 'Rätsel',
       icon: HelpCircle,
       emoji: '❓',
       value: riddleVal,
+      shortValue: `${riddleCount} gelöst`,
       rawCount: riddleCount,
       colorClass: 'text-violet-400',
       bgClass: 'bg-violet-500/10',
@@ -2583,25 +2594,25 @@ export default function DozentenDashboard({
                         <span className="text-[10px] font-mono text-slate-500">Live-Metriken</span>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                         {student10Modes.map((mode) => {
                           const IconComponent = mode.icon;
                           return (
                             <div 
                               key={mode.id}
-                              className="bento-glass p-3 rounded-xl border border-white/10 hover:border-[#dfb871]/30 transition-all space-y-1.5 bg-slate-900/70"
+                              className="p-2.5 flex flex-col justify-between min-h-[68px] bg-[#121620]/90 border border-white/5 hover:border-[#dfb871]/30 transition-all rounded-xl shadow-inner"
                             >
-                              <div className="flex items-center justify-between">
-                                <span className="text-[10px] text-slate-400 font-medium truncate flex items-center gap-1">
-                                  <span>{mode.emoji}</span>
-                                  <span className="truncate">{mode.shortName}</span>
+                              <div className="flex items-start justify-between gap-1">
+                                <span className="text-[11px] font-medium text-slate-300 leading-tight flex items-center gap-1">
+                                  <span className="text-xs shrink-0">{mode.emoji}</span>
+                                  <span>{mode.shortName}</span>
                                 </span>
-                                <div className={`p-1 rounded-lg ${mode.bgClass} ${mode.colorClass} shrink-0`}>
+                                <div className={`p-1 rounded-md ${mode.bgClass} ${mode.colorClass} shrink-0`}>
                                   <IconComponent className="w-3 h-3" />
                                 </div>
                               </div>
-                              <p className="text-xs font-black font-mono text-white truncate">
-                                {mode.value}
+                              <p className="text-xs font-mono font-semibold text-[#dfb871] pt-1">
+                                {mode.shortValue || mode.value}
                               </p>
                             </div>
                           );
@@ -2611,109 +2622,13 @@ export default function DozentenDashboard({
                   );
                 })()}
 
-                {/* B) ECHTE PRÜFUNGSSIMULATIONEN (Historie unten mit Filterung gegen 1-Fragen-Spam) */}
-                {(() => {
-                  const rawList = Array.isArray(selectedStudent.examHistory) ? selectedStudent.examHistory : [];
-                  
-                  // Filter out 1-question spam and loose learning attempts
-                  // Keep only real exams (e.g. mode === 'exam', totalQuestions > 5, or totalPoints > 5)
-                  const validExams = rawList.filter((ex: any) => {
-                    if (!ex) return false;
-                    const mode = (ex.mode || '').toLowerCase();
-                    const totalQ = ex.totalQuestions || ex.totalPoints || 0;
-                    const isLearningMode = mode === 'learning' || mode === 'practice' || mode === 'flashcard';
-                    
-                    if (isLearningMode) return false;
-                    if (totalQ > 0 && totalQ <= 1) return false;
-                    if (ex.totalPoints !== undefined && ex.totalPoints <= 1) return false;
-                    
-                    // Accept if marked as exam mode or has substantial questions/points or default exam structure
-                    return mode === 'exam' || totalQ >= 5 || !mode;
-                  });
-
-                  return (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-mono uppercase text-slate-300 font-bold tracking-wider flex items-center gap-2">
-                          <Award className="w-4 h-4 text-[#dfb871]" /> Vollwertige Prüfungssimulationen
-                        </h3>
-                        {validExams.length > 0 && (
-                          <span className="text-[10px] font-mono text-[#dfb871] bg-[#dfb871]/10 px-2 py-0.5 rounded border border-[#dfb871]/20 font-bold">
-                            {validExams.length} {validExams.length === 1 ? 'Simulation' : 'Simulationen'}
-                          </span>
-                        )}
-                      </div>
-
-                      {validExams.length === 0 ? (
-                        <div className="p-4 rounded-2xl bg-slate-900/50 border border-white/5 space-y-1.5 text-center">
-                          <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 mx-auto mb-1">
-                            <Award className="w-4 h-4 text-slate-500" />
-                          </div>
-                          <p className="text-xs font-semibold text-slate-300">
-                            Keine Prüfungssimulationen vorhanden.
-                          </p>
-                          <p className="text-[11px] text-slate-500">
-                            Der Schüler trainiert derzeit im freien Lern- und Übungsmodus.
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          {validExams.map((ex: any, idx: number) => {
-                            const dateStr = ex.date ? formatStandardGermanDate(ex.date) : '27.08.2026';
-                            const examTitle = ex.examType || ex.title || 'Schriftliche Prüfungssimulation (§ 34a)';
-                            const maxPts = ex.totalPoints || ex.totalQuestions || 72;
-                            const pts = ex.pointsObtained !== undefined ? ex.pointsObtained : (ex.score || Math.round(maxPts * 0.75));
-                            const scorePct = typeof ex.scorePercent === 'number' 
-                              ? ex.scorePercent 
-                              : (maxPts > 0 ? Math.round((pts / maxPts) * 100) : 75);
-                            const isPassed = ex.passed !== undefined ? Boolean(ex.passed) : scorePct >= 50;
-
-                            return (
-                              <div key={ex.id || idx} className="p-3.5 rounded-xl bg-slate-900/70 border border-white/5 hover:border-[#dfb871]/20 transition-all flex items-center justify-between text-xs gap-3">
-                                <div className="space-y-0.5 min-w-0">
-                                  <p className="font-bold text-white truncate">{examTitle}</p>
-                                  <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
-                                    <span>Datum: <strong className="text-slate-300">{dateStr}</strong></span>
-                                    <span>•</span>
-                                    <span>Punkte: <strong className="text-slate-300">{pts} / {maxPts}</strong></span>
-                                  </div>
-                                </div>
-
-                                <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="font-mono font-black text-white text-xs">
-                                      {scorePct} %
-                                    </span>
-                                    {isPassed ? (
-                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                                    ) : (
-                                      <XCircle className="w-3.5 h-3.5 text-rose-400" />
-                                    )}
-                                  </div>
-                                  <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${
-                                    isPassed 
-                                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                                      : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                                  }`}>
-                                    {isPassed ? 'Bestanden (≥ 50%)' : 'Nicht bestanden'}
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-
                 {/* Actions footer */}
-                <div className="pt-4 border-t border-white/10 space-y-2">
+                <div className="mt-6 pt-4 border-t border-white/10 space-y-3">
                   <button
                     onClick={() => handleDownloadPDF(selectedStudent)}
                     className="w-full py-3 rounded-xl bg-gradient-to-r from-[#dfb871] to-[#c8a97e] text-slate-950 font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-98"
                   >
-                    <Printer className="w-4 h-4" /> 📄 Teilnehmer-Abschlussbericht als PDF drucken
+                    <Printer className="w-4 h-4" /> 📄 TEILNEHMER-ABSCHLUSSBERICHT ALS PDF DRUCKEN
                   </button>
 
                   <button
@@ -2723,14 +2638,14 @@ export default function DozentenDashboard({
                     }}
                     className="w-full py-2.5 rounded-xl bg-[#dfb871]/15 hover:bg-[#dfb871]/25 border border-[#dfb871]/30 text-[#dfb871] font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                   >
-                    <KeyRound className="w-4 h-4" /> Passwort manuell zurücksetzen
+                    <KeyRound className="w-4 h-4" /> 🔑 Passwort manuell zurücksetzen
                   </button>
 
                   <button
                     onClick={() => setStudentToDelete(selectedStudent)}
                     className="w-full py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Trash2 className="w-4 h-4" /> Diesen Schüler aus Supabase löschen
+                    <Trash2 className="w-4 h-4" /> 🗑️ Diesen Schüler aus Supabase löschen
                   </button>
                 </div>
 
