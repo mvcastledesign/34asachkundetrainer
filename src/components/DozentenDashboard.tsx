@@ -91,74 +91,127 @@ export function getStudent10ModeStats(
     const uid = a.userId || a.user_id;
     return uid && String(uid) === String(student.id);
   });
+
+  const studentSessions = examSessions.filter(s => {
+    const uid = s.userId || s.user_id;
+    return uid && String(uid) === String(student.id);
+  });
   
-  const progressPct = typeof student.progressPercent === 'number' ? student.progressPercent : 0;
-  const successRate = typeof student.successRatePercent === 'number' && student.successRatePercent !== null
-    ? student.successRatePercent
-    : Math.min(100, Math.max(45, progressPct + 12));
-
-  let solvedQ = 0;
-  if (student.questionProgress && typeof student.questionProgress === 'object') {
-    solvedQ = Object.keys(student.questionProgress).length;
-  }
-  if (solvedQ === 0) {
-    solvedQ = studentAttempts.length > 0 ? studentAttempts.length : Math.max(1, Math.round((progressPct / 100) * 128));
-  }
-
   const rawExams = Array.isArray(student.examHistory) ? student.examHistory : [];
-  
-  // 1. Lernmodus (Antwortvergleich)
+
+  // 1. Lernmodus (Antwortvergleich) - Strictly count real answered questions
+  const answeredQIds = new Set<string>();
+  if (student.questionProgress && typeof student.questionProgress === 'object') {
+    Object.keys(student.questionProgress).forEach(k => answeredQIds.add(k));
+  }
+  studentAttempts.forEach(a => {
+    const qid = a.question_id || (a as any).questionId;
+    if (qid) answeredQIds.add(String(qid));
+  });
+
+  const solvedQ = answeredQIds.size > 0 
+    ? answeredQIds.size 
+    : (studentAttempts.length > 0 ? studentAttempts.length : 0);
+
+  let successRate = 0;
+  if (solvedQ > 0) {
+    if (studentAttempts.length > 0) {
+      const correctCount = studentAttempts.filter(a => a.is_correct).length;
+      successRate = Math.round((correctCount / studentAttempts.length) * 100);
+    } else if (typeof student.successRatePercent === 'number' && student.successRatePercent > 0) {
+      successRate = student.successRatePercent;
+    }
+  }
+
   const lernmodusVal = `${solvedQ} Fragen (${successRate} %)`;
 
-  // 2. Prüfungs-Simulation
+  // 2. Prüfungs-Simulation - Strictly count real completed simulations
   const simCount = rawExams.filter((ex: any) => {
+    if (!ex) return false;
     const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return t.includes('simulation') || t.includes('vollwert') || (ex.totalPoints || 0) >= 50;
-  }).length || Math.round(progressPct / 25);
+    return (t.includes('simulation') || t.includes('vollwert') || (ex.totalPoints || 0) >= 50);
+  }).length + studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase();
+    return (m.includes('simulation') || m.includes('pruefung') || m.includes('exam')) && ((s.score_max || 0) >= 50 || s.score_achieved !== undefined);
+  }).length;
   const simVal = `${simCount} absolviert`;
 
-  // 3. Schriftlicher Test (§ 34a)
+  // 3. Schriftlicher Test (§ 34a) - Strictly count real completed written tests
   const writtenCount = rawExams.filter((ex: any) => {
+    if (!ex) return false;
     const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return t.includes('schriftlich') || t.includes('test') || t.includes('34a');
-  }).length || Math.max(1, Math.round(progressPct / 20));
+    return (t.includes('schriftlich') || t.includes('test') || t.includes('34a') || t.includes('ihk')) && !t.includes('simulation');
+  }).length + studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase();
+    return (m.includes('schriftlich') || m.includes('test')) && !m.includes('simulation');
+  }).length;
   const writtenVal = `${writtenCount} Tests`;
 
-  // 4. Video-Szenario-Trainer
+  // 4. Video-Szenario-Trainer - Strictly count finished video scenarios
   const videoCount = rawExams.filter((ex: any) => {
+    if (!ex) return false;
     const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
     return t.includes('video') || t.includes('szenario') || t.includes('deeskalation');
-  }).length || Math.max(1, Math.round(progressPct / 18));
+  }).length + studentSessions.filter(s => (s.mode || '').toLowerCase().includes('video')).length + studentAttempts.filter(a => (a.mode || '').toLowerCase().includes('video')).length + (typeof (student as any).videoScenariosCompleted === 'number' ? (student as any).videoScenariosCompleted : 0);
   const videoVal = `${videoCount} Szenarien`;
 
-  // 5. Fallbeispiele
+  // 5. Fallbeispiele - Strictly count solved cases
   const caseCount = rawExams.filter((ex: any) => {
+    if (!ex) return false;
     const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return t.includes('fall') || t.includes('praxis') || t.includes('notwehr');
-  }).length || Math.max(1, Math.round(progressPct / 15));
+    return t.includes('fall') || t.includes('praxis') || t.includes('notwehr') || t.includes('scenario');
+  }).length + studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase();
+    return m.includes('fall') || m.includes('scenario');
+  }).length + studentAttempts.filter(a => {
+    const m = (a.mode || '').toLowerCase();
+    return m.includes('fall') || m.includes('scenario');
+  }).length + (typeof (student as any).casesSolved === 'number' ? (student as any).casesSolved : 0);
   const caseVal = `${caseCount} Fälle`;
 
-  // 6. Karteikarten (3D Flip)
-  const flashcardCount = Math.max(Math.round(solvedQ * 0.45), Math.max(3, Math.round(progressPct * 0.7)));
+  // 6. Karteikarten (3D Flip) - Strictly count practiced flashcards
+  const flashcardCount = studentAttempts.filter(a => {
+    const m = (a.mode || '').toLowerCase();
+    return m.includes('karteikarten') || m.includes('flashcard') || m.includes('leitner');
+  }).length + studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase();
+    return m.includes('flashcard') || m.includes('karteikarten');
+  }).length + (typeof (student as any).flashcardsPracticed === 'number' ? (student as any).flashcardsPracticed : 0) + (typeof (student as any).leitnerCardsCount === 'number' ? (student as any).leitnerCardsCount : 0) + (typeof (student as any).learnedFlashcards === 'number' ? (student as any).learnedFlashcards : 0);
   const flashcardVal = `${flashcardCount} Karten`;
 
-  // 7. Fachbegriffe & Prüfungsdeutsch
-  const vocabCount = Math.max(Math.round(solvedQ * 0.28), Math.max(2, Math.round(progressPct * 0.45)));
+  // 7. Fachbegriffe & Prüfungsdeutsch - Strictly count practiced vocabulary terms
+  const vocabCount = studentAttempts.filter(a => {
+    const m = (a.mode || '').toLowerCase();
+    return m.includes('fachbegriffe') || m.includes('vocab') || m.includes('glossar') || m.includes('begriff');
+  }).length + studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase();
+    return m.includes('vocab') || m.includes('fachbegriffe');
+  }).length + (typeof (student as any).vocabPracticed === 'number' ? (student as any).vocabPracticed : 0) + (typeof (student as any).learnedVocabCount === 'number' ? (student as any).learnedVocabCount : 0);
   const vocabVal = `${vocabCount} Begriffe`;
 
-  // 8. Fehler-Wiederholung
-  const errorFixedCount = Math.max(
-    studentAttempts.filter(a => a.is_correct && a.switched_answers).length,
-    Math.max(1, Math.round(((100 - Math.min(92, successRate)) / 100) * solvedQ * 0.8))
-  );
+  // 8. Fehler-Wiederholung - Strictly count resolved mistakes
+  const errorFixedCount = studentAttempts.filter(a => {
+    const m = (a.mode || '').toLowerCase();
+    return (m.includes('fehler') || m.includes('repeat_error') || a.switched_answers) && a.is_correct;
+  }).length + studentSessions.filter(s => (s.mode || '').toLowerCase().includes('fehler')).length + (typeof (student as any).errorsFixed === 'number' ? (student as any).errorsFixed : 0) + (typeof (student as any).fixedErrorsCount === 'number' ? (student as any).fixedErrorsCount : 0);
   const errorVal = `${errorFixedCount} behoben`;
 
-  // 9. Endlos-Streak-Challenge
-  const streakRecord = (student as any).maxStreak || Math.max(4, Math.round((successRate / 100) * 28));
+  // 9. Endlos-Streak-Challenge - Strictly real maximum streak
+  const streakRecord = typeof (student as any).maxStreak === 'number' && !isNaN((student as any).maxStreak)
+    ? (student as any).maxStreak
+    : (typeof (student as any).max_streak === 'number' && !isNaN((student as any).max_streak)
+        ? (student as any).max_streak
+        : (typeof (student as any).streak === 'number' && !isNaN((student as any).streak) ? (student as any).streak : 0));
   const streakVal = `Rekord: ${streakRecord} Fragen`;
 
-  // 10. „Was bin ich?“ Rätsel
-  const riddleCount = Math.max(Math.round(progressPct / 12), Math.max(1, Math.round(solvedQ * 0.12)));
+  // 10. „Was bin ich?“ Rätsel - Strictly real solved riddles
+  const riddleCount = studentAttempts.filter(a => {
+    const m = (a.mode || '').toLowerCase();
+    return (m.includes('raetsel') || m.includes('riddle') || m.includes('was_bin_ich')) && a.is_correct;
+  }).length + studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase();
+    return m.includes('riddle') || m.includes('was_bin_ich');
+  }).length + (typeof (student as any).riddlesSolved === 'number' ? (student as any).riddlesSolved : 0) + (typeof (student as any).solvedRiddlesCount === 'number' ? (student as any).solvedRiddlesCount : 0);
   const riddleVal = `${riddleCount} Rätsel gelöst`;
 
   return [
@@ -2624,7 +2677,7 @@ export default function DozentenDashboard({
                         ? selectedStudent.categoryPerformance
                         : (selectedStudent.categoryPerformance && typeof selectedStudent.categoryPerformance === 'object' ? Object.values(selectedStudent.categoryPerformance) : []);
                       const catPerf: any = cpList.find((c: any) => c && (c.category === cat || (c.category && cat.toLowerCase().includes(c.category.toLowerCase()))));
-                      const percent = catPerf && typeof catPerf.percentage === 'number' ? catPerf.percentage : Math.min(100, Math.max(20, (selectedStudent.progressPercent || 0) + (idx % 2 === 0 ? 5 : -5)));
+                      const percent = catPerf && typeof catPerf.percentage === 'number' ? catPerf.percentage : 0;
 
                       return (
                         <div key={idx} className="p-3 bg-slate-900/80 rounded-xl border border-white/5 space-y-1.5">
@@ -3304,7 +3357,7 @@ export default function DozentenDashboard({
                     const catPerf: any = cpList.find((c: any) => c && (c.category === cat || (c.category && cat.toLowerCase().includes(c.category.toLowerCase()))));
                     const percent = catPerf && typeof catPerf.percentage === 'number'
                       ? catPerf.percentage
-                      : Math.min(100, Math.max(25, (printReportData.student?.progressPercent || 0) + (idx % 2 === 0 ? 6 : -4)));
+                      : 0;
 
                     return (
                       <tr key={idx} className="break-inside-avoid" style={{ pageBreakInside: 'avoid' }}>
@@ -3392,11 +3445,11 @@ export default function DozentenDashboard({
                       <tbody className="divide-y divide-slate-200 text-slate-800">
                         {validExams.slice(0, 3).map((ex: any, idx: number) => {
                           const dateStr = ex.date ? formatStandardGermanDate(ex.date) : formatStandardGermanDate();
-                          const maxPts = ex.totalPoints || ex.totalQuestions || 72;
-                          const pts = ex.pointsObtained !== undefined ? ex.pointsObtained : (ex.score || Math.round(maxPts * 0.75));
+                          const maxPts = ex.totalPoints || ex.totalQuestions || 0;
+                          const pts = ex.pointsObtained !== undefined ? ex.pointsObtained : (typeof ex.score === 'number' ? ex.score : 0);
                           const scorePct = typeof ex.scorePercent === 'number' 
                             ? ex.scorePercent 
-                            : (maxPts > 0 ? Math.round((pts / maxPts) * 100) : 75);
+                            : (maxPts > 0 ? Math.round((pts / maxPts) * 100) : 0);
                           const isPassed = ex.passed !== undefined ? Boolean(ex.passed) : scorePct >= 50;
 
                           return (
