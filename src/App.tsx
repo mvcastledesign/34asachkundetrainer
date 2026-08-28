@@ -182,20 +182,23 @@ export default function App() {
     }
   }, []);
 
-  // 2. Active stopwatch loop to increment study hours
+  // 2. Active stopwatch loop to increment study hours (ONLY for active students)
   useEffect(() => {
+    if (!currentUser || currentUser.role !== 'schueler') return;
+
     const timer = setInterval(() => {
-      setStudyDuration(prev => {
-        const updated = prev + 1;
-        if (updated % 10 === 0) {
-          localStorage.setItem('sachkunde_34a_study_duration', updated.toString());
-        }
-        return updated;
-      });
+      setStudyDuration(prev => prev + 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [currentUser?.id, currentUser?.role]);
+
+  // Persist study duration every 10 seconds cleanly outside the state setter
+  useEffect(() => {
+    if (studyDuration > 0 && studyDuration % 10 === 0) {
+      localStorage.setItem('sachkunde_34a_study_duration', studyDuration.toString());
+    }
+  }, [studyDuration]);
 
   // Sync state mutation actions with local storage
   const saveQuestionsToLocal = (newQuestions: Question[]) => {
@@ -461,7 +464,7 @@ export default function App() {
 
         syncProgressToSupabase(progress, currentUser.id, updatedExamHistory);
 
-        if (item.typ === 'Prüfung') {
+        if (item.typ === 'Prüfung' && currentUser.id) {
           logExamSession({
             user_id: currentUser.id,
             mode: 'exam',
@@ -477,21 +480,6 @@ export default function App() {
             passed: (item.richtig / item.anzahl) >= 0.5
           });
         }
-      } else if (item.typ === 'Prüfung') {
-        logExamSession({
-          user_id: currentUser?.id || '13',
-          mode: 'exam',
-          exam_type: 'Prüfungssimulation § 34a',
-          scoreAchieved: item.richtig,
-          scoreMax: item.anzahl,
-          total_questions: item.anzahl,
-          correct_count: item.richtig,
-          incorrect_count: item.falsch,
-          score_percent: item.anzahl > 0 ? Math.round((item.richtig / item.anzahl) * 100) : 0,
-          points_earned: item.richtig,
-          max_points: item.anzahl,
-          passed: item.anzahl > 0 ? (item.richtig / item.anzahl) >= 0.5 : true
-        });
       }
 
       return updated;
@@ -613,10 +601,10 @@ export default function App() {
       vorname: 'Maximilian',
       nachname: 'Schulze',
       role: 'schueler',
-      courseId: 'MOREDU34a',
-      courseName: 'Aktueller Kurs: Sachkunde § 34a',
+      courseId: 'KURS-34a-2026',
+      courseName: 'Sachkunde § 34a (Lehrgang 2026)',
       registeredAt: '10.05.2026',
-      invitationCode: 'MOREDU34a'
+      invitationCode: 'KURS-34a-2026'
     };
     handleLoginSuccess(studentUser);
   };
@@ -628,7 +616,7 @@ export default function App() {
       vorname: 'Alexander',
       nachname: 'Weber',
       role: 'dozent',
-      companyName: 'MOREDU 34a-Gruppe',
+      companyName: 'Fachakademie für Sicherheitsausbildung',
       registeredAt: '01.01.2026'
     };
     handleLoginSuccess(dozentUser);
@@ -785,7 +773,9 @@ export default function App() {
                   </div>
                   <div className="overflow-hidden">
                     <p className="text-xs font-bold text-white truncate">{currentUser.name}</p>
-                    <p className="text-[10px] text-[#dfb871] font-mono truncate font-semibold">Kurs: MOREDU34a</p>
+                    <p className="text-[10px] text-[#dfb871] font-mono truncate font-semibold">
+                      Kurs: {currentUser.courseId || currentUser.invitationCode || 'KURS-34a'}
+                    </p>
                   </div>
                 </div>
 

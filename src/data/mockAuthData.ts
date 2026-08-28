@@ -18,10 +18,10 @@ export const DEMO_USERS: UserProfile[] = [
     vorname: 'Maximilian',
     nachname: 'Schulze',
     role: 'schueler',
-    courseId: 'MOREDU34a',
-    courseName: 'Aktueller Kurs: Sachkunde § 34a',
+    courseId: 'KURS-34a-2026',
+    courseName: 'Sachkunde § 34a (Lehrgang 2026)',
     registeredAt: '10.05.2026',
-    invitationCode: 'MOREDU34a'
+    invitationCode: 'KURS-34a-2026'
   },
   {
     id: 'usr-dozent-demo',
@@ -29,7 +29,7 @@ export const DEMO_USERS: UserProfile[] = [
     vorname: 'Alexander',
     nachname: 'Weber',
     role: 'dozent',
-    companyName: 'MOREDU 34a-Gruppe',
+    companyName: 'Fachakademie für Sicherheitsausbildung',
     registeredAt: '01.01.2026'
   }
 ];

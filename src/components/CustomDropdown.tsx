@@ -32,15 +32,19 @@ export default function CustomDropdown({
 
   const selectedOption = options.find(opt => opt.value === value) || options[0];
 
-  // Close dropdown on click outside
+  // Close dropdown on click outside (support both mouse and touch events)
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (optionValue: string) => {

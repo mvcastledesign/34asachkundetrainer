@@ -297,19 +297,19 @@ export function getStudent10ModeStats(
 
 const DEFAULT_COURSES: CourseCohort[] = [
   { 
-    id: 'MOREDU34a', 
+    id: 'SK-2026-A', 
     name: 'Sachkunde § 34a (Sommer 2026)', 
     period: '01.07.2026 – 15.08.2026',
-    description: 'Hauptlehrgang Vollzeit (IHK-Prüfung August 2026)'
+    description: 'Hauptlehrgang Vollzeit (Abschlussprüfung August 2026)'
   },
   { 
-    id: 'MOREDU34b', 
+    id: 'SK-2026-B', 
     name: 'Sachkunde § 34a (Herbst 2026)', 
     period: '01.09.2026 – 15.10.2026',
-    description: 'Kompaktlehrgang Herbst (IHK-Prüfung Oktober 2026)'
+    description: 'Kompaktlehrgang Herbst (Abschlussprüfung Oktober 2026)'
   },
   { 
-    id: 'MOREDU34c', 
+    id: 'SK-2026-C', 
     name: 'Sachkunde § 34a (Wochenend-Kurs)', 
     period: '15.10.2026 – 30.11.2026',
     description: 'Berufsbegleitender Abend- & Wochenendlehrgang'
@@ -613,8 +613,8 @@ export default function DozentenDashboard({
   // Modal State for Course Archive Overview & Restore
   const [showArchiveModal, setShowArchiveModal] = useState<boolean>(false);
 
-  // Selected course cohort ID: 'MOREDU34a' by default, or 'ALL' for overview
-  const [selectedCourseId, setSelectedCourseId] = useState<string>('MOREDU34a');
+  // Selected course cohort ID: 'SK-2026-A' by default, or 'ALL' for overview
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('SK-2026-A');
   const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
   const courseDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -846,7 +846,7 @@ export default function DozentenDashboard({
     const counts: Record<string, number> = {};
     availableCourses.forEach(c => { counts[c.id.toUpperCase()] = 0; });
     studentsList.forEach(s => {
-      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'MOREDU34a').trim().toUpperCase();
+      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'SK-2026-A').trim().toUpperCase();
       counts[sCourse] = (counts[sCourse] || 0) + 1;
     });
     return counts;
@@ -858,7 +858,7 @@ export default function DozentenDashboard({
       return studentsList;
     }
     return studentsList.filter(s => {
-      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'MOREDU34a').trim().toUpperCase();
+      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'SK-2026-A').trim().toUpperCase();
       return sCourse === selectedCourseId.toUpperCase();
     });
   }, [studentsList, selectedCourseId]);
@@ -1177,7 +1177,7 @@ export default function DozentenDashboard({
 
   // Copy invitation code for active course
   const handleCopyInviteLink = () => {
-    const code = activeCourse.id === 'ALL' ? 'MOREDU34a' : activeCourse.id;
+    const code = activeCourse.id === 'ALL' ? 'SK-2026-A' : activeCourse.id;
     navigator.clipboard.writeText(code);
     showToast(`Pflicht-Kurs-Code "${code}" in die Zwischenablage kopiert!`);
   };
@@ -2099,7 +2099,7 @@ export default function DozentenDashboard({
                               <div>
                                 <p className="font-bold text-white text-xs">{student.name}</p>
                                 <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                                  Kurs-Code: <span className="text-[#dfb871] font-bold">{student.courseId || student.invitationCode || 'MOREDU34a'}</span>
+                                  Kurs-Code: <span className="text-[#dfb871] font-bold">{student.courseId || student.invitationCode || 'SK-2026-A'}</span>
                                 </p>
                               </div>
                             </div>
@@ -2188,7 +2188,7 @@ export default function DozentenDashboard({
                   </div>
                   <h2 className="text-xl font-bold text-white font-display flex items-center gap-2">
                     <Radar className="w-5 h-5 text-[#dfb871]" />
-                    Intelligentes Diagnose-Center (§ 34a IHK)
+                    Intelligentes Diagnose-Center (§ 34a GewO)
                   </h2>
                   <p className="text-xs text-slate-400">
                     Erkennung von Fehlmustern, psychologischer Prüfungsunsicherheit und gezielte Handlungsempfehlungen für den Unterricht.
@@ -2245,7 +2245,7 @@ export default function DozentenDashboard({
                       </div>
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Diese Aufgaben wurden zwar als <strong>richtig</strong> gewertet, dauerten jedoch über 25 Sekunden oder wurden mehrfach umgestellt. In der echten IHK-Prüfung droht hier Zeitnot oder Fehlentscheidung.
+                      Diese Aufgaben wurden zwar als <strong>richtig</strong> gewertet, dauerten jedoch über 25 Sekunden oder wurden mehrfach umgestellt. In der echten Abschlussprüfung droht hier Zeitnot oder Fehlentscheidung.
                     </p>
                   </div>
 
@@ -2375,12 +2375,12 @@ export default function DozentenDashboard({
                         </h3>
                       </div>
                       <p className="text-xs text-slate-400">
-                        Analyse der Fehleranfälligkeit bei typischen IHK-Formulierungsfallen.
+                        Analyse der Fehleranfälligkeit bei typischen Formulierungsfallen.
                       </p>
                     </div>
 
                     <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">
-                      IHK-Fallen Radar
+                      Signalwort- & Formulierungs-Radar
                     </span>
                   </div>
 
@@ -2417,7 +2417,7 @@ export default function DozentenDashboard({
                   <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-start gap-2.5">
                     <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-300">
-                      <strong>Strategie für die Prüfung:</strong> Vermitteln Sie das Signalwort-Markieren in der IHK-Maske. Fragen mit <em>„NICHT“</em> müssen gedanklich invertiert werden.
+                      <strong>Strategie für die Prüfung:</strong> Vermitteln Sie das Signalwort-Markieren in Prüfungsfragen. Fragen mit <em>„NICHT“</em> müssen gedanklich invertiert werden.
                     </p>
                   </div>
                 </section>
@@ -2538,7 +2538,7 @@ export default function DozentenDashboard({
                   </div>
                   <div className="space-y-1">
                     <span className="text-slate-400 block text-[10px] uppercase">Pflicht-Kurs-Code</span>
-                    <span className="text-base font-bold text-[#dfb871]">{selectedStudent.courseId || selectedStudent.invitationCode || 'MOREDU34a'}</span>
+                    <span className="text-base font-bold text-[#dfb871]">{selectedStudent.courseId || selectedStudent.invitationCode || 'SK-2026-A'}</span>
                   </div>
                   <div className="space-y-1">
                     <span className="text-slate-400 block text-[10px] uppercase">Registriert seit</span>
@@ -2726,7 +2726,7 @@ export default function DozentenDashboard({
 
               <div className="space-y-2 text-xs text-slate-300">
                 <p>
-                  Möchten Sie den Schüler <strong className="text-white">{studentToDelete.name}</strong> (Kurs-Code: {studentToDelete.courseId || studentToDelete.invitationCode || 'MOREDU34a'}) wirklich unwiderruflich aus der Datenbank löschen?
+                  Möchten Sie den Schüler <strong className="text-white">{studentToDelete.name}</strong> (Kurs-Code: {studentToDelete.courseId || studentToDelete.invitationCode || 'SK-2026-A'}) wirklich unwiderruflich aus der Datenbank löschen?
                 </p>
                 <p className="text-[11px] text-slate-400">
                   Alle Prüfungs- und Lernfortschritte dieses Teilnehmers werden dabei dauerhaft entfernt.
@@ -2801,13 +2801,13 @@ export default function DozentenDashboard({
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider flex items-center justify-between">
                     <span>Kurs-Code (Pflicht-Registrierungscode):</span>
-                    <span className="text-[10px] text-[#dfb871] font-mono lowercase font-normal">z. B. MOREDU34b</span>
+                    <span className="text-[10px] text-[#dfb871] font-mono lowercase font-normal">z. B. SK-2026-B</span>
                   </label>
                   <input
                     type="text"
                     value={newCourseCode}
                     onChange={(e) => setNewCourseCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
-                    placeholder="MOREDU34D"
+                    placeholder="KURS-34a-2026"
                     className="w-full bg-slate-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-[#dfb871] font-mono font-bold tracking-widest focus:outline-none focus:border-[#dfb871] focus:ring-1 focus:ring-[#dfb871]"
                     required
                   />
@@ -3179,7 +3179,7 @@ export default function DozentenDashboard({
             {/* Document Subtitle */}
             <div className="text-center py-1 px-2 bg-slate-50 border border-slate-200 rounded">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                Teilnehmer-Leistungsnachweis & IHK-Prüfungsreife
+                Teilnehmer-Leistungsnachweis & Fachliche Prüfungsreife
               </h2>
               <p className="text-[9px] text-slate-500">
                 Vorbereitungslehrgang auf die Sachkundeprüfung im Bewachungsgewerbe nach § 34a GewO
@@ -3370,12 +3370,12 @@ export default function DozentenDashboard({
               <div className="p-2 bg-slate-50 border-l-4 border-slate-900 rounded-r text-[10px] space-y-0.5">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900 uppercase text-[9px]">Pädagogische Gesamteinschätzung:</span>
-                  <span className="font-mono text-[9px] text-slate-600">IHK-Sachkunde § 34a GewO</span>
+                  <span className="font-mono text-[9px] text-slate-600">Sachkunde § 34a GewO</span>
                 </div>
                 <p className="text-slate-800 leading-snug text-[10px]">
                   {(printReportData.student.progressPercent || 0) >= 75 ? (
                     <>
-                      <strong>Prüfungsreife bestätigt (&gt;75 %):</strong> Der Teilnehmer weist einen überdurchschnittlich soliden und stabilen Kenntnisstand in allen acht Sachgebieten auf. Die Anmeldung zur offiziellen IHK-Sachkundeprüfung wird ausdrücklich befürwortet.
+                      <strong>Prüfungsreife bestätigt (&gt;75 %):</strong> Der Teilnehmer weist einen überdurchschnittlich soliden und stabilen Kenntnisstand in allen acht Sachgebieten auf. Die Anmeldung zur offiziellen Sachkundeprüfung wird ausdrücklich befürwortet.
                     </>
                   ) : (printReportData.student.progressPercent || 0) >= 50 ? (
                     <>
@@ -3591,7 +3591,7 @@ export default function DozentenDashboard({
               </h3>
               <div className="p-1.5 bg-slate-50 border-l-4 border-slate-900 rounded-r text-[9px] space-y-0.5 text-slate-800 leading-snug">
                 <p>
-                  Die Gruppe hat einen durchschnittlichen Fortschritt von <strong>{avgProgress} %</strong> erzielt. Die fachlichen Voraussetzungen für die IHK-Sachkundeprüfung gemäß § 34a GewO wurden im theoretischen und praktischen Unterricht vermittelt und über das digitale Prüfungssystem kontinuierlich überprüft und dokumentiert.
+                  Die Gruppe hat einen durchschnittlichen Fortschritt von <strong>{avgProgress} %</strong> erzielt. Die fachlichen Voraussetzungen für die Sachkundeprüfung gemäß § 34a GewO wurden im theoretischen und praktischen Unterricht vermittelt und über das digitale Prüfungssystem kontinuierlich überprüft und dokumentiert.
                 </p>
               </div>
             </div>
