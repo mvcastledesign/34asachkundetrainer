@@ -344,7 +344,7 @@ export default function Dashboard({
                 </p>
               </div>
               <span className="px-2.5 py-1 text-[10px] font-display font-semibold tracking-wide text-[#dfb871] bg-[#dfb871]/5 rounded-lg border border-[#dfb871]/15">
-                11 Sachgebiete
+                8 Sachgebiete
               </span>
             </div>
 

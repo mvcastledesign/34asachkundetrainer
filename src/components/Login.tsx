@@ -41,6 +41,63 @@ const SECURITY_QUESTIONS = [
   'Wie lautet der Mädchenname deiner Mutter?'
 ];
 
+// Helper to format names into proper Title Case (e.g., "max muster" -> "Max Muster", "jean-luc" -> "Jean-Luc")
+const formatTitleCase = (str: string): string => {
+  return str
+    .trim()
+    .toLowerCase()
+    .split(/(\s+|-)/)
+    .map(part => {
+      if (!part || /\s+|-/.test(part)) return part;
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join('');
+};
+
+// Helper to gather all legitimate course codes (Standard courses, Dozenten custom courses from localStorage, and Supabase)
+const getExistingValidCourseCodes = async (): Promise<Set<string>> => {
+  const codes = new Set<string>(['SK-2026-A', 'SK-2026-B', 'SK-2026-C']);
+
+  // 1. From localStorage 'moredu_custom_courses'
+  try {
+    const raw1 = localStorage.getItem('moredu_custom_courses');
+    if (raw1) {
+      const parsed = JSON.parse(raw1);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((c: any) => {
+          if (c && c.id) codes.add(String(c.id).trim().toUpperCase());
+        });
+      }
+    }
+  } catch (e) {}
+
+  // 2. From localStorage 'custom_courses'
+  try {
+    const raw2 = localStorage.getItem('custom_courses');
+    if (raw2) {
+      const parsed = JSON.parse(raw2);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((c: any) => {
+          if (c && c.id) codes.add(String(c.id).trim().toUpperCase());
+        });
+      }
+    }
+  } catch (e) {}
+
+  // 3. From Supabase existing student cohorts
+  try {
+    const students = await fetchStudentsFromSupabase();
+    students.forEach((s: any) => {
+      const c = s.courseId || s.courseCode || s.course_code || s.invitationCode;
+      if (c && typeof c === 'string' && c.trim().length >= 3) {
+        codes.add(c.trim().toUpperCase());
+      }
+    });
+  } catch (e) {}
+
+  return codes;
+};
+
 export default function Login({ onLoginSuccess }: LoginProps) {
   const [mode, setMode] = useState<AuthMode>('login');
 
@@ -242,10 +299,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       return;
     }
 
-    // DYNAMIC COURSE CODE VALIDATION (Any valid course code >= 3 chars)
+    // STRICT COURSE CODE VALIDATION
     const cleanKursCode = kursCode.trim().toUpperCase().replace(/\s+/g, '');
     if (!cleanKursCode || cleanKursCode.length < 3) {
-      setError('Ungültiger Kurs-Code! Bitte geben Sie den korrekten Code Ihres Lehrgangs ein.');
+      setError('Dieser Kurs-Code existiert nicht. Bitte prüfen Sie den Code auf Tippfehler oder kontaktieren Sie Ihre Lehrgangsleitung.');
       return;
     }
 
@@ -256,12 +313,22 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
     setLoading(true);
 
-    const fullName = `${vorname.trim()} ${nachname.trim()}`;
+    const validCourseCodes = await getExistingValidCourseCodes();
+    if (!validCourseCodes.has(cleanKursCode)) {
+      setLoading(false);
+      setError('Dieser Kurs-Code existiert nicht. Bitte prüfen Sie den Code auf Tippfehler oder kontaktieren Sie Ihre Lehrgangsleitung.');
+      return;
+    }
 
-    // Insert new student into Supabase `students` table with the exact entered course code
+    // Auto-format names in proper Title Case (e.g., "max muster" -> "Max Muster")
+    const formattedVorname = formatTitleCase(vorname);
+    const formattedNachname = formatTitleCase(nachname);
+    const fullName = `${formattedVorname} ${formattedNachname}`;
+
+    // Insert new student into Supabase `students` table with the validated course code
     const result = await createStudentInSupabase({
-      vorname: vorname.trim(),
-      nachname: nachname.trim(),
+      vorname: formattedVorname,
+      nachname: formattedNachname,
       password: registerPassword,
       securityQuestion: securityQuestion,
       securityAnswer: securityAnswer.trim().toLowerCase(),
@@ -276,11 +343,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
     const newStudent = result.student;
 
+    // Initialize user-bound study duration strictly to 0
+    localStorage.setItem(`sachkunde_34a_study_duration_${newStudent.id}`, '0');
+
     const newUserProfile: UserProfile = {
       id: newStudent.id,
       name: fullName,
-      vorname: vorname.trim(),
-      nachname: nachname.trim(),
+      vorname: formattedVorname,
+      nachname: formattedNachname,
       role: 'schueler',
       courseId: cleanKursCode,
       courseName: `Lehrgang: ${cleanKursCode}`,

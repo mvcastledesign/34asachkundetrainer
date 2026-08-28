@@ -174,13 +174,18 @@ export default function App() {
     if (localGoal) {
       setDailyGoal(parseInt(localGoal, 10) || 10);
     }
-
-    // Study Duration
-    const localDuration = localStorage.getItem('sachkunde_34a_study_duration');
-    if (localDuration) {
-      setStudyDuration(parseInt(localDuration, 10) || 0);
-    }
   }, []);
+
+  // Load user-bound study duration whenever active user changes
+  useEffect(() => {
+    if (currentUser?.id && currentUser.role === 'schueler') {
+      const userDurationKey = `sachkunde_34a_study_duration_${currentUser.id}`;
+      const savedDuration = localStorage.getItem(userDurationKey);
+      setStudyDuration(savedDuration ? parseInt(savedDuration, 10) || 0 : 0);
+    } else {
+      setStudyDuration(0);
+    }
+  }, [currentUser?.id, currentUser?.role]);
 
   // 2. Active stopwatch loop to increment study hours (ONLY for active students)
   useEffect(() => {
@@ -193,12 +198,12 @@ export default function App() {
     return () => clearInterval(timer);
   }, [currentUser?.id, currentUser?.role]);
 
-  // Persist study duration every 10 seconds cleanly outside the state setter
+  // Persist study duration every 5 seconds user-specifically
   useEffect(() => {
-    if (studyDuration > 0 && studyDuration % 10 === 0) {
-      localStorage.setItem('sachkunde_34a_study_duration', studyDuration.toString());
+    if (currentUser?.id && currentUser.role === 'schueler' && studyDuration > 0 && studyDuration % 5 === 0) {
+      localStorage.setItem(`sachkunde_34a_study_duration_${currentUser.id}`, studyDuration.toString());
     }
-  }, [studyDuration]);
+  }, [studyDuration, currentUser?.id, currentUser?.role]);
 
   // Sync state mutation actions with local storage
   const saveQuestionsToLocal = (newQuestions: Question[]) => {
@@ -516,10 +521,11 @@ export default function App() {
     if (currentUser?.id) {
       localStorage.removeItem(`sachkunde_34a_progress_${currentUser.id}`);
       localStorage.removeItem(`sachkunde_34a_history_${currentUser.id}`);
+      localStorage.removeItem(`sachkunde_34a_study_duration_${currentUser.id}`);
     }
     localStorage.removeItem('sachkunde_34a_progress');
     localStorage.removeItem('sachkunde_34a_history');
-    localStorage.setItem('sachkunde_34a_study_duration', '0');
+    localStorage.removeItem('sachkunde_34a_study_duration');
   };
 
   const handleSetDailyGoal = (goal: number) => {
@@ -587,6 +593,7 @@ export default function App() {
     setCurrentUser(null);
     setProgress({});
     setHistory([]);
+    setStudyDuration(0);
     localStorage.removeItem('sachkunde_34a_current_user');
     sessionStorage.removeItem('sachkunde_34a_current_user');
     localStorage.removeItem('sachkunde_34a_progress');
