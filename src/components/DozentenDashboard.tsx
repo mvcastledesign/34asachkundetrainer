@@ -363,16 +363,25 @@ export default function DozentenDashboard({
   const [newCourseDescription, setNewCourseDescription] = useState<string>('');
   const [activeCalendarPicker, setActiveCalendarPicker] = useState<'start' | 'end' | null>(null);
 
-  // Deleted courses tracking (to hide removed courses from view without touching Supabase)
-  const [deletedCourseIds, setDeletedCourseIds] = useState<string[]>(() => {
+  // Archived courses tracking (to hide removed courses from active view without touching Supabase)
+  const [archivedCourseIds, setArchivedCourseIds] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem('moredu_deleted_course_ids');
+      const saved = localStorage.getItem('moredu_archived_courses');
       if (saved) return JSON.parse(saved);
+      // Backwards compatibility with old key if present
+      const oldSaved = localStorage.getItem('moredu_deleted_course_ids');
+      if (oldSaved) return JSON.parse(oldSaved);
     } catch (e) {
-      console.warn('Could not read moredu_deleted_course_ids from localStorage', e);
+      console.warn('Could not read moredu_archived_courses from localStorage', e);
     }
     return [];
   });
+
+  // Modal State for Course Archiving Confirmation
+  const [courseToArchive, setCourseToArchive] = useState<CourseCohort | null>(null);
+
+  // Modal State for Course Archive Overview & Restore
+  const [showArchiveModal, setShowArchiveModal] = useState<boolean>(false);
 
   // Selected course cohort ID: 'MOREDU34a' by default, or 'ALL' for overview
   const [selectedCourseId, setSelectedCourseId] = useState<string>('MOREDU34a');
@@ -426,14 +435,12 @@ export default function DozentenDashboard({
     student?: StudentDetail;
   } | null>(null);
 
-  // Dynamically resolve all courses, merging `courses` state with any new courses found in students list
-  const availableCourses = useMemo(() => {
+  // Dynamically resolve all raw courses including any from students list
+  const allKnownCourses = useMemo(() => {
     const courseMap = new Map<string, CourseCohort>();
-    // First register all courses from state (unless hidden/deleted)
+    // First register all courses from state
     courses.forEach(c => {
-      if (!deletedCourseIds.includes(c.id.toUpperCase())) {
-        courseMap.set(c.id.toUpperCase(), c);
-      }
+      courseMap.set(c.id.toUpperCase(), c);
     });
 
     // Then register any course code found in students list
@@ -442,7 +449,7 @@ export default function DozentenDashboard({
       if (rawId && typeof rawId === 'string' && rawId.trim()) {
         const code = rawId.trim();
         const codeUpper = code.toUpperCase();
-        if (!courseMap.has(codeUpper) && !deletedCourseIds.includes(codeUpper)) {
+        if (!courseMap.has(codeUpper)) {
           courseMap.set(codeUpper, {
             id: code,
             name: `Sachkunde § 34a (${code})`,
@@ -454,7 +461,17 @@ export default function DozentenDashboard({
     });
 
     return Array.from(courseMap.values());
-  }, [courses, deletedCourseIds, studentsList]);
+  }, [courses, studentsList]);
+
+  // Active (non-archived) courses
+  const availableCourses = useMemo(() => {
+    return allKnownCourses.filter(c => !archivedCourseIds.includes(c.id.toUpperCase()));
+  }, [allKnownCourses, archivedCourseIds]);
+
+  // Archived courses list
+  const archivedCourses = useMemo(() => {
+    return allKnownCourses.filter(c => archivedCourseIds.includes(c.id.toUpperCase()));
+  }, [allKnownCourses, archivedCourseIds]);
 
   // Handler: Quick set end date +4, +6, +8 weeks from start date
   const handleAddWeeksToEndDate = (weeks: number) => {
@@ -466,33 +483,49 @@ export default function DozentenDashboard({
     showToast(`Lehrgangs-Ende auf +${weeks} Wochen gesetzt (${formatGermanDateOnly(targetIso)})`);
   };
 
-  // Handler: Delete / Hide course safely from local view without deleting Supabase data
-  const handleDeleteCourse = (courseToDelete: CourseCohort, e: React.MouseEvent) => {
+  // Handler: Open in-app archive confirmation modal
+  const handleInitiateArchiveCourse = (courseToHide: CourseCohort, e: React.MouseEvent) => {
     e.stopPropagation();
-    const confirmed = window.confirm(
-      `Kurs "${courseToDelete.name}" (${courseToDelete.id}) aus der Ansicht entfernen?\n\nAlle Schüler- und Prüfungsdaten in Supabase bleiben unberührt und vollständig erhalten.`
-    );
-    if (!confirmed) return;
+    setCourseToArchive(courseToHide);
+  };
 
-    const idUpper = courseToDelete.id.toUpperCase();
-    const updatedCourses = courses.filter(c => c.id.toUpperCase() !== idUpper);
-    setCourses(updatedCourses);
+  // Handler: Confirm course archiving (local only, no Supabase deletion)
+  const handleConfirmArchiveCourse = () => {
+    if (!courseToArchive) return;
 
-    const updatedDeletedIds = Array.from(new Set([...deletedCourseIds, idUpper]));
-    setDeletedCourseIds(updatedDeletedIds);
+    const idUpper = courseToArchive.id.toUpperCase();
+    const updatedArchivedIds = Array.from(new Set([...archivedCourseIds, idUpper]));
+    setArchivedCourseIds(updatedArchivedIds);
 
     try {
-      localStorage.setItem('moredu_custom_courses', JSON.stringify(updatedCourses));
-      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedDeletedIds));
+      localStorage.setItem('moredu_archived_courses', JSON.stringify(updatedArchivedIds));
+      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedArchivedIds));
     } catch (err) {
-      console.warn('Could not update localStorage after course deletion', err);
+      console.warn('Could not update localStorage after course archiving', err);
     }
 
     if (selectedCourseId.toUpperCase() === idUpper) {
       setSelectedCourseId('ALL');
     }
 
-    showToast(`Kurs "${courseToDelete.name}" (${courseToDelete.id}) aus der Ansicht entfernt.`);
+    setCourseToArchive(null);
+    showToast(`Kurs "${courseToArchive.name}" archiviert. Kann jederzeit im Archiv wiederhergestellt werden.`);
+  };
+
+  // Handler: Restore archived course
+  const handleRestoreCourse = (courseId: string, courseName?: string) => {
+    const idUpper = courseId.toUpperCase();
+    const updatedArchivedIds = archivedCourseIds.filter(id => id !== idUpper);
+    setArchivedCourseIds(updatedArchivedIds);
+
+    try {
+      localStorage.setItem('moredu_archived_courses', JSON.stringify(updatedArchivedIds));
+      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedArchivedIds));
+    } catch (err) {
+      console.warn('Could not update localStorage after course restore', err);
+    }
+
+    showToast(`Kurs ${courseName ? `"${courseName}"` : courseId} erfolgreich wiederhergestellt!`);
   };
 
   // Handler: Create and persist a new course / cohort
@@ -512,7 +545,7 @@ export default function DozentenDashboard({
       return;
     }
 
-    // Check for duplicate course code
+    // Check for duplicate course code among active courses
     const isDuplicate = availableCourses.some(c => c.id.toUpperCase() === cleanCode);
     if (isDuplicate) {
       showToast(`Der Kurs-Code "${cleanCode}" existiert bereits.`);
@@ -531,18 +564,19 @@ export default function DozentenDashboard({
       createdAt: new Date().toISOString()
     };
 
-    const updatedCourses = [...courses, newCourseObj];
+    const updatedCourses = [...courses.filter(c => c.id.toUpperCase() !== cleanCode), newCourseObj];
     setCourses(updatedCourses);
 
-    // If it was previously marked deleted, un-delete it
-    const updatedDeletedIds = deletedCourseIds.filter(id => id !== cleanCode);
-    setDeletedCourseIds(updatedDeletedIds);
+    // If it was previously marked archived, un-archive it
+    const updatedArchivedIds = archivedCourseIds.filter(id => id !== cleanCode);
+    setArchivedCourseIds(updatedArchivedIds);
 
     try {
       localStorage.setItem('moredu_custom_courses', JSON.stringify(updatedCourses));
-      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedDeletedIds));
+      localStorage.setItem('moredu_archived_courses', JSON.stringify(updatedArchivedIds));
+      localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(updatedArchivedIds));
     } catch (err) {
-      console.warn('Could not persist new course to localStorage', err);
+      console.warn('Could not save custom course to localStorage', err);
     }
 
     // Switch active view directly to the newly created course
@@ -1323,9 +1357,9 @@ export default function DozentenDashboard({
                                 {course.id !== 'ALL' && (
                                   <button
                                     type="button"
-                                    onClick={(e) => handleDeleteCourse(course, e)}
+                                    onClick={(e) => handleInitiateArchiveCourse(course, e)}
                                     className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer ml-0.5"
-                                    title={`Kurs "${course.name}" (${course.id}) aus der Ansicht entfernen (Daten in Supabase bleiben erhalten)`}
+                                    title={`Kurs "${course.name}" (${course.id}) archivieren (Daten in Supabase bleiben erhalten)`}
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
@@ -1334,6 +1368,27 @@ export default function DozentenDashboard({
                             </div>
                           );
                         })}
+                      </div>
+
+                      {/* Kurs-Archiv Footer Toggle Button */}
+                      <div className="border-t border-white/10 pt-1.5 mt-1.5">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCourseDropdownOpen(false);
+                            setShowArchiveModal(true);
+                          }}
+                          className="w-full text-left p-2.5 rounded-xl hover:bg-white/5 text-slate-400 hover:text-[#dfb871] border border-white/5 hover:border-[#dfb871]/30 transition-all flex items-center justify-between text-xs font-mono cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm">📦</span>
+                            <span className="font-semibold text-slate-300 group-hover:text-[#dfb871]">Kurs-Archiv öffnen</span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] text-slate-400 font-bold group-hover:border-[#dfb871]/40 group-hover:text-[#dfb871]">
+                            {archivedCourses.length}
+                          </span>
+                        </button>
                       </div>
                     </div>
                   )}
@@ -2582,6 +2637,149 @@ export default function DozentenDashboard({
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* 9. IN-APP CONFIRMATION MODAL: KURS ARCHIVIEREN */}
+        {courseToArchive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
+            <div className="w-full max-w-md bg-slate-950 border border-[#dfb871]/30 rounded-3xl p-6 space-y-5 shadow-2xl relative bento-glass bento-glow-gold">
+              
+              {/* Header */}
+              <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                <div className="p-3 bg-amber-500/15 text-amber-400 rounded-2xl border border-amber-500/30">
+                  <span className="text-xl">📦</span>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">Kurs in das Archiv verschieben?</h3>
+                  <p className="text-xs text-slate-400 font-mono">Code: <span className="text-[#dfb871] font-bold">{courseToArchive.id}</span></p>
+                </div>
+              </div>
+
+              {/* Message Body */}
+              <div className="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+                <p>
+                  Der Kurs <strong className="text-white">"{courseToArchive.name}"</strong> wird aus der aktiven Auswahlliste ausgeblendet.
+                </p>
+                <div className="p-3 bg-white/5 border border-white/10 rounded-xl text-[11px] text-slate-400">
+                  Alle Schülerdaten, Statistiken und Prüfungsstände bleiben in der Datenbank vollständig erhalten und der Kurs kann jederzeit wiederhergestellt werden.
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCourseToArchive(null)}
+                  className="bg-white/5 hover:bg-white/10 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Abbrechen
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleConfirmArchiveCourse}
+                  className="bg-rose-500/20 border border-rose-500/40 text-rose-300 hover:bg-rose-500/30 px-4 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer shadow-md flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Ja, archivieren</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 10. KURS-ARCHIV & WIEDERHERSTELLUNG MODAL */}
+        {showArchiveModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
+            <div className="w-full max-w-xl bg-slate-950 border border-[#dfb871]/40 rounded-3xl p-6 md:p-7 space-y-6 shadow-2xl relative bento-glass bento-glow-gold max-h-[85vh] flex flex-col">
+              
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-[#dfb871]/15 text-[#dfb871] rounded-2xl border border-[#dfb871]/30">
+                    <span className="text-xl">📦</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white font-display">Kurs-Archiv</h3>
+                    <p className="text-xs text-slate-400 font-mono">
+                      {archivedCourses.length} archivierte{archivedCourses.length === 1 ? 'r' : ''} Kurs{archivedCourses.length === 1 ? '' : 'e'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowArchiveModal(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                  title="Schließen"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Archived Courses List */}
+              <div className="overflow-y-auto space-y-3 pr-1 flex-1">
+                {archivedCourses.length === 0 ? (
+                  <div className="py-12 text-center space-y-3 bg-white/5 rounded-2xl border border-white/10">
+                    <span className="text-3xl block">✨</span>
+                    <p className="text-sm font-medium text-slate-300">Das Archiv ist aktuell leer.</p>
+                    <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                      Alle angelegten Lehrgänge und Kohorten sind derzeit aktiv in der Auswahlliste sichtbar.
+                    </p>
+                  </div>
+                ) : (
+                  archivedCourses.map(course => {
+                    const count = studentCountByCourse[course.id.toUpperCase()] || 0;
+                    return (
+                      <div
+                        key={course.id}
+                        className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 hover:border-[#dfb871]/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-white truncate">{course.name}</span>
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#dfb871]/10 text-[#dfb871] border border-[#dfb871]/20">
+                              {course.id}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400 font-mono">
+                            <span>📅 {course.period || 'Fortlaufend / Flexibel'}</span>
+                            <span>•</span>
+                            <span>👥 {count} Schüler zugeordnet</span>
+                          </div>
+                          {course.description && (
+                            <p className="text-[11px] text-slate-500 truncate">{course.description}</p>
+                          )}
+                        </div>
+
+                        <div className="shrink-0 flex items-center justify-end">
+                          <button
+                            type="button"
+                            onClick={() => handleRestoreCourse(course.id, course.name)}
+                            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#dfb871]/20 to-[#dfb871]/10 hover:from-[#dfb871]/30 hover:to-[#dfb871]/20 border border-[#dfb871]/40 hover:border-[#dfb871] text-[#dfb871] font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                            title={`Kurs "${course.name}" wieder in die aktive Auswahlliste aufnehmen`}
+                          >
+                            <span>🔄 Wiederherstellen</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono shrink-0">
+                <span>Supabase-Datenbestand: 100% gesichert</span>
+                <button
+                  type="button"
+                  onClick={() => setShowArchiveModal(false)}
+                  className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Schließen
+                </button>
+              </div>
             </div>
           </div>
         )}
