@@ -100,14 +100,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         securityQuestion: 'In welcher Stadt bist du geboren?',
         securityAnswer: 'berlin',
         avatarInitials: 'MS',
-        courseId: 'MOREDU34a',
-        courseName: 'Aktueller Kurs: Sachkunde § 34a',
+        courseId: 'SK-2026-A',
+        courseName: 'Aktueller Kurs: Sachkunde § 34a (Sommer 2026)',
         progressPercent: 65,
         successRatePercent: 82,
         status: 'pruefungssicher',
         lastActive: 'Vor 10 Min.',
         registeredAt: '10.05.2026',
-        invitationCode: 'MOREDU34a',
+        invitationCode: 'SK-2026-A',
         categoryPerformance: [],
         examHistory: []
       };
@@ -155,7 +155,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           vorname: 'Alexander',
           nachname: 'Weber',
           role: 'dozent',
-          companyName: 'MOREDU 34a-Gruppe',
+          companyName: 'Dozenten-Portal § 34a',
           registeredAt: '01.01.2026'
         };
         setLoading(false);
@@ -193,15 +193,17 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       return;
     }
 
+    const studentCourse = foundStudent.courseId || foundStudent.invitationCode || 'SK-2026-A';
+
     const studentProfile: UserProfile = {
       id: foundStudent.id,
       name: foundStudent.name,
       vorname: foundStudent.vorname,
       nachname: foundStudent.nachname,
       role: 'schueler',
-      courseId: foundStudent.courseId || 'MOREDU34a',
-      courseName: 'Aktueller Kurs: Sachkunde § 34a',
-      invitationCode: 'MOREDU34a',
+      courseId: studentCourse,
+      courseName: `Lehrgang: ${studentCourse}`,
+      invitationCode: studentCourse,
       registeredAt: foundStudent.registeredAt,
       progressPercent: foundStudent.progressPercent,
       successRatePercent: foundStudent.successRatePercent,
@@ -240,9 +242,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       return;
     }
 
-    // STRICT COURSE CODE VALIDATION
-    if (!kursCode || kursCode.trim() !== 'MOREDU34a') {
-      setError('Ungültiger Kurs-Code! Bitte geben Sie MOREDU34a ein.');
+    // DYNAMIC COURSE CODE VALIDATION (Any valid course code >= 3 chars)
+    const cleanKursCode = kursCode.trim().toUpperCase().replace(/\s+/g, '');
+    if (!cleanKursCode || cleanKursCode.length < 3) {
+      setError('Ungültiger Kurs-Code! Bitte geben Sie den korrekten Code Ihres Lehrgangs ein.');
       return;
     }
 
@@ -255,14 +258,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
     const fullName = `${vorname.trim()} ${nachname.trim()}`;
 
-    // Insert new student into Supabase `students` table
+    // Insert new student into Supabase `students` table with the exact entered course code
     const result = await createStudentInSupabase({
       vorname: vorname.trim(),
       nachname: nachname.trim(),
       password: registerPassword,
       securityQuestion: securityQuestion,
       securityAnswer: securityAnswer.trim().toLowerCase(),
-      courseCode: 'MOREDU34a'
+      courseCode: cleanKursCode
     });
 
     if (result.error || !result.student) {
@@ -279,9 +282,9 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       vorname: vorname.trim(),
       nachname: nachname.trim(),
       role: 'schueler',
-      courseId: 'MOREDU34a',
-      courseName: 'Aktueller Kurs: Sachkunde § 34a',
-      invitationCode: 'MOREDU34a',
+      courseId: cleanKursCode,
+      courseName: `Lehrgang: ${cleanKursCode}`,
+      invitationCode: cleanKursCode,
       registeredAt: newStudent.registeredAt,
       progressPercent: newStudent.progressPercent || 0,
       successRatePercent: newStudent.successRatePercent || 0,
@@ -409,7 +412,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           </h2>
           <p className="text-xs text-slate-400 font-medium font-sans">
             {mode === 'login' && 'Zentraler Login für Schüler und Dozenten'}
-            {mode === 'register' && 'Konto erstellen mit Kurs-Code MOREDU34a'}
+            {mode === 'register' && 'Konto mit dem Kurs-Code Ihres Bildungsträgers erstellen'}
             {mode === 'forgot_password' && 'Identität über Sicherheitsfrage bestätigen'}
           </p>
         </div>
@@ -727,7 +730,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               </span>
             </div>
 
-            {/* Mandatory Course Code "MOREDU34a" */}
+            {/* Mandatory Course Code */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                 <span>Kurs-Code</span>
@@ -741,14 +744,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   type="text"
                   required
                   value={kursCode}
-                  onChange={(e) => setKursCode(e.target.value)}
-                  placeholder="MOREDU34a"
-                  className="w-full bg-slate-950/70 border border-[#dfb871]/30 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#dfb871] transition-all font-mono font-bold"
+                  onChange={(e) => setKursCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                  placeholder="z. B. SK-2026-A oder TESTKURS"
+                  className="w-full bg-slate-950/70 border border-[#dfb871]/30 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#dfb871] transition-all font-mono font-bold uppercase tracking-wider"
                   disabled={loading}
                 />
               </div>
               <span className="text-[10px] text-slate-400 block font-sans">
-                Geben Sie den Kurscode <strong className="text-[#dfb871] font-mono">MOREDU34a</strong> ein.
+                Geben Sie den Kurs-Code ein, den Sie von Ihrer Lehrgangsleitung erhalten haben.
               </span>
             </div>
 
