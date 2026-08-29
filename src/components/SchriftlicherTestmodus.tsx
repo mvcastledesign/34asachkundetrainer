@@ -43,6 +43,7 @@ import { IHK_120_EXAM_QUESTIONS, IHK_CATEGORIES_CONFIG, IhkCategoryConfig } from
 import TranslationView from './TranslationView.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { supabase, mapRowToWrittenQuestion } from '../lib/supabase.ts';
 
 interface SchriftlicherTestmodusProps {
   translationLang?: string;
@@ -193,6 +194,47 @@ export default function SchriftlicherTestmodus({
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [configError, setConfigError] = useState<string | null>(null);
   
+  // Supabase Questions Pool
+  const [supabaseQuestions, setSupabaseQuestions] = useState<WrittenQuestion[]>([]);
+  const [isLoadingPool, setIsLoadingPool] = useState<boolean>(true);
+
+  // Load questions directly from Supabase (target_mode = 'written_test')
+  useEffect(() => {
+    let isMounted = true;
+    async function loadWrittenQuestions() {
+      setIsLoadingPool(true);
+      try {
+        const { data, error } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('target_mode', 'written_test')
+          .order('id', { ascending: true });
+
+        if (!error && data && data.length > 0) {
+          const mapped = data.map(mapRowToWrittenQuestion);
+          if (isMounted) {
+            setSupabaseQuestions(mapped);
+            setIsLoadingPool(false);
+          }
+        } else {
+          // Fallback to standard 120-pt questions if no written_test questions yet in database
+          if (isMounted) {
+            setSupabaseQuestions(IHK_120_EXAM_QUESTIONS);
+            setIsLoadingPool(false);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load written questions from Supabase, using standard catalogue:', err);
+        if (isMounted) {
+          setSupabaseQuestions(IHK_120_EXAM_QUESTIONS);
+          setIsLoadingPool(false);
+        }
+      }
+    }
+    loadWrittenQuestions();
+    return () => { isMounted = false; };
+  }, []);
+
   // Active exam questions and answers state
   const [questions, setQuestions] = useState<WrittenQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -252,6 +294,7 @@ export default function SchriftlicherTestmodus({
   // Start Exam
   const handleStartExam = () => {
     let examSet: WrittenQuestion[] = [];
+    const poolToUse = (supabaseQuestions && supabaseQuestions.length > 0) ? supabaseQuestions : IHK_120_EXAM_QUESTIONS;
     
     if (subMode === 'category' && !selectedCategory) {
       setConfigError('Bitte wählen Sie ein Sachgebiet aus.');
@@ -264,18 +307,22 @@ export default function SchriftlicherTestmodus({
     let durationSeconds = 120 * 60;
     if (subMode === 'ihk') {
       modePrefix = 'written_exam_82';
-      // 82 Fragen nach 120-Punkte-Bewertungsschlüssel
-      examSet = [...IHK_120_EXAM_QUESTIONS];
+      // Fragen nach 120-Punkte-Bewertungsschlüssel aus Supabase
+      examSet = [...poolToUse];
       durationSeconds = 120 * 60; // 120 Minuten
     } else if (subMode === 'quick') {
       modePrefix = 'written_exam_quick';
       // 20 Fragen Schnelldurchlauf
-      const shuffled = [...IHK_120_EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
-      examSet = shuffled.slice(0, 20);
+      const shuffled = [...poolToUse].sort(() => Math.random() - 0.5);
+      examSet = shuffled.slice(0, Math.min(20, shuffled.length));
       durationSeconds = 30 * 60; // 30 Minuten
     } else {
       // Einzelnes Fachgebiet
-      examSet = IHK_120_EXAM_QUESTIONS.filter(q => q.kategorie === selectedCategory);
+      examSet = poolToUse.filter(q => q.kategorie === selectedCategory);
+      if (examSet.length === 0) {
+        // Fallback to standard if no category matches
+        examSet = IHK_120_EXAM_QUESTIONS.filter(q => q.kategorie === selectedCategory);
+      }
       durationSeconds = Math.max(10, examSet.length * 1.5) * 60;
     }
 

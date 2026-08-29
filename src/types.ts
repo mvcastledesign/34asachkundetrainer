@@ -21,6 +21,7 @@ export interface WrittenQuestion {
   korrekteAntworten: number[]; // indices of correct option(s) (0 to 3)
   punkte: number; // point value (1 or 2)
   erklaerung: string; // solution explanation
+  target_mode?: string; // 'written_test'
 }
 
 export type Lernstatus = 'neu' | 'gewusst' | 'nicht_gewusst';

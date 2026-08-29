@@ -631,7 +631,7 @@ export default function App() {
     { id: 'was-bin-ich', label: '„Was bin ich?“ Rätsel', icon: HelpCircle },
     { id: 'analyse', label: 'Fortschritt & Statistiken', icon: TrendingUp },
     { id: 'suche', label: 'Inhalten Suchen & Filtern', icon: Search },
-    { id: 'daten', label: 'Fragenkatalog bearbeiten', icon: PlusCircle }
+    { id: 'daten', label: 'Fragen-Editor (Schriftlich)', icon: PlusCircle }
   ];
 
   return (

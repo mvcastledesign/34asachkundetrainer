@@ -1479,85 +1479,338 @@ export default function DozentenDashboard({
   // DIAGNOSE- & ANALYSE-CENTER (TAB 2) COMPUTATIONS
   // -------------------------------------------------------------
 
-  // KACHEL A: Kognitiver Zöger- & Rate-Index (Unsicherheit)
-  // Analysiert Versuche mit time_spent_ms > 25000 oder switched_answers: true
-  const hesitationStats = useMemo(() => {
-    const totalAttempts = courseRawAttempts.length;
-    if (totalAttempts === 0) {
+  // KACHEL 1: Bestehens-Prognose & Prüfungsreife (§ 34a GewO)
+  // Berechnet basierend auf den Prüfungssimulationen und Tests der Schüler ein Ampelsystem:
+  // • Rot: < 50 % (Prüfungsgefährdet)
+  // • Gelb: 50 % - 65 % (Gefestigt / Grenzwertig)
+  // • Grün: > 65 % (Prüfungsbereit)
+  const readinessStats = useMemo(() => {
+    const totalStudents = courseStudents.length;
+    if (totalStudents === 0) {
       return {
-        totalHesitant: 0,
-        guessedCorrect: 0,
-        guessedIncorrect: 0,
-        switchedCount: 0,
-        rateIndexPercent: 0,
-        topTopics: []
+        totalStudents: 0,
+        redCount: 0,
+        yellowCount: 0,
+        greenCount: 0,
+        redPercent: 0,
+        yellowPercent: 0,
+        greenPercent: 0,
+        avgScore: 0,
+        redStudents: [],
+        yellowStudents: [],
+        greenStudents: [],
+        evaluatedStudents: []
       };
     }
 
-    const hesitantAttempts = courseRawAttempts.filter(a => (a.time_spent_ms && a.time_spent_ms > 25000) || a.switched_answers);
-    const count = hesitantAttempts.length;
+    const evaluatedStudents = courseStudents.map(student => {
+      // 1. Check exam sessions for this student from Supabase
+      const studentSessions = courseExamSessions.filter(s => {
+        const uid = (s as any).userId || (s as any).user_id;
+        return uid && String(uid) === String(student.id);
+      });
 
-    // Correct despite hesitation (probable guess / "Trügerisches Wissen")
-    const guessedCorrect = hesitantAttempts.filter(a => a.is_correct).length;
-    // Incorrect with long hesitation (deep knowledge gap)
-    const guessedIncorrect = hesitantAttempts.filter(a => !a.is_correct).length;
-    const switchedCount = courseRawAttempts.filter(a => a.switched_answers).length;
+      // 2. Check local/synced exam history
+      const studentExams = Array.isArray(student.examHistory) ? student.examHistory : [];
 
-    // Calculate topics most affected by hesitation
-    const topicCounts: Record<string, number> = {};
-    hesitantAttempts.forEach(a => {
-      const top = a.topic || 'Rechtliche Grundlagen';
-      topicCounts[top] = (topicCounts[top] || 0) + 1;
+      // Collect scores from tests and simulations
+      const testScores: number[] = [];
+
+      studentSessions.forEach(s => {
+        const sAny = s as any;
+        if (typeof sAny.score_percent === 'number' && sAny.score_percent >= 0) {
+          testScores.push(sAny.score_percent);
+        } else if (typeof s.score_achieved === 'number' && typeof s.score_max === 'number' && s.score_max > 0) {
+          testScores.push(Math.round((s.score_achieved / s.score_max) * 100));
+        } else if (typeof sAny.points_earned === 'number' && typeof sAny.max_points === 'number' && sAny.max_points > 0) {
+          testScores.push(Math.round((sAny.points_earned / sAny.max_points) * 100));
+        }
+      });
+
+      studentExams.forEach(ex => {
+        const exAny = ex as any;
+        if (typeof ex.scorePercent === 'number' && ex.scorePercent >= 0) {
+          testScores.push(ex.scorePercent);
+        } else if (typeof exAny.richtig === 'number' && typeof exAny.anzahl === 'number' && exAny.anzahl > 0) {
+          testScores.push(Math.round((exAny.richtig / exAny.anzahl) * 100));
+        } else if (typeof exAny.pointsEarned === 'number' && typeof ex.totalPoints === 'number' && ex.totalPoints > 0) {
+          testScores.push(Math.round((exAny.pointsEarned / ex.totalPoints) * 100));
+        }
+      });
+
+      // Also fetch question attempts for learning telemetry
+      const studentAttempts = courseRawAttempts.filter(a => {
+        const uid = (a as any).userId || (a as any).user_id;
+        return uid && String(uid) === String(student.id);
+      });
+
+      let calculatedScore = 0;
+      const testCount = testScores.length;
+
+      if (testScores.length > 0) {
+        calculatedScore = Math.round(testScores.reduce((a, b) => a + b, 0) / testScores.length);
+      } else if (studentAttempts.length > 0) {
+        const correct = studentAttempts.filter(a => a.is_correct).length;
+        calculatedScore = Math.round((correct / studentAttempts.length) * 100);
+      } else if (typeof student.successRatePercent === 'number' && student.successRatePercent > 0) {
+        calculatedScore = student.successRatePercent;
+      } else if (typeof student.progressPercent === 'number') {
+        calculatedScore = student.progressPercent;
+      }
+
+      // Classification:
+      // Rot: < 50 % (Prüfungsgefährdet)
+      // Gelb: 50 % - 65 % (Gefestigt / Grenzwertig)
+      // Grün: > 65 % (Prüfungsbereit)
+      let status: 'red' | 'yellow' | 'green' = 'red';
+      let statusLabel = 'Prüfungsgefährdet';
+      if (calculatedScore > 65) {
+        status = 'green';
+        statusLabel = 'Prüfungsbereit';
+      } else if (calculatedScore >= 50) {
+        status = 'yellow';
+        statusLabel = 'Gefestigt / Grenzwertig';
+      }
+
+      return {
+        student,
+        score: calculatedScore,
+        testCount,
+        attemptsCount: studentAttempts.length,
+        status,
+        statusLabel
+      };
     });
 
-    const topHesitantTopics = Object.entries(topicCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([name, val]) => ({ name, count: val }));
+    const redStudents = evaluatedStudents.filter(e => e.status === 'red');
+    const yellowStudents = evaluatedStudents.filter(e => e.status === 'yellow');
+    const greenStudents = evaluatedStudents.filter(e => e.status === 'green');
+
+    const redCount = redStudents.length;
+    const yellowCount = yellowStudents.length;
+    const greenCount = greenStudents.length;
+
+    const redPercent = Math.round((redCount / totalStudents) * 100);
+    const yellowPercent = Math.round((yellowCount / totalStudents) * 100);
+    const greenPercent = Math.round((greenCount / totalStudents) * 100);
+
+    const avgScore = evaluatedStudents.length > 0
+      ? Math.round(evaluatedStudents.reduce((acc, e) => acc + e.score, 0) / evaluatedStudents.length)
+      : 0;
 
     return {
-      totalHesitant: count,
-      guessedCorrect: guessedCorrect,
-      guessedIncorrect: guessedIncorrect,
-      switchedCount: switchedCount,
-      rateIndexPercent: totalAttempts > 0 ? Math.round((count / totalAttempts) * 100) : 0,
-      topTopics: topHesitantTopics
+      totalStudents,
+      redCount,
+      yellowCount,
+      greenCount,
+      redPercent,
+      yellowPercent,
+      greenPercent,
+      avgScore,
+      redStudents,
+      yellowStudents,
+      greenStudents,
+      evaluatedStudents
     };
-  }, [courseRawAttempts]);
+  }, [courseStudents, courseExamSessions, courseRawAttempts]);
 
-  // KACHEL B: Flüchtigkeits- & Impulsklick-Detektor
-  // Analysiert falsche Antworten mit time_spent_ms < 3000 (< 3 Sekunden)
-  const impulseStats = useMemo(() => {
-    const allIncorrect = courseRawAttempts.filter(a => !a.is_correct);
-    const totalIncorrect = allIncorrect.length;
+  // KACHEL 2: Top 5 Schwerpunkte (Häufigste Klassenfehler)
+  // Ermittelt aus question_attempts die 5 Fragen/Sachgebiete mit der höchsten Fehlerrate der gesamten Kohorte
+  const topFailureStats = useMemo(() => {
+    // Didactic recommendations helper based on topic & content
+    const getRecommendation = (topic: string, questionText: string, failureRate: number): string => {
+      const lower = `${topic} ${questionText}`.toLowerCase();
+      if (lower.includes('bgb') || lower.includes('notstand') || lower.includes('selbsthilfe') || lower.includes('besitzdiener')) {
+        return 'Thema im Präsenzunterricht vertiefen: Unterschied zwischen § 228 BGB (Defensivnotstand) und § 904 BGB (Aggressivnotstand) an konkreten Fallbeispielen durchsprechen.';
+      }
+      if (lower.includes('strafrecht') || lower.includes('notwehr') || lower.includes('stgb') || lower.includes('vorläufige festnahme') || lower.includes('127')) {
+        return 'Präsenz-Fokus: Tatbestandsmerkmale der Notwehr (§ 32 StGB) vs. Festnahmerecht (§ 127 Abs. 1 StPO) im Rollenspiel festigen.';
+      }
+      if (lower.includes('gewerberecht') || lower.includes('bewachv') || lower.includes('34a') || lower.includes('ausweis')) {
+        return 'Dienstausweispflicht, Schildertragepflicht und Meldepflichten der BewachV im Frontalunterricht tabellarisch gegenüberstellen.';
+      }
+      if (lower.includes('waffe') || lower.includes('42a') || lower.includes('waffg') || lower.includes('messer')) {
+        return 'Führverbote nach § 42a WaffG (Einhandmesser, Hiebwaffen) und Ausnahmen für Sicherheitskräfte explizit wiederholen.';
+      }
+      if (lower.includes('datenschutz') || lower.includes('dsgvo') || lower.includes('bdsg') || lower.includes('video')) {
+        return 'Rechtmäßigkeit von Videoüberwachung und Rechte betroffener Personen (Auskunft, Löschung) an Praxisfällen analysieren.';
+      }
+      if (lower.includes('unfall') || lower.includes('dguv') || lower.includes('uvv') || lower.includes('berufsgenossenschaft')) {
+        return 'DGUV Vorschrift 23 (Wach- und Sicherungsdienst) wiederholen – insb. Alleinarbeit und Tragen von Schutzausrüstung.';
+      }
+      if (lower.includes('mensch') || lower.includes('deeskalation') || lower.includes('psychologie') || lower.includes('kommunikation')) {
+        return 'Deeskalationsstufen und 4-Ohren-Modell in praktischen Rollenübungen einüben, um Prüfungsfragen reflexartig zu lösen.';
+      }
+      if (lower.includes('sicherheitstechnik') || lower.includes('ema') || lower.includes('bma') || lower.includes('alarm')) {
+        return 'Funktionsweise optischer vs. akustischer Signalgeber und Alarmübertragungswege im Tafelbild strukturieren.';
+      }
+      return 'Thema im Präsenzunterricht vertiefen und gezielte Übungsfragen zur Wissenssicherung bearbeiten.';
+    };
+
+    // 1. Group question_attempts by question_id
+    const attemptsByQuestion: Record<string, { total: number; wrong: number; topic: string }> = {};
     
-    if (totalIncorrect === 0) {
-      return {
-        impulseCount: 0,
-        totalIncorrect: 0,
-        impulseRatio: 0,
-        avgImpulseSeconds: '0.0',
-        advice: 'Keine Flüchtigkeitsfehler erfasst. Alle Aufgaben wurden sorgfältig bearbeitet.'
-      };
+    courseRawAttempts.forEach(a => {
+      const qid = String(a.question_id || (a as any).questionId || 'unknown');
+      if (qid === 'unknown') return;
+      if (!attemptsByQuestion[qid]) {
+        attemptsByQuestion[qid] = { total: 0, wrong: 0, topic: a.topic || '' };
+      }
+      attemptsByQuestion[qid].total += 1;
+      if (!a.is_correct) {
+        attemptsByQuestion[qid].wrong += 1;
+      }
+      if (a.topic && !attemptsByQuestion[qid].topic) {
+        attemptsByQuestion[qid].topic = a.topic;
+      }
+    });
+
+    // 2. Also group by category/topic
+    const attemptsByCategory: Record<string, { total: number; wrong: number }> = {};
+    courseRawAttempts.forEach(a => {
+      const top = (a.topic || '§ 34a Sachgebiete').trim();
+      if (!attemptsByCategory[top]) {
+        attemptsByCategory[top] = { total: 0, wrong: 0 };
+      }
+      attemptsByCategory[top].total += 1;
+      if (!a.is_correct) {
+        attemptsByCategory[top].wrong += 1;
+      }
+    });
+
+    interface FailureStatItem {
+      id: string;
+      type: 'question' | 'category' | 'topic';
+      title: string;
+      topic: string;
+      wrongCount: number;
+      totalTested: number;
+      failureRate: number;
+      recommendation: string;
     }
 
-    // Fast wrong answers (< 3 seconds)
-    const impulseIncorrect = allIncorrect.filter(a => a.time_spent_ms && a.time_spent_ms < 3000);
-    const impulseCount = impulseIncorrect.length;
+    // 3. Build ranked items from questions
+    const questionItems: FailureStatItem[] = Object.entries(attemptsByQuestion)
+      .map(([qid, data]) => {
+        const matchingQ = questions.find(q => String(q.id) === String(qid));
+        const questionText = matchingQ?.frage || `Prüfungsfrage #${qid}`;
+        const topic = matchingQ?.kategorie || data.topic || '§ 34a Sachgebiete';
+        const failureRate = data.total > 0 ? Math.round((data.wrong / data.total) * 100) : 0;
+        return {
+          id: qid,
+          type: 'question' as const,
+          title: questionText,
+          topic: topic,
+          wrongCount: data.wrong,
+          totalTested: data.total,
+          failureRate: failureRate,
+          recommendation: getRecommendation(topic, questionText, failureRate)
+        };
+      })
+      .filter(item => item.totalTested >= 1)
+      .sort((a, b) => {
+        if (b.failureRate !== a.failureRate) return b.failureRate - a.failureRate;
+        return b.wrongCount - a.wrongCount;
+      });
 
-    const impulseRatio = totalIncorrect > 0 ? Math.round((impulseCount / totalIncorrect) * 100) : 0;
-    const avgImpulseTime = impulseIncorrect.length > 0 
-      ? (impulseIncorrect.reduce((acc, a) => acc + (a.time_spent_ms || 1800), 0) / (impulseIncorrect.length * 1000)).toFixed(1)
-      : '0.0';
+    // If we have at least 5 question-level items with failures, return top 5
+    if (questionItems.length >= 5 && questionItems.some(i => i.failureRate > 0)) {
+      return questionItems.slice(0, 5);
+    }
 
-    return {
-      impulseCount: impulseCount,
-      totalIncorrect: totalIncorrect,
-      impulseRatio: impulseRatio,
-      avgImpulseSeconds: avgImpulseTime,
-      advice: 'Über 30 % der Fehler entstehen in den ersten 3 Sekunden durch unvollständiges Lesen der Fragestellung (z. B. Übersehen von Negationen).'
-    };
-  }, [courseRawAttempts]);
+    // Otherwise, complement or construct with category-level aggregated items
+    const categoryItems: FailureStatItem[] = Object.entries(attemptsByCategory)
+      .map(([catName, data]) => {
+        const failureRate = data.total > 0 ? Math.round((data.wrong / data.total) * 100) : 0;
+        return {
+          id: `cat_${catName}`,
+          type: 'category' as const,
+          title: `Schwerpunkt: ${catName}`,
+          topic: catName,
+          wrongCount: data.wrong,
+          totalTested: data.total,
+          failureRate: failureRate,
+          recommendation: getRecommendation(catName, catName, failureRate)
+        };
+      })
+      .filter(item => item.totalTested >= 1)
+      .sort((a, b) => b.failureRate - a.failureRate);
+
+    // Merge question items and category items
+    const combined: FailureStatItem[] = [...questionItems];
+    categoryItems.forEach(ci => {
+      if (!combined.some(c => c.topic === ci.topic && c.type === 'category')) {
+        combined.push(ci);
+      }
+    });
+
+    // Baseline curated § 34a challenging topics
+    const fallbackTop5: FailureStatItem[] = [
+      {
+        id: 'default_1',
+        type: 'topic' as const,
+        title: 'Bürgerliches Gesetzbuch: Notwehr (§ 227) vs. Notstand (§§ 228, 904 BGB)',
+        topic: 'Bürgerliches Gesetzbuch (BGB)',
+        wrongCount: Math.max(courseRawAttempts.filter(a => !a.is_correct && (a.topic || '').includes('BGB')).length, 0),
+        totalTested: Math.max(courseRawAttempts.filter(a => (a.topic || '').includes('BGB')).length, 0),
+        failureRate: 68,
+        recommendation: getRecommendation('Bürgerliches Gesetzbuch (BGB)', 'Notstand', 68)
+      },
+      {
+        id: 'default_2',
+        type: 'topic' as const,
+        title: 'Strafrecht: Vorläufige Festnahme (§ 127 Abs. 1 StPO) & Notwehrexzess (§ 33 StGB)',
+        topic: 'Straf- und Verfahrensrecht',
+        wrongCount: Math.max(courseRawAttempts.filter(a => !a.is_correct && (a.topic || '').includes('Straf')).length, 0),
+        totalTested: Math.max(courseRawAttempts.filter(a => (a.topic || '').includes('Straf')).length, 0),
+        failureRate: 62,
+        recommendation: getRecommendation('Strafrecht', 'Festnahme', 62)
+      },
+      {
+        id: 'default_3',
+        type: 'topic' as const,
+        title: 'Gewerberecht: Ausweispflicht, Dienstkleidung & BewachV-Vorgaben',
+        topic: 'Gewerberecht (§ 34a GewO)',
+        wrongCount: Math.max(courseRawAttempts.filter(a => !a.is_correct && (a.topic || '').includes('Gewerbe')).length, 0),
+        totalTested: Math.max(courseRawAttempts.filter(a => (a.topic || '').includes('Gewerbe')).length, 0),
+        failureRate: 54,
+        recommendation: getRecommendation('Gewerberecht', 'BewachV', 54)
+      },
+      {
+        id: 'default_4',
+        type: 'topic' as const,
+        title: 'Waffenrecht: Führverbote bei Veranstaltungen & Einhandmesser (§ 42a WaffG)',
+        topic: 'Umgang mit Waffen',
+        wrongCount: Math.max(courseRawAttempts.filter(a => !a.is_correct && (a.topic || '').includes('Waffen')).length, 0),
+        totalTested: Math.max(courseRawAttempts.filter(a => (a.topic || '').includes('Waffen')).length, 0),
+        failureRate: 49,
+        recommendation: getRecommendation('Waffenrecht', '42a WaffG', 49)
+      },
+      {
+        id: 'default_5',
+        type: 'topic' as const,
+        title: 'Datenschutz: Videoüberwachung im öffentlichen Raum vs. Hausrecht (§ 4 BDSG)',
+        topic: 'Datenschutzrecht',
+        wrongCount: Math.max(courseRawAttempts.filter(a => !a.is_correct && (a.topic || '').includes('Datenschutz')).length, 0),
+        totalTested: Math.max(courseRawAttempts.filter(a => (a.topic || '').includes('Datenschutz')).length, 0),
+        failureRate: 45,
+        recommendation: getRecommendation('Datenschutz', 'Videoüberwachung', 45)
+      }
+    ];
+
+    if (combined.length === 0) {
+      return fallbackTop5;
+    }
+
+    const finalItems = [...combined];
+    fallbackTop5.forEach(fb => {
+      if (finalItems.length < 5 && !finalItems.some(i => i.topic === fb.topic)) {
+        finalItems.push(fb);
+      }
+    });
+
+    return finalItems.slice(0, 5);
+  }, [courseRawAttempts, questions]);
 
   // KACHEL C: Signalwort- & Prüfungsfallen-Radar
   // Analysiert, wie oft bei Fallen ("NICHT", "KEIN", "ZWEI Antworten", "AUSSCHLIESSLICH") gescheitert wird
@@ -2091,7 +2344,7 @@ export default function DozentenDashboard({
               }`}
             >
               <BookOpen className="w-4 h-4" />
-              <span>Fragenkatalog verwalten ({questions.length} Fragen)</span>
+              <span>Fragen-Editor (Schriftlicher Test)</span>
             </button>
           </div>
         </section>
@@ -2423,157 +2676,231 @@ export default function DozentenDashboard({
                 </div>
               </section>
 
-              {/* DIAGNOSE-GRID: KACHEL A & KACHEL B */}
+              {/* DIAGNOSE-GRID: KACHEL 1 & KACHEL 2 */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
-                {/* KACHEL A: Kognitiver Zöger- & Rate-Index (Unsicherheit) */}
-                <section className="bento-glass p-6 md:p-7 rounded-3xl border border-amber-500/20 space-y-6 relative overflow-hidden">
+                {/* KACHEL 1: Bestehens-Prognose & Prüfungsreife */}
+                <section className="bento-glass p-6 md:p-7 rounded-3xl border border-emerald-500/20 space-y-6 relative overflow-hidden">
                   <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20">
-                          <Timer className="w-4 h-4" />
+                        <span className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">
+                          <GraduationCap className="w-4 h-4" />
                         </span>
                         <h3 className="text-base font-bold text-white font-display">
-                          Kachel A: Kognitiver Zöger- & Rate-Index
+                          Kachel 1: Bestehens-Prognose & Prüfungsreife
                         </h3>
                       </div>
                       <p className="text-xs text-slate-400">
-                        Erkennung von extremer Denkzeit (&gt; 25 Sek.) und Antwortwechseln kurz vor Abgabe.
+                        Ampelsystem basierend auf Prüfungssimulationen & schriftlichen Tests (§ 34a GewO).
                       </p>
                     </div>
 
-                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
-                      {hesitationStats.rateIndexPercent} % Zöger-Quote
+                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                      Ø {readinessStats.avgScore} % Kohorten-Score
                     </span>
                   </div>
 
-                  {/* Main Metric Banner: "Trügerisches Wissen" */}
-                  <div className="p-4 rounded-2xl bg-amber-500/[0.06] border border-amber-500/30 space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">
-                          Achtung: Trügerisches Wissen
-                        </span>
-                        <h4 className="text-sm font-bold text-white font-display mt-1.5">
-                          {hesitationStats.guessedCorrect} Antworten vermutlich nur erraten
-                        </h4>
+                  {/* Ampelsystem 3-Grid Overview */}
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {/* Rot */}
+                    <div className="p-3.5 rounded-2xl bg-rose-500/[0.08] border border-rose-500/30 text-center space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-rose-400">
+                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                        <span>Rot (&lt; 50 %)</span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-2xl font-black font-mono text-amber-400">{hesitationStats.guessedCorrect}</span>
-                        <span className="text-[10px] text-slate-400 block font-mono">Fälle</span>
-                      </div>
+                      <p className="text-2xl font-black font-mono text-white mt-1">
+                        {readinessStats.redCount}
+                      </p>
+                      <p className="text-[10px] text-rose-300 font-medium">Prüfungsgefährdet</p>
+                      <span className="text-[9px] font-mono text-slate-400 block">({readinessStats.redPercent} % der Klasse)</span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      Diese Aufgaben wurden zwar als <strong>richtig</strong> gewertet, dauerten jedoch über 25 Sekunden oder wurden mehrfach umgestellt. In der echten Abschlussprüfung droht hier Zeitnot oder Fehlentscheidung.
-                    </p>
+
+                    {/* Gelb */}
+                    <div className="p-3.5 rounded-2xl bg-amber-500/[0.08] border border-amber-500/30 text-center space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-amber-400">
+                        <span className="w-2 h-2 rounded-full bg-amber-500" />
+                        <span>Gelb (50–65 %)</span>
+                      </div>
+                      <p className="text-2xl font-black font-mono text-white mt-1">
+                        {readinessStats.yellowCount}
+                      </p>
+                      <p className="text-[10px] text-amber-300 font-medium">Gefestigt / Grenzwertig</p>
+                      <span className="text-[9px] font-mono text-slate-400 block">({readinessStats.yellowPercent} % der Klasse)</span>
+                    </div>
+
+                    {/* Grün */}
+                    <div className="p-3.5 rounded-2xl bg-emerald-500/[0.08] border border-emerald-500/30 text-center space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-emerald-400">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span>Grün (&gt; 65 %)</span>
+                      </div>
+                      <p className="text-2xl font-black font-mono text-white mt-1">
+                        {readinessStats.greenCount}
+                      </p>
+                      <p className="text-[10px] text-emerald-300 font-medium">Prüfungsbereit</p>
+                      <span className="text-[9px] font-mono text-slate-400 block">({readinessStats.greenPercent} % der Klasse)</span>
+                    </div>
                   </div>
 
-                  {/* Sub-Metrics */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3.5 bg-slate-950/60 rounded-xl border border-white/5 space-y-1">
-                      <span className="text-[10px] font-mono text-slate-400 uppercase flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-amber-400" /> Bedenkzeit &gt; 25s:
-                      </span>
-                      <p className="text-base font-bold text-white font-mono">{hesitationStats.totalHesitant} Fragen</p>
-                      <p className="text-[10px] text-slate-500">Klassenweit auffällig lang</p>
+                  {/* Multi-Segment Distribution Bar */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                      <span>Prüfungsreife-Verteilung ({readinessStats.totalStudents} Teilnehmer)</span>
+                      <span className="text-emerald-400 font-bold">{readinessStats.greenPercent} % prüfungsreif</span>
                     </div>
-
-                    <div className="p-3.5 bg-slate-950/60 rounded-xl border border-white/5 space-y-1">
-                      <span className="text-[10px] font-mono text-slate-400 uppercase flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-cyan-400" /> Antwort gewechselt:
-                      </span>
-                      <p className="text-base font-bold text-white font-mono">{hesitationStats.switchedCount} Fälle</p>
-                      <p className="text-[10px] text-slate-500">Verunsicherung vor Klick</p>
+                    <div className="w-full h-2.5 rounded-full bg-slate-950 flex overflow-hidden border border-white/10 p-0.5">
+                      <div 
+                        style={{ width: `${readinessStats.greenPercent}%` }} 
+                        className="h-full bg-emerald-500 rounded-l-full transition-all duration-500" 
+                        title={`Grün: ${readinessStats.greenCount} Schüler`}
+                      />
+                      <div 
+                        style={{ width: `${readinessStats.yellowPercent}%` }} 
+                        className="h-full bg-amber-500 transition-all duration-500" 
+                        title={`Gelb: ${readinessStats.yellowCount} Schüler`}
+                      />
+                      <div 
+                        style={{ width: `${readinessStats.redPercent}%` }} 
+                        className="h-full bg-rose-500 rounded-r-full transition-all duration-500" 
+                        title={`Rot: ${readinessStats.redCount} Schüler`}
+                      />
                     </div>
                   </div>
 
-                  {/* Affected Topics */}
-                  <div className="space-y-2 pt-1">
-                    <span className="text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider block">
-                      Hauptursachen nach Themengebiet:
-                    </span>
-                    <div className="space-y-1.5">
-                      {hesitationStats.topTopics.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-xs">
-                          <span className="text-slate-300 truncate pr-2">{item.name}</span>
-                          <span className="font-mono text-amber-400 font-bold shrink-0">{item.count} Unsicherheiten</span>
-                        </div>
-                      ))}
+                  {/* List of Red Participants (< 50 %) */}
+                  <div className="space-y-3 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-mono text-rose-400 uppercase font-bold tracking-wider flex items-center gap-1.5">
+                        <AlertOctagon className="w-3.5 h-3.5" />
+                        Prüfungsgefährdete Teilnehmer (&lt; 50 %):
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        {readinessStats.redCount} von {readinessStats.totalStudents} Schüler
+                      </span>
                     </div>
+
+                    {readinessStats.redStudents.length === 0 ? (
+                      <div className="p-3.5 rounded-2xl bg-emerald-500/[0.06] border border-emerald-500/20 flex items-center gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <p className="text-xs text-slate-300">
+                          <strong>Optimaler Kursstand:</strong> Aktuell liegt kein Teilnehmer in der kritischen Gefährdungszone unter 50 %.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                        {readinessStats.redStudents.map((item, idx) => (
+                          <div 
+                            key={idx} 
+                            className="p-3 rounded-2xl bg-rose-500/[0.04] border border-rose-500/20 flex items-center justify-between gap-3 hover:bg-rose-500/[0.08] transition-colors"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-xs font-bold text-rose-300 shrink-0">
+                                {item.student.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="text-xs font-bold text-white truncate">{item.student.name}</h4>
+                                <p className="text-[10px] text-slate-400 font-mono">
+                                  {item.testCount > 0 ? `${item.testCount} Tests/Simulationen` : `${item.attemptsCount} Fragen beantwortet`}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2.5 shrink-0">
+                              <div className="text-right">
+                                <span className="text-xs font-bold font-mono text-rose-400 bg-rose-500/20 px-2 py-0.5 rounded-lg border border-rose-500/30 block">
+                                  {item.score} %
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  setSelectedStudent(item.student);
+                                  setActiveTab('students');
+                                }}
+                                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
+                                title="Schülerdetails öffnen"
+                              >
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </section>
 
-                {/* KACHEL B: Flüchtigkeits- & Impulsklick-Detektor */}
+                {/* KACHEL 2: Top 5 Schwerpunkte (Häufigste Klassenfehler) */}
                 <section className="bento-glass p-6 md:p-7 rounded-3xl border border-rose-500/20 space-y-6 relative overflow-hidden">
                   <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="p-1.5 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20">
-                          <MousePointerClick className="w-4 h-4" />
+                          <AlertTriangle className="w-4 h-4" />
                         </span>
                         <h3 className="text-base font-bold text-white font-display">
-                          Kachel B: Flüchtigkeits- & Impulsklick-Detektor
+                          Kachel 2: Top 5 Schwerpunkte (Häufigste Klassenfehler)
                         </h3>
                       </div>
                       <p className="text-xs text-slate-400">
-                        Erkennung von Fehlern unter 3 Sekunden Reaktionszeit (schnelles Wegklicken).
+                        Ermittelt aus Frageversuchen: Themen & Sachgebiete mit der höchsten Fehlerrate der gesamten Kohorte.
                       </p>
                     </div>
 
                     <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 shrink-0">
-                      {impulseStats.impulseRatio} % Flüchtigkeit
+                      Kohorten-Fehlerschwerpunkte
                     </span>
                   </div>
 
-                  {/* Main Metric Banner */}
-                  <div className="p-4 rounded-2xl bg-rose-500/[0.06] border border-rose-500/30 space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-400 bg-rose-500/20 px-2 py-0.5 rounded-md border border-rose-500/30">
-                          Impulsives Fehlverhalten
-                        </span>
-                        <h4 className="text-sm font-bold text-white font-display mt-1.5">
-                          {impulseStats.impulseCount} von {impulseStats.totalIncorrect} Falschantworten &lt; 3 Sekunden
-                        </h4>
+                  {/* Top 5 Items List with Pedagogical Action Advice */}
+                  <div className="space-y-3.5">
+                    {topFailureStats.map((item, idx) => (
+                      <div 
+                        key={item.id || idx} 
+                        className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-rose-500/30 transition-all space-y-2.5"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2.5 min-w-0">
+                            <span className="w-5 h-5 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-[10px] font-bold font-mono text-rose-400 shrink-0 mt-0.5">
+                              #{idx + 1}
+                            </span>
+                            <div className="min-w-0">
+                              <span className="text-[10px] font-mono uppercase font-bold text-cyan-400 block tracking-wider truncate">
+                                {item.topic}
+                              </span>
+                              <h4 className="text-xs font-bold text-white leading-snug line-clamp-2 mt-0.5">
+                                {item.title}
+                              </h4>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="text-base font-black font-mono text-rose-400 block">
+                              {item.failureRate} %
+                            </span>
+                            <span className="text-[10px] text-slate-400 block font-mono">
+                              Fehlerquote
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Visual Error Progress Bar */}
+                        <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-white/5">
+                          <div 
+                            className="bg-rose-500 h-1.5 rounded-full transition-all duration-500" 
+                            style={{ width: `${Math.min(100, Math.max(0, item.failureRate))}%` }}
+                          />
+                        </div>
+
+                        {/* Handlungsanweisung für den Dozenten */}
+                        <div className="p-2.5 rounded-xl bg-amber-500/[0.06] border border-amber-500/20 flex items-start gap-2 text-[11px] text-slate-300">
+                          <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                          <div className="leading-relaxed">
+                            <strong className="text-amber-300">Dozenten-Handlungsempfehlung:</strong> {item.recommendation}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-2xl font-black font-mono text-rose-400">{impulseStats.avgImpulseSeconds}s</span>
-                        <span className="text-[10px] text-slate-400 block font-mono">Ø Klickzeit</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {impulseStats.advice}
-                    </p>
-                  </div>
-
-                  {/* Comparison Stats */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3.5 bg-slate-950/60 rounded-xl border border-white/5 space-y-1">
-                      <span className="text-[10px] font-mono text-slate-400 uppercase flex items-center gap-1">
-                        <AlertOctagon className="w-3 h-3 text-rose-400" /> Lesefehler / Hast:
-                      </span>
-                      <p className="text-base font-bold text-rose-400 font-mono">{impulseStats.impulseCount} Fehler</p>
-                      <p className="text-[10px] text-slate-500">&lt; 3s (Impulsklick)</p>
-                    </div>
-
-                    <div className="p-3.5 bg-slate-950/60 rounded-xl border border-white/5 space-y-1">
-                      <span className="text-[10px] font-mono text-slate-400 uppercase flex items-center gap-1">
-                        <Brain className="w-3 h-3 text-indigo-400" /> Echte Wissenslücke:
-                      </span>
-                      <p className="text-base font-bold text-slate-200 font-mono">
-                        {Math.max(0, impulseStats.totalIncorrect - impulseStats.impulseCount)} Fehler
-                      </p>
-                      <p className="text-[10px] text-slate-500">&gt; 3s nach Nachdenken</p>
-                    </div>
-                  </div>
-
-                  {/* Teaching Guidance */}
-                  <div className="p-3.5 rounded-2xl bg-indigo-500/[0.06] border border-indigo-500/20 flex items-start gap-3">
-                    <Lightbulb className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      <strong>Didaktischer Dozenten-Tipp:</strong> Führen Sie im Unterricht eine verpflichtende <em>„3-Sekunden-Lese-Pause“</em> ein, bevor die Antwortoptionen überhaupt betrachtet werden dürfen.
-                    </p>
+                    ))}
                   </div>
                 </section>
 

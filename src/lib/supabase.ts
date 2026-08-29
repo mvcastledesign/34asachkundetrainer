@@ -5,6 +5,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { StudentDetail } from '../types/auth.ts';
+import { WrittenQuestion } from '../types.ts';
 
 const SUPABASE_URL = "https://tfkwxkpbnklwauljauta.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRma3d4a3Bibmtsd2F1bGphdXRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ1OTAsImV4cCI6MjEwMDIzMDU5MH0.i1-YXijqWsG6wfY550_svsPE-7hrTZe7m_dlgmTM87s";
@@ -388,6 +389,290 @@ export async function updateStudentProgressInSupabase(
   } catch (err: any) {
     console.error('Supabase Update Error (Exception):', err);
     return { success: false, error: err?.message || 'Unbekannter Fehler' };
+  }
+}
+
+/**
+ * Maps Supabase row to WrittenQuestion
+ */
+export function mapRowToWrittenQuestion(r: any): WrittenQuestion {
+  let optionen: string[] = [];
+  if (Array.isArray(r.optionen)) {
+    optionen = r.optionen;
+  } else if (Array.isArray(r.options)) {
+    optionen = r.options;
+  } else if (typeof r.optionen === 'string') {
+    try { 
+      const parsed = JSON.parse(r.optionen); 
+      if (Array.isArray(parsed)) optionen = parsed;
+      else optionen = [r.optionen];
+    } catch { 
+      optionen = [r.optionen]; 
+    }
+  } else if (typeof r.options === 'string') {
+    try { 
+      const parsed = JSON.parse(r.options); 
+      if (Array.isArray(parsed)) optionen = parsed;
+      else optionen = [r.options];
+    } catch { 
+      optionen = [r.options]; 
+    }
+  } else {
+    const a = r.option_a || r.optionA || '';
+    const b = r.option_b || r.optionB || '';
+    const c = r.option_c || r.optionC || '';
+    const d = r.option_d || r.optionD || '';
+    if (a || b || c || d) {
+      optionen = [a, b, c, d];
+    }
+  }
+
+  // Ensure exactly 4 options
+  while (optionen.length < 4) {
+    optionen.push('');
+  }
+
+  let korrekteAntworten: number[] = [];
+  const rawCorrect = r.korrekte_antworten ?? r.correct_answers ?? r.korrekteAntworten ?? r.correctAnswers;
+  if (Array.isArray(rawCorrect)) {
+    korrekteAntworten = rawCorrect.map(Number).filter(n => !isNaN(n));
+  } else if (typeof rawCorrect === 'string') {
+    try {
+      const parsed = JSON.parse(rawCorrect);
+      if (Array.isArray(parsed)) {
+        korrekteAntworten = parsed.map(Number).filter(n => !isNaN(n));
+      }
+    } catch {
+      if (rawCorrect.includes(',')) {
+        korrekteAntworten = rawCorrect.split(',').map(s => {
+          const trimmed = s.trim().toUpperCase();
+          if (trimmed === 'A') return 0;
+          if (trimmed === 'B') return 1;
+          if (trimmed === 'C') return 2;
+          if (trimmed === 'D') return 3;
+          return Number(trimmed);
+        }).filter(n => !isNaN(n));
+      } else {
+        const trimmed = rawCorrect.trim().toUpperCase();
+        if (trimmed === 'A') korrekteAntworten = [0];
+        else if (trimmed === 'B') korrekteAntworten = [1];
+        else if (trimmed === 'C') korrekteAntworten = [2];
+        else if (trimmed === 'D') korrekteAntworten = [3];
+        else if (!isNaN(Number(trimmed))) korrekteAntworten = [Number(trimmed)];
+      }
+    }
+  } else if (typeof rawCorrect === 'number') {
+    korrekteAntworten = [rawCorrect];
+  }
+
+  if (korrekteAntworten.length === 0) {
+    korrekteAntworten = [0];
+  }
+
+  const rawPunkte = typeof r.punkte === 'number' ? r.punkte : (typeof r.points === 'number' ? r.points : (korrekteAntworten.length === 2 ? 2 : 1));
+  const punkte = rawPunkte === 2 ? 2 : 1;
+
+  return {
+    id: String(r.id),
+    kategorie: r.kategorie || r.category || 'Recht der öffentlichen Sicherheit und Ordnung',
+    frage: r.frage || r.question || '',
+    optionen: optionen.slice(0, 4),
+    korrekteAntworten: korrekteAntworten,
+    punkte: punkte,
+    erklaerung: r.erklaerung || r.explanation || r.begruendung || '',
+    target_mode: r.target_mode || 'written_test'
+  };
+}
+
+/**
+ * Fetch all written test questions from Supabase (target_mode = 'written_test')
+ */
+export async function fetchWrittenQuestionsFromSupabase(): Promise<WrittenQuestion[]> {
+  try {
+    const { data, error } = await supabase
+      .from('questions')
+      .select('*')
+      .eq('target_mode', 'written_test')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.warn('Supabase fetch written questions notice:', error.message);
+      return [];
+    }
+
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    return data.map(mapRowToWrittenQuestion);
+  } catch (err) {
+    console.error('Failed to fetch written questions from Supabase:', err);
+    return [];
+  }
+}
+
+/**
+ * Saves or updates a written question in Supabase (target_mode = 'written_test')
+ */
+export async function saveWrittenQuestionToSupabase(
+  q: Omit<WrittenQuestion, 'id'> & { id?: string }
+): Promise<{ success: boolean; data?: WrittenQuestion; error?: string }> {
+  try {
+    const isEdit = Boolean(q.id && !q.id.startsWith('ihk-') && !q.id.startsWith('temp-') && !q.id.startsWith('local-'));
+    
+    const payload: any = {
+      target_mode: 'written_test',
+      kategorie: q.kategorie,
+      frage: q.frage.trim(),
+      optionen: q.optionen.map(opt => opt.trim()),
+      korrekte_antworten: q.korrekteAntworten,
+      punkte: q.punkte === 2 ? 2 : 1,
+      erklaerung: q.erklaerung.trim()
+    };
+
+    if (isEdit && q.id) {
+      const isNumericId = /^\d+$/.test(String(q.id));
+      const targetId = isNumericId ? parseInt(String(q.id), 10) : q.id;
+
+      const { data, error } = await supabase
+        .from('questions')
+        .update(payload)
+        .eq('id', targetId)
+        .select();
+
+      if (error) {
+        // Fallback with english keys
+        const fallbackPayload = {
+          target_mode: 'written_test',
+          category: q.kategorie,
+          question: q.frage.trim(),
+          options: q.optionen.map(opt => opt.trim()),
+          correct_answers: q.korrekteAntworten,
+          points: q.punkte === 2 ? 2 : 1,
+          explanation: q.erklaerung.trim()
+        };
+        const { data: fbData, error: fbError } = await supabase
+          .from('questions')
+          .update(fallbackPayload)
+          .eq('id', targetId)
+          .select();
+
+        if (fbError) {
+          return { success: false, error: error.message || fbError.message };
+        }
+        return { success: true, data: fbData && fbData[0] ? mapRowToWrittenQuestion(fbData[0]) : undefined };
+      }
+
+      return { success: true, data: data && data[0] ? mapRowToWrittenQuestion(data[0]) : undefined };
+    } else {
+      // Insert new question
+      const { data, error } = await supabase
+        .from('questions')
+        .insert([payload])
+        .select();
+
+      if (error) {
+        // Fallback with english keys
+        const fallbackPayload = {
+          target_mode: 'written_test',
+          category: q.kategorie,
+          question: q.frage.trim(),
+          options: q.optionen.map(opt => opt.trim()),
+          correct_answers: q.korrekteAntworten,
+          points: q.punkte === 2 ? 2 : 1,
+          explanation: q.erklaerung.trim()
+        };
+        const { data: fbData, error: fbError } = await supabase
+          .from('questions')
+          .insert([fallbackPayload])
+          .select();
+
+        if (fbError) {
+          return { success: false, error: error.message || fbError.message };
+        }
+        return { success: true, data: fbData && fbData[0] ? mapRowToWrittenQuestion(fbData[0]) : undefined };
+      }
+
+      return { success: true, data: data && data[0] ? mapRowToWrittenQuestion(data[0]) : undefined };
+    }
+  } catch (err: any) {
+    console.error('Error saving written question to Supabase:', err);
+    return { success: false, error: err?.message || 'Speichern fehlgeschlagen' };
+  }
+}
+
+/**
+ * Delete a written question from Supabase
+ */
+export async function deleteWrittenQuestionFromSupabase(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const isNumericId = /^\d+$/.test(String(id));
+    const targetId = isNumericId ? parseInt(String(id), 10) : id;
+
+    const { error } = await supabase
+      .from('questions')
+      .delete()
+      .eq('id', targetId);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  } catch (err: any) {
+    console.error('Error deleting written question:', err);
+    return { success: false, error: err?.message || 'Löschen fehlgeschlagen' };
+  }
+}
+
+/**
+ * Import a list of questions directly into Supabase (target_mode = 'written_test')
+ */
+export async function importWrittenQuestionsToSupabase(
+  questionsList: WrittenQuestion[]
+): Promise<{ success: boolean; count: number; error?: string }> {
+  try {
+    const payloads = questionsList.map(q => ({
+      target_mode: 'written_test',
+      kategorie: q.kategorie,
+      frage: q.frage.trim(),
+      optionen: q.optionen.map(opt => opt.trim()),
+      korrekte_antworten: q.korrekteAntworten,
+      punkte: q.punkte === 2 ? 2 : 1,
+      erklaerung: q.erklaerung.trim()
+    }));
+
+    const { data, error } = await supabase
+      .from('questions')
+      .insert(payloads)
+      .select();
+
+    if (error) {
+      // Fallback with english keys
+      const fallbackPayloads = questionsList.map(q => ({
+        target_mode: 'written_test',
+        category: q.kategorie,
+        question: q.frage.trim(),
+        options: q.optionen.map(opt => opt.trim()),
+        correct_answers: q.korrekteAntworten,
+        points: q.punkte === 2 ? 2 : 1,
+        explanation: q.erklaerung.trim()
+      }));
+
+      const { data: fbData, error: fbErr } = await supabase
+        .from('questions')
+        .insert(fallbackPayloads)
+        .select();
+
+      if (fbErr) {
+        return { success: false, count: 0, error: error.message || fbErr.message };
+      }
+      return { success: true, count: fbData ? fbData.length : questionsList.length };
+    }
+
+    return { success: true, count: data ? data.length : questionsList.length };
+  } catch (err: any) {
+    console.error('Error batch importing written questions:', err);
+    return { success: false, count: 0, error: err?.message || 'Import fehlgeschlagen' };
   }
 }
 
