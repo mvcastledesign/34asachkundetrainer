@@ -43,11 +43,85 @@ import { IHK_120_EXAM_QUESTIONS, IHK_CATEGORIES_CONFIG, IhkCategoryConfig } from
 import TranslationView from './TranslationView.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { supabase, mapRowToWrittenQuestion } from '../lib/supabase.ts';
+import { fetchWrittenQuestionsFromSupabase } from '../lib/supabase.ts';
 
 interface SchriftlicherTestmodusProps {
   translationLang?: string;
   onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+}
+
+/**
+ * Normalisiert und vergleicht Kategorienamen tolerant gegen kleinere Abweichungen
+ */
+export function matchesCategory(qCat: string | undefined, targetCatName: string | undefined): boolean {
+  if (!qCat || !targetCatName) return false;
+  const a = qCat.trim().toLowerCase();
+  const b = targetCatName.trim().toLowerCase();
+  if (a === b) return true;
+  if (a.includes(b) || b.includes(a)) return true;
+
+  const keywords = [
+    'bgb', 
+    'stgb', 
+    'stpo', 
+    'waffen', 
+    'uvv', 
+    'dguv', 
+    'datenschutz', 
+    'dsgvo', 
+    'gewerberecht', 
+    'gewo', 
+    'sicherheitstechnik', 
+    'technik', 
+    'umgang mit menschen', 
+    'deeskalation', 
+    'öffentliche sicherheit'
+  ];
+  for (const kw of keywords) {
+    if (a.includes(kw) && b.includes(kw)) return true;
+  }
+  return false;
+}
+
+/**
+ * Führt Standardfragen mit dynamisch aus Supabase geladenen Fragen zusammen.
+ * Verhindert Duplikate anhand von ID und normalisiertem Fragetext.
+ * Cloud-Fragen aus Supabase überschreiben bei Übereinstimmung veraltete Standardfragen.
+ */
+export function mergeWrittenQuestionPool(
+  standardQuestions: WrittenQuestion[],
+  cloudQuestions: WrittenQuestion[]
+): WrittenQuestion[] {
+  const questionMap = new Map<string, WrittenQuestion>();
+  const textToKeyMap = new Map<string, string>();
+
+  // 1. Standardkatalog als Basis hinterlegen
+  standardQuestions.forEach(q => {
+    if (!q || !q.frage) return;
+    const idKey = String(q.id || '').trim().toLowerCase();
+    const textKey = q.frage.trim().toLowerCase().replace(/\s+/g, ' ');
+    questionMap.set(idKey, q);
+    textToKeyMap.set(textKey, idKey);
+  });
+
+  // 2. Cloud-Fragen aus Supabase einfügen / aktualisieren
+  cloudQuestions.forEach(q => {
+    if (!q || !q.frage) return;
+    const idKey = String(q.id || '').trim().toLowerCase();
+    const textKey = q.frage.trim().toLowerCase().replace(/\s+/g, ' ');
+
+    // Falls dieselbe Frage unter einer anderen ID existierte, alte entfernen
+    const existingKeyByText = textToKeyMap.get(textKey);
+    if (existingKeyByText && existingKeyByText !== idKey) {
+      questionMap.delete(existingKeyByText);
+    }
+
+    const finalKey = idKey || existingKeyByText || `cloud-${textKey.slice(0, 24)}`;
+    questionMap.set(finalKey, q);
+    textToKeyMap.set(textKey, finalKey);
+  });
+
+  return Array.from(questionMap.values());
 }
 
 /**
@@ -180,45 +254,34 @@ export default function SchriftlicherTestmodus({
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [configError, setConfigError] = useState<string | null>(null);
   
-  // Supabase Questions Pool
+  // Supabase Questions Pool & Combined Active Catalog
   const [supabaseQuestions, setSupabaseQuestions] = useState<WrittenQuestion[]>([]);
+  const [mergedQuestionsPool, setMergedQuestionsPool] = useState<WrittenQuestion[]>(IHK_120_EXAM_QUESTIONS);
   const [isLoadingPool, setIsLoadingPool] = useState<boolean>(true);
 
-  // Load questions directly from Supabase (target_mode = 'written_test')
-  useEffect(() => {
-    let isMounted = true;
-    async function loadWrittenQuestions() {
-      setIsLoadingPool(true);
-      try {
-        const { data, error } = await supabase
-          .from('questions')
-          .select('*')
-          .eq('target_mode', 'written_test')
-          .order('id', { ascending: true });
-
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(mapRowToWrittenQuestion);
-          if (isMounted) {
-            setSupabaseQuestions(mapped);
-            setIsLoadingPool(false);
-          }
-        } else {
-          // Fallback to standard 120-pt questions if no written_test questions yet in database
-          if (isMounted) {
-            setSupabaseQuestions(IHK_120_EXAM_QUESTIONS);
-            setIsLoadingPool(false);
-          }
-        }
-      } catch (err) {
-        console.warn('Could not load written questions from Supabase, using standard catalogue:', err);
-        if (isMounted) {
-          setSupabaseQuestions(IHK_120_EXAM_QUESTIONS);
-          setIsLoadingPool(false);
-        }
+  // Load questions directly from Supabase (written_questions) and merge with static catalog
+  const loadWrittenQuestions = async () => {
+    setIsLoadingPool(true);
+    try {
+      const cloudData = await fetchWrittenQuestionsFromSupabase();
+      if (cloudData && cloudData.length > 0) {
+        setSupabaseQuestions(cloudData);
+        const combined = mergeWrittenQuestionPool(IHK_120_EXAM_QUESTIONS, cloudData);
+        setMergedQuestionsPool(combined);
+      } else {
+        setSupabaseQuestions([]);
+        setMergedQuestionsPool(IHK_120_EXAM_QUESTIONS);
       }
+    } catch (err) {
+      console.warn('Could not load written questions from Supabase, using standard catalogue:', err);
+      setMergedQuestionsPool(IHK_120_EXAM_QUESTIONS);
+    } finally {
+      setIsLoadingPool(false);
     }
+  };
+
+  useEffect(() => {
     loadWrittenQuestions();
-    return () => { isMounted = false; };
   }, []);
 
   // Active exam questions and answers state
@@ -280,7 +343,7 @@ export default function SchriftlicherTestmodus({
   // Start Exam
   const handleStartExam = () => {
     let examSet: WrittenQuestion[] = [];
-    const poolToUse = (supabaseQuestions && supabaseQuestions.length > 0) ? supabaseQuestions : IHK_120_EXAM_QUESTIONS;
+    const poolToUse = mergedQuestionsPool.length > 0 ? mergedQuestionsPool : IHK_120_EXAM_QUESTIONS;
     
     if (subMode === 'category' && !selectedCategory) {
       setConfigError('Bitte wählen Sie ein Sachgebiet aus.');
@@ -293,23 +356,46 @@ export default function SchriftlicherTestmodus({
     let durationSeconds = 120 * 60;
     if (subMode === 'ihk') {
       modePrefix = 'written_exam_82';
-      // Fragen nach 120-Punkte-Bewertungsschlüssel aus Supabase
-      examSet = [...poolToUse];
-      durationSeconds = 120 * 60; // 120 Minuten
+      // Originalgetreue IHK 82-Fragen Simulation
+      // Für jedes Sachgebiet Fragen aus dem zusammengeführten Pool zusammenstellen
+      const assembled: WrittenQuestion[] = [];
+
+      IHK_CATEGORIES_CONFIG.forEach(cat => {
+        const catQuestions = poolToUse.filter(q => matchesCategory(q.kategorie, cat.name));
+        
+        if (catQuestions.length <= cat.questionCount) {
+          assembled.push(...catQuestions);
+        } else {
+          // Cloud-Fragen aus Supabase in dieser Kategorie identifizieren
+          const cloudInCat = catQuestions.filter(q =>
+            supabaseQuestions.some(sq => String(sq.id).toLowerCase() === String(q.id).toLowerCase())
+          );
+          const othersInCat = catQuestions.filter(q =>
+            !supabaseQuestions.some(sq => String(sq.id).toLowerCase() === String(q.id).toLowerCase())
+          );
+          
+          // Neu angelegte / veränderte Cloud-Fragen bevorzugt in die Simulation übernehmen
+          const combined = [...cloudInCat, ...othersInCat];
+          assembled.push(...combined.slice(0, Math.max(cat.questionCount, cloudInCat.length)));
+        }
+      });
+
+      examSet = assembled.length > 0 ? assembled : [...poolToUse];
+      durationSeconds = Math.max(60, Math.round(examSet.length * 1.46)) * 60; // 120 Minuten für 82 Fragen
     } else if (subMode === 'quick') {
       modePrefix = 'written_exam_quick';
-      // 20 Fragen Schnelldurchlauf
+      // 20 Fragen Schnelldurchlauf aus dem zusammengeführten Pool
       const shuffled = [...poolToUse].sort(() => Math.random() - 0.5);
       examSet = shuffled.slice(0, Math.min(20, shuffled.length));
       durationSeconds = 30 * 60; // 30 Minuten
     } else {
-      // Einzelnes Fachgebiet
-      examSet = poolToUse.filter(q => q.kategorie === selectedCategory);
+      // Einzelnes Fachgebiet - alle zugehörigen Fragen (Standard + neue Supabase-Fragen)
+      examSet = poolToUse.filter(q => matchesCategory(q.kategorie, selectedCategory));
       if (examSet.length === 0) {
-        // Fallback to standard if no category matches
-        examSet = IHK_120_EXAM_QUESTIONS.filter(q => q.kategorie === selectedCategory);
+        // Fallback falls exakter Kategoriename abweicht
+        examSet = IHK_120_EXAM_QUESTIONS.filter(q => matchesCategory(q.kategorie, selectedCategory));
       }
-      durationSeconds = Math.max(10, examSet.length * 1.5) * 60;
+      durationSeconds = Math.max(10, Math.round(examSet.length * 1.5)) * 60;
     }
 
     totalExamSecondsRef.current = durationSeconds;
@@ -565,17 +651,38 @@ export default function SchriftlicherTestmodus({
         <section className="bento-glass p-6 md:p-8 rounded-2xl relative overflow-visible bento-glow-gold">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#dfb871]/[0.03] rounded-full blur-3xl pointer-events-none" />
 
-          <div className="flex items-center gap-3.5 mb-6">
-            <div className="p-3 bg-[#dfb871]/10 rounded-xl border border-[#dfb871]/20">
-              <FileText className="w-6 h-6 text-[#dfb871]" />
+          <div className="flex flex-wrap items-center justify-between gap-3.5 mb-6">
+            <div className="flex items-center gap-3.5">
+              <div className="p-3 bg-[#dfb871]/10 rounded-xl border border-[#dfb871]/20">
+                <FileText className="w-6 h-6 text-[#dfb871]" />
+              </div>
+              <div>
+                <h2 className="text-xl font-display font-bold text-white tracking-tight">
+                  Sachkunde-Prüfungssimulation (§ 34a GewO)
+                </h2>
+                <p className="text-xs text-slate-400 font-sans mt-0.5">
+                  Neuer Bewertungsschlüssel (120-Punkte-System): 82 Fragen • 120 Punkte • 120 Minuten Zeit
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-display font-bold text-white tracking-tight">
-                Sachkunde-Prüfungssimulation (§ 34a GewO)
-              </h2>
-              <p className="text-xs text-slate-400 font-sans mt-0.5">
-                Neuer Bewertungsschlüssel (120-Punkte-System): 82 Fragen • 120 Punkte • 120 Minuten Zeit
-              </p>
+
+            {/* Cloud Pool Status & Refresh Button */}
+            <div className="flex items-center gap-2">
+              <div className="text-[11px] px-3 py-1.5 rounded-lg bg-slate-900/80 border border-white/10 text-slate-300 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>
+                  {mergedQuestionsPool.length} Fragen aktiv {supabaseQuestions.length > 0 && `(${supabaseQuestions.length} aus Cloud)`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={loadWrittenQuestions}
+                disabled={isLoadingPool}
+                title="Fragenpool aus Supabase aktualisieren"
+                className="p-2 rounded-lg bg-slate-900/80 border border-white/10 hover:border-[#dfb871]/40 text-slate-400 hover:text-[#dfb871] transition-all"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoadingPool ? 'animate-spin text-[#dfb871]' : ''}`} />
+              </button>
             </div>
           </div>
 
