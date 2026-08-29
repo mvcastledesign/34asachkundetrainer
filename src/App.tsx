@@ -681,7 +681,7 @@ export default function App() {
           {/* Footer Disclaimer */}
           <footer className="pt-8 pb-4 text-center border-t border-white/5 space-y-1 print:hidden">
             <p className="text-xs text-slate-500 font-sans">
-              § 34a GewO Sachkunde-Vorbereitungsportal • Unabhängiges Prüfungstraining
+              § 34a GewO Sachkunde-Vorbereitungsportal • Unabhängiges Prüfungstraining für Sicherheitsfachkräfte
             </p>
             <p className="text-[11px] text-slate-600 font-sans max-w-2xl mx-auto leading-relaxed">
               Hinweis: Dieses Lernportal ist ein unabhängiges Vorbereitungsprogramm und steht in keiner offiziellen Verbindung zu einer Industrie- und Handelskammer.
@@ -975,7 +975,7 @@ export default function App() {
               {/* Footer Disclaimer */}
               <footer className="pt-8 pb-4 text-center border-t border-white/5 space-y-1">
                 <p className="text-xs text-slate-500 font-sans">
-                  § 34a GewO Sachkunde-Vorbereitungsportal • Unabhängiges Prüfungstraining
+                  § 34a GewO Sachkunde-Vorbereitungsportal • Unabhängiges Prüfungstraining für Sicherheitsfachkräfte
                 </p>
                 <p className="text-[11px] text-slate-600 font-sans max-w-2xl mx-auto leading-relaxed">
                   Hinweis: Dieses Lernportal ist ein unabhängiges Vorbereitungsprogramm und steht in keiner offiziellen Verbindung zu einer Industrie- und Handelskammer.

@@ -51,14 +51,14 @@ interface SchriftlicherTestmodusProps {
 }
 
 /**
- * Neuer Bewertungsschlüssel (120-Punkte-System):
+ * Bewertungsschlüssel (120-Punkte-System):
  * - 1-Punkt-Frage: 1 richtige Antwort (Einfachauswahl).
  *     1 richtig & 0 falsch = 1 Punkt.
  *     Sonst = 0 Punkte.
  * - 2-Punkte-Frage: 2 richtige Antworten (Mehrfachauswahl).
- *     Beide richtig & 0 falsch = 2 Punkte.
- *     1 richtig & 0 falsch = 1 Teilpunkt.
- *     Mindestens 1 falsche Antwort oder Übermarkierung = 0 Punkte.
+ *     Beide richtig = 2 Punkte.
+ *     Genau 1 richtige Option gewählt (auch wenn 1 falsche Option gewählt wurde) = 1 Teilpunkt.
+ *     0 richtige Optionen = 0 Punkte.
  */
 export function evaluateWrittenQuestion(q: WrittenQuestion, selection: number[] = []): {
   points: number;
@@ -102,22 +102,8 @@ export function evaluateWrittenQuestion(q: WrittenQuestion, selection: number[] 
 
   if (maxPoints === 2 || numCorrectNeeded === 2) {
     // 2-Punkte-Frage
-    if (wrongSelected > 0) {
-      // Falsche Antwort gewählt -> 0 Punkte
-      return {
-        points: 0,
-        maxPoints: 2,
-        isOvermarked: false,
-        statusText: '0 / 2 Punkten (Falsche Antwort)',
-        isFullyCorrect: false,
-        isPartial: false,
-        correctSelected,
-        wrongSelected
-      };
-    }
-
     if (correctSelected === 2) {
-      // Beide richtig & keine falsch -> 2 Punkte
+      // Beide richtig gewählt -> 2 Punkte
       return {
         points: 2,
         maxPoints: 2,
@@ -128,8 +114,8 @@ export function evaluateWrittenQuestion(q: WrittenQuestion, selection: number[] 
         correctSelected,
         wrongSelected
       };
-    } else if (correctSelected === 1 && userCount === 1) {
-      // Genau 1 richtige Antwort & keine falsche -> 1 Teilpunkt
+    } else if (correctSelected === 1) {
+      // Genau 1 richtige Antwort gewählt (auch wenn 1 falsche gewählt wurde) -> 1 Teilpunkt
       return {
         points: 1,
         maxPoints: 2,

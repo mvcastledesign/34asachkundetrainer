@@ -7,21 +7,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   PlusCircle, 
   Upload, 
-  Download, 
   Trash2, 
   Edit3, 
   Search, 
-  Filter, 
   CheckCircle2, 
   AlertCircle, 
   BookOpen, 
   Check, 
   X, 
   RefreshCw, 
-  FileText, 
-  Sparkles,
-  HelpCircle,
-  Scale,
   Award,
   Layers,
   ChevronDown,
@@ -31,14 +25,11 @@ import { WrittenQuestion } from '../types.ts';
 import { IHK_CATEGORIES_CONFIG } from '../data/ihk120ExamQuestions.ts';
 import CustomDropdown from './CustomDropdown.tsx';
 import { 
-  supabase, 
   fetchWrittenQuestionsFromSupabase, 
   saveWrittenQuestionToSupabase, 
   deleteWrittenQuestionFromSupabase, 
-  importWrittenQuestionsToSupabase,
-  mapRowToWrittenQuestion 
+  importWrittenQuestionsToSupabase 
 } from '../lib/supabase.ts';
-import { IHK_120_EXAM_QUESTIONS } from '../data/ihk120ExamQuestions.ts';
 
 interface DataManagementProps {
   questions?: any[];
@@ -48,14 +39,54 @@ interface DataManagementProps {
   onResetToDefaults?: () => void;
 }
 
+/**
+ * Wandelt beliebige IDs (z. B. "ihk-oeff-1", "ihk-bgb-2" oder UUIDs) in neutrale SK-Bezeichner um
+ */
+export function normalizeToNeutralId(rawId: string | undefined, category: string, index: number): string {
+  const catMap: Record<string, string> = {
+    'recht der öffentlichen sicherheit': 'OEFF',
+    'öffentliche sicherheit': 'OEFF',
+    'gewerberecht': 'GEW',
+    'datenschutz': 'DS',
+    'bürgerliches gesetzbuch': 'BGB',
+    'bgb': 'BGB',
+    'straf-': 'STRAF',
+    'strafrecht': 'STRAF',
+    'waffen': 'WAFF',
+    'unfallverhütung': 'UVV',
+    'uvv': 'UVV',
+    'umgang mit menschen': 'MENSCH',
+    'mensch': 'MENSCH',
+    'sicherheitstechnik': 'TECH',
+    'technik': 'TECH'
+  };
+
+  let prefix = 'SK';
+  const lowerCat = (category || '').toLowerCase();
+  for (const [key, val] of Object.entries(catMap)) {
+    if (lowerCat.includes(key)) {
+      prefix = `SK-${val}`;
+      break;
+    }
+  }
+  if (prefix === 'SK') {
+    prefix = 'SK-FRAGE';
+  }
+
+  // Extrahiere vorhandene Nummer oder nutze laufenden Index
+  const numMatch = rawId ? rawId.match(/(\d+)$/) : null;
+  const num = numMatch ? parseInt(numMatch[1], 10) : (index + 1);
+  const padded = String(num).padStart(3, '0');
+  return `${prefix}-${padded}`;
+}
+
 export default function DataManagement({}: DataManagementProps) {
-  // Cloud Questions Pool (target_mode = 'written_test')
+  // Fragenpool aus der Cloud (target_mode = 'written_test')
   const [cloudQuestions, setCloudQuestions] = useState<WrittenQuestion[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [isSeeding, setIsSeeding] = useState<boolean>(false);
 
-  // Form State
+  // Formular State
   const [editingId, setEditingId] = useState<string | null>(null);
   const [kategorie, setKategorie] = useState<string>(IHK_CATEGORIES_CONFIG[0]?.name || 'Recht der öffentlichen Sicherheit und Ordnung');
   const [frage, setFrage] = useState<string>('');
@@ -73,22 +104,22 @@ export default function DataManagement({}: DataManagementProps) {
   const [filterPoints, setFilterPoints] = useState<'all' | '1' | '2'>('all');
   const [expandedDetails, setExpandedDetails] = useState<Record<string, boolean>>({});
 
-  // Feedback notifications
+  // Toast / Benachrichtigungen
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  // File import ref
+  // Dateiupload Ref
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formTopRef = useRef<HTMLDivElement>(null);
 
-  // Categories list for dropdown
+  // Sachgebiete für Dropdown
   const categoryOptions = IHK_CATEGORIES_CONFIG.map(c => ({
     value: c.name,
     label: `${c.shortName} (${c.maxPoints} Pkt.)`
   }));
 
-  // Fetch written questions from Supabase on mount
+  // Fragen beim Laden abrufen
   const loadQuestions = async () => {
     setIsLoading(true);
     try {
@@ -105,7 +136,7 @@ export default function DataManagement({}: DataManagementProps) {
     loadQuestions();
   }, []);
 
-  // Toggle correct answer checkbox
+  // Checkbox für richtige Antwort(en) umschalten
   const handleToggleCorrect = (index: number) => {
     setKorrekteAntworten(prev => {
       let next: number[];
@@ -115,7 +146,6 @@ export default function DataManagement({}: DataManagementProps) {
         next = [...prev, index].sort((a, b) => a - b);
       }
 
-      // Auto-adjust points based on count of correct answers
       if (next.length === 2) {
         setPunkte(2);
       } else if (next.length === 1) {
@@ -126,7 +156,7 @@ export default function DataManagement({}: DataManagementProps) {
     });
   };
 
-  // Toggle points switch and sync selection
+  // Punkte umschalten
   const handleSetPoints = (pts: number) => {
     setPunkte(pts);
     if (pts === 1 && korrekteAntworten.length > 1) {
@@ -134,7 +164,7 @@ export default function DataManagement({}: DataManagementProps) {
     }
   };
 
-  // Reset form
+  // Formular zurücksetzen
   const handleResetForm = () => {
     setEditingId(null);
     setFrage('');
@@ -148,7 +178,7 @@ export default function DataManagement({}: DataManagementProps) {
     setErrorMsg('');
   };
 
-  // Load question into form for editing
+  // Frage zur Bearbeitung laden
   const handleStartEdit = (q: WrittenQuestion) => {
     setEditingId(q.id);
     setKategorie(q.kategorie);
@@ -168,13 +198,13 @@ export default function DataManagement({}: DataManagementProps) {
     }
   };
 
-  // Save question to Supabase
+  // Frage speichern
   const handleSaveQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
 
-    // Validation
+    // Validierung
     if (!frage.trim()) {
       setErrorMsg('Bitte geben Sie einen Prüfungsfragetext ein.');
       return;
@@ -212,59 +242,37 @@ export default function DataManagement({}: DataManagementProps) {
       const res = await saveWrittenQuestionToSupabase(questionPayload);
 
       if (!res.success) {
-        throw new Error(res.error || 'Speichern in Supabase fehlgeschlagen.');
+        throw new Error(res.error || 'Speichern fehlgeschlagen.');
       }
 
-      setSuccessMsg(editingId ? 'Frage erfolgreich in Supabase aktualisiert!' : 'Neue Prüfungsfrage erfolgreich in Supabase gespeichert!');
+      setSuccessMsg(editingId ? 'Frage erfolgreich im Katalog aktualisiert.' : 'Frage erfolgreich im Katalog gespeichert.');
       handleResetForm();
       await loadQuestions();
-      setTimeout(() => setSuccessMsg(''), 4500);
+      setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err: any) {
-      setErrorMsg(err.message || 'Fehler beim Speichern der Frage.');
+      setErrorMsg('Fehler beim Speichern. Bitte Eingaben prüfen.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Delete question from Supabase
+  // Frage löschen
   const handleDeleteQuestion = async (id: string) => {
     try {
       const res = await deleteWrittenQuestionFromSupabase(id);
       if (!res.success) {
         throw new Error(res.error || 'Löschen fehlgeschlagen.');
       }
-      setSuccessMsg('Frage erfolgreich aus Supabase gelöscht.');
+      setSuccessMsg('Frage erfolgreich aus dem Katalog gelöscht.');
       setDeleteConfirmId(null);
       await loadQuestions();
       setTimeout(() => setSuccessMsg(''), 3500);
     } catch (err: any) {
-      setErrorMsg(`Fehler beim Löschen: ${err.message}`);
+      setErrorMsg('Fehler beim Löschen der Frage.');
     }
   };
 
-  // JSON Export (direct from Supabase pool)
-  const handleExportJSON = () => {
-    try {
-      const exportList = cloudQuestions.length > 0 ? cloudQuestions : IHK_120_EXAM_QUESTIONS;
-      const dataStr = JSON.stringify(exportList, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `supabase_written_test_fragenkatalog_${Date.now()}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      setSuccessMsg(`Export von ${exportList.length} Fragen erfolgreich abgeschlossen.`);
-      setTimeout(() => setSuccessMsg(''), 4000);
-    } catch (err) {
-      console.error(err);
-      setErrorMsg('Der JSON-Export ist fehlgeschlagen.');
-    }
-  };
-
-  // JSON Import directly into Supabase (target_mode = 'written_test')
+  // Robuster JSON Import (flexible Feldnamen & automatische neutrale IDs)
   const handleImportJSON = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -281,21 +289,33 @@ export default function DataManagement({}: DataManagementProps) {
         const validQuestions: WrittenQuestion[] = [];
 
         parsed.forEach((obj, idx) => {
-          const frageText = obj.frage || obj.question;
-          const opts = obj.optionen || obj.options;
+          const frageText = obj.frage || obj.question_text || obj.question || obj.Frage || obj.text;
+          const opts = obj.optionen || obj.options || obj.Optionen || obj.answers || obj.antworten;
+          
           if (frageText && Array.isArray(opts) && opts.length >= 4) {
-            const rawCorrect = obj.korrekteAntworten || obj.korrekte_antworten || obj.correct_answers || [0];
+            const rawCorrect = 
+              obj.richtige_antworten || 
+              obj.korrekte_antworten || 
+              obj.korrekteAntworten || 
+              obj.correct_answers || 
+              obj.correctAnswers || 
+              obj.correct_indices || 
+              [0];
+            
             const correctIndices = Array.isArray(rawCorrect) ? rawCorrect.map(Number) : [0];
-            const pts = (obj.punkte === 2 || obj.points === 2 || correctIndices.length === 2) ? 2 : 1;
+            const pts = (obj.punkte === 2 || obj.points === 2 || obj.Punkte === 2 || correctIndices.length === 2) ? 2 : 1;
+            const category = obj.kategorie || obj.category || obj.sachgebiet || obj.Kategorie || IHK_CATEGORIES_CONFIG[0].name;
+            const explanation = obj.begruendung || obj.erklaerung || obj.explanation || obj.Begruendung || obj.Erklaerung || '';
+            const neutralId = normalizeToNeutralId(obj.id, category, idx);
 
             validQuestions.push({
-              id: `imported-${idx}-${Date.now()}`,
-              kategorie: obj.kategorie || obj.category || IHK_CATEGORIES_CONFIG[0].name,
+              id: neutralId,
+              kategorie: String(category).trim(),
               frage: String(frageText).trim(),
               optionen: [String(opts[0]).trim(), String(opts[1]).trim(), String(opts[2]).trim(), String(opts[3]).trim()],
               korrekteAntworten: correctIndices.length > 0 ? correctIndices : [0],
               punkte: pts,
-              erklaerung: String(obj.erklaerung || obj.explanation || obj.begruendung || '').trim(),
+              erklaerung: String(explanation).trim(),
               target_mode: 'written_test'
             });
           }
@@ -309,14 +329,14 @@ export default function DataManagement({}: DataManagementProps) {
         const res = await importWrittenQuestionsToSupabase(validQuestions);
 
         if (!res.success) {
-          throw new Error(res.error || 'Import in Supabase fehlgeschlagen.');
+          throw new Error(res.error || 'Import fehlgeschlagen.');
         }
 
-        setSuccessMsg(`Erfolgreich ${res.count} Fragen direkt in Supabase (target_mode: 'written_test') importiert!`);
+        setSuccessMsg(`${res.count} Fragen erfolgreich importiert.`);
         await loadQuestions();
         setTimeout(() => setSuccessMsg(''), 4500);
       } catch (err: any) {
-        setErrorMsg(`Fehler beim Importieren: ${err.message}`);
+        setErrorMsg('Fehler beim Importieren. Bitte Dateiformat prüfen.');
       } finally {
         setIsSaving(false);
         if (fileInputRef.current) fileInputRef.current.value = '';
@@ -325,35 +345,14 @@ export default function DataManagement({}: DataManagementProps) {
     reader.readAsText(file);
   };
 
-  // Seed default 82 IHK questions into Supabase
-  const handleSeedDefaults = async () => {
-    if (isSeeding) return;
-    setIsSeeding(true);
-    setErrorMsg('');
-    setSuccessMsg('');
-    try {
-      const res = await importWrittenQuestionsToSupabase(IHK_120_EXAM_QUESTIONS);
-      if (!res.success) {
-        throw new Error(res.error || 'Initialisierung in Supabase fehlgeschlagen.');
-      }
-      setSuccessMsg(`Erfolgreich ${res.count} offizielle IHK-Prüfungsfragen in Supabase eingepflegt!`);
-      await loadQuestions();
-      setTimeout(() => setSuccessMsg(''), 4500);
-    } catch (err: any) {
-      setErrorMsg(`Fehler beim Einpflegen des Katalogs: ${err.message}`);
-    } finally {
-      setIsSeeding(false);
-    }
-  };
-
-  // Filter questions for the list view
+  // Fragen für die Listenansicht filtern
   const displayedQuestions = (cloudQuestions.length > 0 ? cloudQuestions : []).filter(q => {
     const matchesCategory = filterCategory === 'all' || q.kategorie === filterCategory;
     const matchesPoints = filterPoints === 'all' || (filterPoints === '1' && q.punkte === 1) || (filterPoints === '2' && q.punkte === 2);
     const matchesSearch = !searchQuery.trim() || 
       q.frage.toLowerCase().includes(searchQuery.toLowerCase()) ||
       q.optionen.some(opt => opt.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      q.erklaerung.toLowerCase().includes(searchQuery.toLowerCase());
+      (q.erklaerung && q.erklaerung.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesPoints && matchesSearch;
   });
 
@@ -373,27 +372,18 @@ export default function DataManagement({}: DataManagementProps) {
               </h2>
             </div>
             <p className="text-xs text-slate-400 font-sans max-w-2xl">
-              Multiple-Choice-Fragenkatalog mit direkter Supabase-Cloud-Synchronisation (<code className="text-[#dfb871] bg-slate-950/80 px-1.5 py-0.5 rounded font-mono text-[11px]">target_mode: 'written_test'</code>). Alle erstellten oder importierten Fragen stehen den Schülern im Schriftlichen Testmodus sofort zur Verfügung.
+              Multiple-Choice-Fragenkatalog für die schriftliche Prüfung nach § 34a GewO. Alle erstellten oder importierten Fragen stehen im Prüfungstraining sofort zur Verfügung.
             </p>
           </div>
 
-          {/* Cloud Badge & Quick Actions */}
+          {/* Badge & Quick Actions */}
           <div className="flex flex-wrap items-center gap-2.5">
             <div className="px-3 py-2 rounded-xl bg-slate-950/70 border border-white/10 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-mono text-slate-300">
-                Supabase Pool: <strong className="text-white font-bold">{cloudQuestions.length}</strong> Fragen
+                Fragenpool: <strong className="text-white font-bold">{cloudQuestions.length}</strong> Fragen
               </span>
             </div>
-
-            <button
-              onClick={handleExportJSON}
-              className="px-3.5 py-2 bg-slate-900/90 hover:bg-slate-800 border border-white/10 rounded-xl text-xs font-bold text-slate-200 flex items-center gap-2 transition-all cursor-pointer hover:border-white/20 active:scale-95"
-              title="Aktuellen Fragenkatalog als JSON herunterladen"
-            >
-              <Download className="w-3.5 h-3.5 text-[#dfb871]" />
-              <span>JSON Export</span>
-            </button>
 
             <div className="relative">
               <input
@@ -402,13 +392,13 @@ export default function DataManagement({}: DataManagementProps) {
                 accept=".json"
                 onChange={handleImportJSON}
                 className="hidden"
-                id="supabase-json-import"
+                id="json-file-import"
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isSaving}
                 className="px-3.5 py-2 bg-slate-900/90 hover:bg-slate-800 border border-white/10 rounded-xl text-xs font-bold text-slate-200 flex items-center gap-2 transition-all cursor-pointer hover:border-white/20 active:scale-95 disabled:opacity-50"
-                title="JSON-Datei mit Fragen direkt in Supabase hochladen"
+                title="JSON-Datei mit Fragen importieren"
               >
                 <Upload className="w-3.5 h-3.5 text-indigo-400" />
                 <span>JSON Import</span>
@@ -416,32 +406,9 @@ export default function DataManagement({}: DataManagementProps) {
             </div>
           </div>
         </div>
-
-        {/* Cloud database empty notice & quick seed */}
-        {cloudQuestions.length === 0 && !isLoading && (
-          <div className="mt-6 p-4 rounded-xl bg-[#dfb871]/10 border border-[#dfb871]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-[#dfb871] shrink-0" />
-              <div>
-                <p className="text-xs font-bold text-white font-display">Supabase-Fragenkatalog ist noch leer</p>
-                <p className="text-[11px] text-slate-300 font-sans">
-                  Sie können entweder neue Fragen im Formular anlegen oder mit einem Klick den offiziellen 82-Fragen IHK-Standardkatalog in Supabase einpflegen.
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleSeedDefaults}
-              disabled={isSeeding}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#dfb871] to-[#c8a97e] text-slate-950 font-bold text-xs flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all cursor-pointer shrink-0 disabled:opacity-50 shadow-md"
-            >
-              {isSeeding ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <PlusCircle className="w-3.5 h-3.5" />}
-              <span>82 IHK-Fragen in Supabase laden</span>
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Main Grid: Left Column = Form (Multiple Choice Editor), Right Column = Tips & Info */}
+      {/* Main Grid: Left Column = Formular, Right Column = Bewertungsschlüssel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* FORM CONTAINER (Left 2 Columns) */}
@@ -457,7 +424,7 @@ export default function DataManagement({}: DataManagementProps) {
                   {editingId ? 'Prüfungsfrage bearbeiten' : 'Neue Multiple-Choice-Frage anlegen'}
                 </h3>
                 <p className="text-xs text-slate-400 font-sans">
-                  {editingId ? 'Änderungen werden direkt in Supabase gespeichert.' : 'Wird in der Tabelle questions mit target_mode: \'written_test\' gespeichert.'}
+                  {editingId ? 'Änderungen werden im Fragenkatalog gespeichert.' : 'Neue Multiple-Choice-Prüfungsfrage anlegen.'}
                 </p>
               </div>
             </div>
@@ -491,10 +458,10 @@ export default function DataManagement({}: DataManagementProps) {
 
           <form onSubmit={handleSaveQuestion} className="space-y-6">
             
-            {/* Row 1: Sachgebiet & IHK-Punkte Selection */}
+            {/* Row 1: Sachgebiet & Punkte Selection */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
               
-              {/* Dropdown: Sachgebiete des § 34a GewO (7 cols) */}
+              {/* Dropdown: Sachgebiet (7 cols) */}
               <div className="md:col-span-7 space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-display">
                   Sachgebiet (§ 34a GewO) <span className="text-rose-400">*</span>
@@ -508,10 +475,10 @@ export default function DataManagement({}: DataManagementProps) {
                 />
               </div>
 
-              {/* Toggle: IHK-Punkte (1 Punkt vs 2 Punkte) (5 cols) */}
+              {/* Toggle: Punkte & Fragetyp (5 cols) */}
               <div className="md:col-span-5 space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-display">
-                  IHK-Punkte & Fragetyp <span className="text-rose-400">*</span>
+                  PUNKTE & FRAGETYP <span className="text-rose-400">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-2 bg-slate-950/80 p-1 rounded-xl border border-white/10">
                   <button
@@ -556,7 +523,7 @@ export default function DataManagement({}: DataManagementProps) {
               <textarea
                 value={frage}
                 onChange={e => setFrage(e.target.value)}
-                placeholder="Formulieren Sie hier die genaue Multiple-Choice-Prüfungsfrage nach IHK-Standard..."
+                placeholder="Formulieren Sie hier die Prüfungsfrage..."
                 rows={3}
                 className="w-full bg-slate-950/80 text-white text-xs md:text-sm p-3.5 rounded-xl border border-white/10 focus:border-[#dfb871] focus:ring-1 focus:ring-[#dfb871] focus:outline-none placeholder-slate-600 font-sans transition-all resize-y"
               />
@@ -742,12 +709,12 @@ export default function DataManagement({}: DataManagementProps) {
                 {isSaving ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>In Supabase speichern...</span>
+                    <span>Wird gespeichert...</span>
                   </>
                 ) : (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>{editingId ? 'Änderungen in Supabase speichern' : 'Frage in Supabase speichern'}</span>
+                    <span>{editingId ? 'Änderungen speichern' : 'Frage speichern'}</span>
                   </>
                 )}
               </button>
@@ -757,14 +724,13 @@ export default function DataManagement({}: DataManagementProps) {
 
         </div>
 
-        {/* RIGHT COLUMN: INFOS & BEWERTUNGSSCHLÜSSEL (§ 34a) */}
+        {/* RIGHT COLUMN: BEWERTUNGSSCHLÜSSEL */}
         <div className="space-y-6">
           
-          {/* Box 1: IHK Bewertungsschlüssel Details */}
           <div className="bento-glass p-6 rounded-2xl border border-white/10 space-y-4">
             <h4 className="text-xs font-bold text-white uppercase tracking-wider font-display flex items-center gap-2">
               <Award className="w-4 h-4 text-[#dfb871]" />
-              IHK-Bewertungsschlüssel
+              BEWERTUNGSSCHLÜSSEL
             </h4>
             <div className="space-y-3 text-xs text-slate-300 font-sans leading-relaxed">
               <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl space-y-1">
@@ -777,30 +743,9 @@ export default function DataManagement({}: DataManagementProps) {
               <div className="p-3 bg-[#dfb871]/10 border border-[#dfb871]/20 rounded-xl space-y-1">
                 <span className="font-bold text-[#dfb871] block font-display">2-Punkte-Fragen (Mehrfachauswahl)</span>
                 <p className="text-[11px] text-slate-300">
-                  Genau 2 richtige Optionen. 2 Punkte bei beiden richtig, 1 Teilpunkt bei 1 richtig & 0 falsch. Übermarkierung oder falsche Option = 0 Punkte.
+                  Genau 2 richtige Antworten: 2 Punkte bei beiden richtig. 1 Teilpunkt, wenn mindestens 1 richtige Antwort ausgewählt wurde (auch wenn 1 falsche Option gewählt wurde). 0 Punkte bei 0 richtigen Antworten.
                 </p>
               </div>
-            </div>
-          </div>
-
-          {/* Box 2: Synchronisations-Status */}
-          <div className="bento-glass p-6 rounded-2xl border border-white/10 space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider font-display flex items-center gap-2">
-              <Scale className="w-4 h-4 text-emerald-400" />
-              Direkte Cloud-Bindung
-            </h4>
-            <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
-              Alle Fragen in dieser Ansicht sind direkt mit der Supabase-Cloud synchronisiert. Andere Übungsmodi (wie die mündliche Prüfung oder Fallbeispiele) bleiben unabhängig und greifen auf ihren jeweiligen Fachdatenbestand zu.
-            </p>
-            <div className="pt-2">
-              <button
-                onClick={loadQuestions}
-                disabled={isLoading}
-                className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-xs font-semibold text-slate-300 flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-[#dfb871]' : ''}`} />
-                <span>Katalog aus Supabase neu laden</span>
-              </button>
             </div>
           </div>
 
@@ -826,7 +771,7 @@ export default function DataManagement({}: DataManagementProps) {
         {/* Filter Toolbar */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
           
-          {/* Search field (5 cols) */}
+          {/* Suchfeld (5 cols) */}
           <div className="lg:col-span-5 relative">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
@@ -838,7 +783,7 @@ export default function DataManagement({}: DataManagementProps) {
             />
           </div>
 
-          {/* Category Filter (4 cols) */}
+          {/* Kategorie-Filter (4 cols) */}
           <div className="lg:col-span-4">
             <CustomDropdown
               options={[
@@ -852,7 +797,7 @@ export default function DataManagement({}: DataManagementProps) {
             />
           </div>
 
-          {/* Points Filter (3 cols) */}
+          {/* Punkte-Filter (3 cols) */}
           <div className="lg:col-span-3">
             <div className="grid grid-cols-3 gap-1 bg-slate-950/80 p-1 rounded-xl border border-white/10 text-xs font-mono">
               <button
@@ -887,11 +832,11 @@ export default function DataManagement({}: DataManagementProps) {
 
         </div>
 
-        {/* Questions Cards List */}
+        {/* Fragenliste */}
         {isLoading ? (
           <div className="py-16 text-center space-y-3">
             <RefreshCw className="w-8 h-8 animate-spin text-[#dfb871] mx-auto" />
-            <p className="text-xs text-slate-400 font-mono">Lade Fragenkatalog aus Supabase...</p>
+            <p className="text-xs text-slate-400 font-mono">Lade Fragenkatalog...</p>
           </div>
         ) : displayedQuestions.length === 0 ? (
           <div className="py-12 text-center bg-slate-950/40 rounded-xl border border-white/5 space-y-2">
@@ -936,7 +881,7 @@ export default function DataManagement({}: DataManagementProps) {
                       <button
                         onClick={() => setDeleteConfirmId(q.id)}
                         className="px-3 py-1.5 rounded-lg bg-rose-950/30 hover:bg-rose-900/40 border border-rose-900/40 text-rose-300 hover:text-rose-200 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                        title="Frage aus Supabase löschen"
+                        title="Frage aus dem Katalog entfernen"
                       >
                         <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                         <span>Löschen</span>
@@ -944,14 +889,14 @@ export default function DataManagement({}: DataManagementProps) {
                     </div>
                   </div>
 
-                  {/* Question Stem */}
+                  {/* Fragetext */}
                   <div>
                     <h4 className="text-sm font-semibold text-white font-sans leading-relaxed">
                       {q.frage}
                     </h4>
                   </div>
 
-                  {/* 4 Options Grid */}
+                  {/* 4 Optionen */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
                     {q.optionen.map((opt, optIdx) => {
                       const isCorrect = q.korrekteAntworten.includes(optIdx);
@@ -978,7 +923,7 @@ export default function DataManagement({}: DataManagementProps) {
                     })}
                   </div>
 
-                  {/* Explanation Toggle */}
+                  {/* Rechtliche Begründung Toggle */}
                   {q.erklaerung && (
                     <div className="pt-2">
                       <button
@@ -1007,7 +952,7 @@ export default function DataManagement({}: DataManagementProps) {
 
       </section>
 
-      {/* Delete Confirmation Modal */}
+      {/* Lösch-Bestätigungsmodal */}
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
           <div className="w-full max-w-md bento-glass p-6 rounded-2xl border border-rose-500/30 shadow-2xl relative space-y-4 text-center">
@@ -1015,9 +960,9 @@ export default function DataManagement({}: DataManagementProps) {
               <Trash2 className="w-6 h-6 text-rose-400" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white font-display">Prüfungsfrage löschen?</h3>
+              <h3 className="text-base font-bold text-white font-display">Frage wirklich aus dem Katalog entfernen?</h3>
               <p className="text-xs text-slate-400 font-sans leading-relaxed">
-                Möchten Sie diesen Datensatz wirklich dauerhaft aus der Supabase-Datenbank entfernen? Schüler können diese Frage danach nicht mehr im Test aufrufen.
+                Möchten Sie diesen Datensatz wirklich dauerhaft entfernen? Schüler können diese Frage danach nicht mehr im Test aufrufen.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
