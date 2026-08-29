@@ -101,101 +101,96 @@ export function getStudent10ModeStats(
   
   const rawExams = Array.isArray(student.examHistory) ? student.examHistory : [];
 
-  // 1. Lernmodus (Antwortvergleich) - Strictly count real answered questions
-  const answeredQIds = new Set<string>();
-  if (student.questionProgress && typeof student.questionProgress === 'object') {
-    Object.keys(student.questionProgress).forEach(k => answeredQIds.add(k));
-  }
-  studentAttempts.forEach(a => {
-    const qid = a.question_id || (a as any).questionId;
-    if (qid) answeredQIds.add(String(qid));
+  // 1. Lernmodus (Antwortvergleich) - Isoliert: Zähle ausschließlich Fragen aus dem Lernmodus (Antwortvergleich)
+  const lernmodusAttempts = studentAttempts.filter(a => {
+    const m = (a.mode || '').toLowerCase().trim();
+    return m === 'lernmodus' || m === 'lernen' || m === 'learning';
   });
-
-  const solvedQ = answeredQIds.size > 0 
-    ? answeredQIds.size 
-    : (studentAttempts.length > 0 ? studentAttempts.length : 0);
-
-  let successRate = 0;
-  if (solvedQ > 0) {
-    if (studentAttempts.length > 0) {
-      const correctCount = studentAttempts.filter(a => a.is_correct).length;
-      successRate = Math.round((correctCount / studentAttempts.length) * 100);
-    } else if (typeof student.successRatePercent === 'number' && student.successRatePercent > 0) {
-      successRate = student.successRatePercent;
-    }
-  }
-
+  const solvedQ = lernmodusAttempts.length;
+  const correctLernCount = lernmodusAttempts.filter(a => a.is_correct).length;
+  const successRate = solvedQ > 0 ? Math.round((correctLernCount / solvedQ) * 100) : 0;
   const lernmodusVal = `${solvedQ} Fragen (${successRate} %)`;
 
-  // 2. Prüfungs-Simulation - Strictly count real completed simulations
-  const simCount = rawExams.filter((ex: any) => {
+  // 2. Prüfungs-Simulation - Zähle ausschließlich regulär abgeschlossene Prüfungssimulationen
+  const simSessions = studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase().trim();
+    const t = (s.exam_type || '').toLowerCase().trim();
+    if (m === 'schriftlich' || m === 'schriftlicher_test' || t.includes('schriftlich') || t.includes('ihk 120')) return false;
+    return m === 'pruefung' || m === 'pruefungssimulation' || t.includes('simulation') || t.includes('mündlich');
+  });
+  const simExams = rawExams.filter((ex: any) => {
     if (!ex) return false;
-    const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return (t.includes('simulation') || t.includes('vollwert') || (ex.totalPoints || 0) >= 50);
-  }).length + studentSessions.filter(s => {
-    const m = (s.mode || '').toLowerCase();
-    return (m.includes('simulation') || m.includes('pruefung') || m.includes('exam')) && ((s.score_max || 0) >= 50 || s.score_achieved !== undefined);
-  }).length;
+    const t = (ex.examType || ex.mode || ex.title || '').toLowerCase().trim();
+    if (t.includes('schriftlich') || t.includes('test') || t.includes('ihk')) return false;
+    return t.includes('simulation') || t.includes('mündlich') || t === 'pruefung';
+  });
+  const simCount = Math.max(simSessions.length, simExams.length);
   const simVal = `${simCount} absolviert`;
 
-  // 3. Schriftlicher Test (§ 34a) - Strictly count real completed written tests
-  const writtenCount = rawExams.filter((ex: any) => {
+  // 3. Schriftlicher Test (§ 34a) - Zähle ausschließlich regulär abgeschlossene schriftliche Tests
+  const writtenSessions = studentSessions.filter(s => {
+    const m = (s.mode || '').toLowerCase().trim();
+    const t = (s.exam_type || '').toLowerCase().trim();
+    if (m === 'pruefung' || m === 'pruefungssimulation' || (t.includes('simulation') && !t.includes('schriftlich')) || t.includes('mündlich')) return false;
+    return m === 'schriftlich' || m === 'schriftlicher_test' || m === 'exam' || t.includes('schriftlich') || t.includes('ihk') || t.includes('schnelltest') || t.includes('kategorietest');
+  });
+  const writtenExams = rawExams.filter((ex: any) => {
     if (!ex) return false;
-    const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return (t.includes('schriftlich') || t.includes('test') || t.includes('34a') || t.includes('ihk')) && !t.includes('simulation');
-  }).length + studentSessions.filter(s => {
-    const m = (s.mode || '').toLowerCase();
-    return (m.includes('schriftlich') || m.includes('test')) && !m.includes('simulation');
-  }).length;
+    const t = (ex.examType || ex.mode || ex.title || '').toLowerCase().trim();
+    if (t.includes('mündlich') || (t.includes('simulation') && !t.includes('schriftlich'))) return false;
+    return t.includes('schriftlich') || t.includes('test') || t.includes('ihk') || t === 'schriftlich';
+  });
+  const writtenCount = Math.max(writtenSessions.length, writtenExams.length);
   const writtenVal = `${writtenCount} Tests`;
 
   // 4. Video-Szenario-Trainer - Strictly count finished video scenarios
-  const videoCount = rawExams.filter((ex: any) => {
-    if (!ex) return false;
-    const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return t.includes('video') || t.includes('szenario') || t.includes('deeskalation');
-  }).length + studentSessions.filter(s => (s.mode || '').toLowerCase().includes('video')).length + studentAttempts.filter(a => (a.mode || '').toLowerCase().includes('video')).length + (typeof (student as any).videoScenariosCompleted === 'number' ? (student as any).videoScenariosCompleted : 0);
+  const videoSessions = studentSessions.filter(s => (s.mode || s.exam_type || '').toLowerCase().includes('video'));
+  const videoExams = rawExams.filter((ex: any) => (ex.examType || ex.mode || ex.title || '').toLowerCase().includes('video'));
+  const videoAttempts = studentAttempts.filter(a => (a.mode || '').toLowerCase().includes('video'));
+  const videoCount = Math.max(videoSessions.length, videoExams.length, (student as any).videoScenariosCompleted || 0, Math.ceil(videoAttempts.length / 3));
   const videoVal = `${videoCount} Szenarien`;
 
   // 5. Fallbeispiele - Strictly count solved cases
-  const caseCount = rawExams.filter((ex: any) => {
-    if (!ex) return false;
+  const caseSessions = studentSessions.filter(s => {
+    const m = (s.mode || s.exam_type || '').toLowerCase();
+    return m.includes('fall') || m.includes('scenario');
+  });
+  const caseExams = rawExams.filter((ex: any) => {
     const t = (ex.examType || ex.mode || ex.title || '').toLowerCase();
-    return t.includes('fall') || t.includes('praxis') || t.includes('notwehr') || t.includes('scenario');
-  }).length + studentSessions.filter(s => {
-    const m = (s.mode || '').toLowerCase();
-    return m.includes('fall') || m.includes('scenario');
-  }).length + studentAttempts.filter(a => {
+    return t.includes('fall') || t.includes('praxis') || t.includes('scenario');
+  });
+  const caseAttempts = studentAttempts.filter(a => {
     const m = (a.mode || '').toLowerCase();
-    return m.includes('fall') || m.includes('scenario');
-  }).length + (typeof (student as any).casesSolved === 'number' ? (student as any).casesSolved : 0);
+    return m === 'fallbeispiele' || m === 'scenario';
+  });
+  const caseCount = Math.max(caseSessions.length, caseExams.length, (student as any).casesSolved || 0, caseAttempts.length);
   const caseVal = `${caseCount} Fälle`;
 
   // 6. Karteikarten (3D Flip) - Strictly count practiced flashcards
-  const flashcardCount = studentAttempts.filter(a => {
+  const cardAttempts = studentAttempts.filter(a => {
     const m = (a.mode || '').toLowerCase();
-    return m.includes('karteikarten') || m.includes('flashcard') || m.includes('leitner');
-  }).length + studentSessions.filter(s => {
-    const m = (s.mode || '').toLowerCase();
-    return m.includes('flashcard') || m.includes('karteikarten');
-  }).length + (typeof (student as any).flashcardsPracticed === 'number' ? (student as any).flashcardsPracticed : 0) + (typeof (student as any).leitnerCardsCount === 'number' ? (student as any).leitnerCardsCount : 0) + (typeof (student as any).learnedFlashcards === 'number' ? (student as any).learnedFlashcards : 0);
+    return m === 'karteikarten' || m === 'flashcards' || m === 'flashcard';
+  });
+  const cardSessions = studentSessions.filter(s => (s.mode || '').toLowerCase().includes('karteikarten') || (s.mode || '').toLowerCase().includes('flashcard'));
+  const flashcardCount = Math.max(cardAttempts.length, cardSessions.length, (student as any).flashcardsPracticed || 0, (student as any).leitnerCardsCount || 0);
   const flashcardVal = `${flashcardCount} Karten`;
 
   // 7. Fachbegriffe & Prüfungsdeutsch - Strictly count practiced vocabulary terms
-  const vocabCount = studentAttempts.filter(a => {
+  const vocabAttempts = studentAttempts.filter(a => {
     const m = (a.mode || '').toLowerCase();
-    return m.includes('fachbegriffe') || m.includes('vocab') || m.includes('glossar') || m.includes('begriff');
-  }).length + studentSessions.filter(s => {
-    const m = (s.mode || '').toLowerCase();
-    return m.includes('vocab') || m.includes('fachbegriffe');
-  }).length + (typeof (student as any).vocabPracticed === 'number' ? (student as any).vocabPracticed : 0) + (typeof (student as any).learnedVocabCount === 'number' ? (student as any).learnedVocabCount : 0);
+    return m === 'fachbegriffe' || m === 'vocab' || m === 'glossar' || m === 'glossary';
+  });
+  const vocabSessions = studentSessions.filter(s => (s.mode || '').toLowerCase().includes('fachbegriffe') || (s.mode || '').toLowerCase().includes('vocab') || (s.mode || '').toLowerCase().includes('glossar'));
+  const vocabCount = Math.max(vocabAttempts.length, vocabSessions.length, (student as any).vocabPracticed || 0);
   const vocabVal = `${vocabCount} Begriffe`;
 
   // 8. Fehler-Wiederholung - Strictly count resolved mistakes
-  const errorFixedCount = studentAttempts.filter(a => {
+  const errorAttempts = studentAttempts.filter(a => {
     const m = (a.mode || '').toLowerCase();
-    return (m.includes('fehler') || m.includes('repeat_error') || a.switched_answers) && a.is_correct;
-  }).length + studentSessions.filter(s => (s.mode || '').toLowerCase().includes('fehler')).length + (typeof (student as any).errorsFixed === 'number' ? (student as any).errorsFixed : 0) + (typeof (student as any).fixedErrorsCount === 'number' ? (student as any).fixedErrorsCount : 0);
+    return (m === 'wiederholung' || m === 'fehler' || m === 'repeat_error') && a.is_correct;
+  });
+  const errorSessions = studentSessions.filter(s => (s.mode || '').toLowerCase().includes('wiederholung') || (s.mode || '').toLowerCase().includes('fehler'));
+  const errorFixedCount = Math.max(errorAttempts.length, errorSessions.length, (student as any).errorsFixed || 0);
   const errorVal = `${errorFixedCount} behoben`;
 
   // 9. Endlos-Streak-Challenge - Strictly real maximum streak
@@ -207,13 +202,12 @@ export function getStudent10ModeStats(
   const streakVal = `Rekord: ${streakRecord} Fragen`;
 
   // 10. „Was bin ich?“ Rätsel - Strictly real solved riddles
-  const riddleCount = studentAttempts.filter(a => {
+  const riddleAttempts = studentAttempts.filter(a => {
     const m = (a.mode || '').toLowerCase();
-    return (m.includes('raetsel') || m.includes('riddle') || m.includes('was_bin_ich')) && a.is_correct;
-  }).length + studentSessions.filter(s => {
-    const m = (s.mode || '').toLowerCase();
-    return m.includes('riddle') || m.includes('was_bin_ich');
-  }).length + (typeof (student as any).riddlesSolved === 'number' ? (student as any).riddlesSolved : 0) + (typeof (student as any).solvedRiddlesCount === 'number' ? (student as any).solvedRiddlesCount : 0);
+    return (m === 'raetsel' || m === 'riddle' || m === 'was_bin_ich') && a.is_correct;
+  });
+  const riddleSessions = studentSessions.filter(s => (s.mode || '').toLowerCase().includes('raetsel') || (s.mode || '').toLowerCase().includes('riddle'));
+  const riddleCount = Math.max(riddleAttempts.length, riddleSessions.length, (student as any).riddlesSolved || 0);
   const riddleVal = `${riddleCount} Rätsel gelöst`;
 
   return [
@@ -1216,9 +1210,16 @@ export default function DozentenDashboard({
       });
     });
 
-    const classAvgSuccess = courseStudents.length > 0
-      ? Math.round(courseStudents.reduce((acc, s) => acc + (s.successRatePercent || s.progressPercent || 0), 0) / courseStudents.length)
-      : 0;
+    const classLernAttempts = courseRawAttempts.filter(a => {
+      const m = (a.mode || '').toLowerCase().trim();
+      return m === 'lernmodus' || m === 'lernen' || m === 'learning';
+    });
+    const classLernCorrect = classLernAttempts.filter(a => a.is_correct).length;
+    const classAvgLernSuccess = classLernAttempts.length > 0
+      ? Math.round((classLernCorrect / classLernAttempts.length) * 100)
+      : (courseStudents.length > 0 
+          ? Math.round(courseStudents.reduce((acc, s) => acc + (s.successRatePercent || 0), 0) / courseStudents.length)
+          : 0);
 
     return [
       {
@@ -1227,7 +1228,7 @@ export default function DozentenDashboard({
         shortName: 'Lernmodus',
         icon: BookOpen,
         emoji: '📖',
-        value: `${totalLernQ} Fragen (Ø ${classAvgSuccess} %)`,
+        value: `${totalLernQ} Fragen (Ø ${classAvgLernSuccess} %)`,
         rawCount: totalLernQ,
         colorClass: 'text-indigo-400',
         bgClass: 'bg-indigo-500/10',
@@ -1669,13 +1670,13 @@ export default function DozentenDashboard({
   const learningModesStats = useMemo(() => {
     const modesConfig = [
       {
-        id: 'exam',
+        id: 'schriftlich',
         title: 'Schriftlicher Test',
         subtitle: 'Prüfungsmodus mit Punktegewichtung',
         icon: FileText,
         color: 'text-amber-400',
         bg: 'bg-amber-500/10 border-amber-500/20',
-        keys: ['exam', 'Schriftlich', 'schriftlich', 'ihk']
+        keys: ['schriftlich', 'exam', 'ihk']
       },
       {
         id: 'scenario',
@@ -1684,7 +1685,7 @@ export default function DozentenDashboard({
         icon: Brain,
         color: 'text-cyan-400',
         bg: 'bg-cyan-500/10 border-cyan-500/20',
-        keys: ['scenario', 'Fallbeispiele', 'fallbeispiel']
+        keys: ['fallbeispiele', 'scenario', 'fallbeispiel']
       },
       {
         id: 'video',
@@ -1693,7 +1694,7 @@ export default function DozentenDashboard({
         icon: Video,
         color: 'text-indigo-400',
         bg: 'bg-indigo-500/10 border-indigo-500/20',
-        keys: ['video', 'video_scenario', 'Video']
+        keys: ['video', 'video_scenario']
       },
       {
         id: 'flashcards',
@@ -1702,7 +1703,7 @@ export default function DozentenDashboard({
         icon: Layers,
         color: 'text-emerald-400',
         bg: 'bg-emerald-500/10 border-emerald-500/20',
-        keys: ['flashcards', 'Karteikarten', 'karteikarten']
+        keys: ['karteikarten', 'flashcards', 'flashcard']
       },
       {
         id: 'riddle',
@@ -1711,7 +1712,7 @@ export default function DozentenDashboard({
         icon: HelpCircle,
         color: 'text-purple-400',
         bg: 'bg-purple-500/10 border-purple-500/20',
-        keys: ['riddle', 'was_bin_ich', 'raetsel']
+        keys: ['raetsel', 'riddle', 'was_bin_ich']
       },
       {
         id: 'streak',
@@ -1720,7 +1721,7 @@ export default function DozentenDashboard({
         icon: Flame,
         color: 'text-rose-400',
         bg: 'bg-rose-500/10 border-rose-500/20',
-        keys: ['streak', 'Streak', 'speed']
+        keys: ['streak', 'speed']
       }
     ];
 
@@ -3557,13 +3558,13 @@ export default function DozentenDashboard({
                 if (!ex) return false;
                 const mode = (ex.mode || '').toLowerCase();
                 const totalQ = ex.totalQuestions || ex.totalPoints || 0;
-                const isLearningMode = mode === 'learning' || mode === 'practice' || mode === 'flashcard';
+                const isLearningMode = mode === 'lernmodus' || mode === 'learning' || mode === 'lernen' || mode === 'practice' || mode === 'karteikarten' || mode === 'flashcards' || mode === 'fachbegriffe';
                 
                 if (isLearningMode) return false;
                 if (totalQ > 0 && totalQ <= 1) return false;
                 if (ex.totalPoints !== undefined && ex.totalPoints <= 1) return false;
                 
-                return mode === 'exam' || totalQ >= 5 || !mode;
+                return mode === 'pruefung' || mode === 'schriftlich' || mode === 'exam' || totalQ >= 5 || !mode;
               });
 
               return (

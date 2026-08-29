@@ -76,7 +76,7 @@ export default function FallbeispieleModus({
     // Fire-and-Forget Logging to Supabase question_attempts
     logQuestionAttempt({
       session_id: sessionIdRef.current,
-      mode: 'scenario',
+      mode: 'fallbeispiele',
       question_id: String(currentCase.id || 'case_item'),
       topic: String(currentCase.title || 'Strafrecht & Notwehr / BGB'),
       is_correct: Boolean(isCorrect),
@@ -103,7 +103,8 @@ export default function FallbeispieleModus({
       setIsFinished(true);
       const correctCount = cases.filter(c => userAnswers[c.id] === c.correct).length;
       logExamSession({
-        mode: 'scenario',
+        mode: 'fallbeispiele',
+        exam_type: 'Fallbeispiele Praxis-Trainer',
         scoreAchieved: correctCount,
         scoreMax: cases.length,
         passed: (correctCount / cases.length) >= 0.5

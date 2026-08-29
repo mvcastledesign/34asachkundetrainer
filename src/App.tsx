@@ -472,23 +472,6 @@ export default function App() {
         const updatedExamHistory = [newExamItem, ...existingExamHistory].slice(0, 20);
 
         syncProgressToSupabase(progress, currentUser.id, updatedExamHistory);
-
-        if (item.typ === 'Prüfung' && currentUser.id) {
-          logExamSession({
-            user_id: currentUser.id,
-            mode: 'exam',
-            exam_type: 'Prüfungssimulation § 34a',
-            scoreAchieved: item.richtig,
-            scoreMax: item.anzahl,
-            total_questions: item.anzahl,
-            correct_count: item.richtig,
-            incorrect_count: item.falsch,
-            score_percent: Math.round((item.richtig / item.anzahl) * 100),
-            points_earned: item.richtig,
-            max_points: item.anzahl,
-            passed: (item.richtig / item.anzahl) >= 0.5
-          });
-        }
       }
 
       return updated;

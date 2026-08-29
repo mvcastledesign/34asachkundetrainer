@@ -74,7 +74,7 @@ export default function Karteikartenmodus({ questions, translationLang = 'deakti
       const metrics = trackerRef.current.getMetrics();
       logQuestionAttempt({
         session_id: sessionIdRef.current,
-        mode: 'flashcards',
+        mode: 'karteikarten',
         question_id: String(currentQuestion.id || 'q_item'),
         topic: String(currentQuestion.kategorie || 'Sachkunde § 34a'),
         is_correct: true,

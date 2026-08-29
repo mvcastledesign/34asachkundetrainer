@@ -8,8 +8,9 @@
  */
 
 import { supabase } from './supabase.ts';
+import { TrainingMode } from '../types.ts';
 
-export type ExamAnalyticsMode = 'exam' | 'flashcards' | 'riddle' | 'scenario' | 'video' | string;
+export type ExamAnalyticsMode = TrainingMode | string;
 
 export interface QuestionAttemptData {
   user_id?: string | number;

@@ -260,7 +260,7 @@ export default function LegalConceptGuesser({
     // Track question attempt in Supabase
     logQuestionAttempt({
       session_id: sessionIdRef.current,
-      mode: 'riddle',
+      mode: 'raetsel',
       question_id: String(currentRiddle.id || 'riddle_item'),
       topic: 'Rechtliche Grundlagen & Begriffe',
       is_correct: Boolean(isCorrect),
@@ -310,7 +310,8 @@ export default function LegalConceptGuesser({
     } else {
       setIsCompleted(true);
       logExamSession({
-        mode: 'riddle',
+        mode: 'raetsel',
+        exam_type: '„Was bin ich?“ Rätsel',
         scoreAchieved: correctCount,
         scoreMax: totalQuestions,
         passed: (correctCount / totalQuestions) >= 0.5

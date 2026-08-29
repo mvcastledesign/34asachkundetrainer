@@ -389,10 +389,10 @@ export default function SchriftlicherTestmodus({
         incorrectCount++;
       }
 
-      // Fire telemetry attempt for every question in the exam
+      // Fire telemetry attempt for every question in the written test
       logQuestionAttempt({
         session_id: sessionIdRef.current,
-        mode: 'exam',
+        mode: 'schriftlich',
         question_id: String(q.id || 'exam_item'),
         topic: String(q.kategorie || 'Schriftliche Prüfung'),
         is_correct: Boolean(evalRes.isFullyCorrect),
@@ -415,7 +415,7 @@ export default function SchriftlicherTestmodus({
     const durationSec = Math.max(0, totalExamSecondsRef.current - timeLeft);
     logExamSession({
       session_id: sessionIdRef.current,
-      mode: 'exam',
+      mode: 'schriftlich',
       exam_type: subMode === 'ihk' ? 'IHK 120 Fragen (82 Pkt.)' : subMode === 'quick' ? 'Schnelltest (30 Fragen)' : `Kategorietest: ${selectedCategory || 'Thema'}`,
       scoreAchieved: resultStats.points,
       scoreMax: resultStats.maxPoints,

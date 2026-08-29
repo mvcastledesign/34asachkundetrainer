@@ -68,5 +68,20 @@ export const KATEGORIEN = [
 
 export type KategorieType = typeof KATEGORIEN[number];
 
+/**
+ * Standardisierte Bezeichner für alle 10 Trainings- und Prüfungsmodi der Plattform
+ */
+export type TrainingMode = 
+  | 'lernmodus'        // Lernmodus (Antwortvergleich)
+  | 'schriftlich'      // Schriftlicher Test (§ 34a)
+  | 'pruefung'         // Prüfungs-Simulation
+  | 'video'            // Video-Szenario-Trainer
+  | 'fallbeispiele'    // Fallbeispiele
+  | 'karteikarten'     // Karteikarten (3D Flip)
+  | 'fachbegriffe'     // Fachbegriffe & Prüfungsdeutsch
+  | 'wiederholung'     // Fehler-Wiederholung
+  | 'streak'           // Endlos-Streak-Challenge
+  | 'raetsel';         // „Was bin ich?“ Rätsel
+
 // Re-export Auth & Management Types
 export * from './types/auth.ts';

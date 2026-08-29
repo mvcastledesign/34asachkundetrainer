@@ -133,8 +133,8 @@ export default function Pruefungsmodus({
     const durationSec = Math.max(0, (timeLimit * 60) - timeLeft);
     logExamSession({
       session_id: sessionIdRef.current,
-      mode: 'exam',
-      exam_type: 'Mündliche Prüfung Simulation (§ 34a)',
+      mode: 'pruefung',
+      exam_type: 'Prüfungs-Simulation (§ 34a Mündlich)',
       scoreAchieved: correctCount,
       scoreMax: examQuestions.length,
       total_questions: examQuestions.length,
@@ -164,7 +164,7 @@ export default function Pruefungsmodus({
     if (currentQ) {
       logQuestionAttempt({
         session_id: sessionIdRef.current,
-        mode: 'exam',
+        mode: 'pruefung',
         question_id: String(currentQ.id || 'exam_item'),
         topic: String(currentQ.kategorie || 'Mündliche Prüfung'),
         is_correct: Boolean(isCorrect),
