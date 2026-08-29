@@ -19,6 +19,7 @@ import { UserProfile } from '../types/auth.ts';
 import { supabase } from '../lib/supabase.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
+import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface StreakChallengeModeProps {
@@ -578,19 +579,18 @@ export default function StreakChallengeMode({
                   <h3 className="text-lg sm:text-xl font-bold font-display text-white leading-snug tracking-tight">
                     {currentQuestion.question}
                   </h3>
+                  {translationLang !== 'deaktiviert' && (
+                    <div className="mt-2">
+                      <TranslatedSubline 
+                        text={currentQuestion.question} 
+                        questionId={`${currentQuestion.id}_q`}
+                        targetLanguage={translationLang} 
+                        type="frage" 
+                        className="text-xs sm:text-sm text-amber-300/85 font-medium italic leading-relaxed"
+                      />
+                    </div>
+                  )}
                 </div>
-
-                {/* Translation View */}
-                {translationLang !== 'deaktiviert' && (
-                  <div className="pt-2 border-t border-white/5">
-                    <TranslationView 
-                      text={currentQuestion.question} 
-                      questionId={currentQuestion.id}
-                      targetLanguage={translationLang} 
-                      type="frage" 
-                    />
-                  </div>
-                )}
 
                 {/* 4 ANSWER BUTTONS */}
                 <div className="space-y-2.5 pt-1">
@@ -620,8 +620,8 @@ export default function StreakChallengeMode({
                         disabled={gameState !== 'playing'}
                         className={`w-full p-3.5 rounded-xl border transition-all text-left flex items-center justify-between gap-3 group active:scale-[0.99] cursor-pointer ${buttonClasses}`}
                       >
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className={`w-7 h-7 rounded-lg font-bold font-mono text-xs flex items-center justify-center shrink-0 transition-colors ${
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <span className={`w-7 h-7 rounded-lg font-bold font-mono text-xs flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                             gameState === 'answered' && isSelected && isCorrect
                               ? 'bg-emerald-500 text-slate-950'
                               : gameState === 'answered' && isSelected && !isCorrect
@@ -631,9 +631,20 @@ export default function StreakChallengeMode({
                             {letter}
                           </span>
 
-                          <span className="font-semibold text-xs sm:text-sm font-sans leading-snug">
-                            {option}
-                          </span>
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <span className="font-semibold text-xs sm:text-sm font-sans leading-snug">
+                              {option}
+                            </span>
+                            {translationLang !== 'deaktiviert' && (
+                              <TranslatedSubline
+                                text={option}
+                                questionId={`${currentQuestion.id}_opt_${idx}`}
+                                targetLanguage={translationLang}
+                                type={`opt_${idx}`}
+                                className="text-xs text-slate-400 mt-0.5 font-normal"
+                              />
+                            )}
+                          </div>
                         </div>
 
                         {gameState === 'answered' && isSelected && isCorrect && (

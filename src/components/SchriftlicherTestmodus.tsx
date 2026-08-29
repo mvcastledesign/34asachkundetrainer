@@ -41,6 +41,7 @@ import {
 import { WrittenQuestion } from '../types.ts';
 import { IHK_120_EXAM_QUESTIONS, IHK_CATEGORIES_CONFIG, IhkCategoryConfig } from '../data/ihk120ExamQuestions.ts';
 import TranslationView from './TranslationView.tsx';
+import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 import { fetchWrittenQuestionsFromSupabase } from '../lib/supabase.ts';
@@ -955,18 +956,19 @@ export default function SchriftlicherTestmodus({
                 </div>
 
                 {/* Question Text */}
-                <h3 className="text-lg md:text-xl font-bold text-white font-display leading-relaxed mb-6">
+                <h3 className="text-lg md:text-xl font-bold text-white font-display leading-relaxed mb-2">
                   {activeQuestion.frage}
                 </h3>
 
-                {/* Multilingual Translation helper if active */}
+                {/* Multilingual Question Translation if active */}
                 {translationLang !== 'deaktiviert' && (
-                  <div className="mb-6">
-                    <TranslationView 
-                      text={`${activeQuestion.frage}\n\n${activeQuestion.optionen.join('\n')}`} 
-                      questionId={activeQuestion.id}
+                  <div className="mb-5">
+                    <TranslatedSubline 
+                      text={activeQuestion.frage} 
+                      questionId={`${activeQuestion.id}_q`}
                       targetLanguage={translationLang}
                       type="frage"
+                      className="text-xs sm:text-sm text-amber-300/85 font-medium italic mt-0.5 leading-relaxed"
                     />
                   </div>
                 )}
@@ -1018,9 +1020,20 @@ export default function SchriftlicherTestmodus({
                           )}
                         </div>
 
-                        {/* Option Label Text */}
-                        <div className="text-sm md:text-base font-normal font-sans leading-snug">
-                          {optText}
+                        {/* Option Label Text & Subtle Translation Subline */}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm md:text-base font-normal font-sans leading-snug">
+                            {optText}
+                          </div>
+                          {translationLang !== 'deaktiviert' && (
+                            <TranslatedSubline
+                              text={optText}
+                              questionId={`${activeQuestion.id}_opt_${optIdx}`}
+                              targetLanguage={translationLang}
+                              type={`opt_${optIdx}`}
+                              className="text-xs text-slate-400 mt-0.5 font-normal"
+                            />
+                          )}
                         </div>
                       </button>
                     );
@@ -1592,9 +1605,20 @@ export default function SchriftlicherTestmodus({
                   </div>
 
                   {/* Question Text */}
-                  <h4 className="text-lg font-bold text-white font-display leading-snug">
-                    {activeReviewQ.frage}
-                  </h4>
+                  <div>
+                    <h4 className="text-lg font-bold text-white font-display leading-snug">
+                      {activeReviewQ.frage}
+                    </h4>
+                    {translationLang !== 'deaktiviert' && (
+                      <TranslatedSubline
+                        text={activeReviewQ.frage}
+                        questionId={`${activeReviewQ.id}_review_q`}
+                        targetLanguage={translationLang}
+                        type="frage"
+                        className="text-xs sm:text-sm text-amber-300/85 font-medium italic mt-1 leading-relaxed"
+                      />
+                    )}
+                  </div>
 
                   {/* Options with Visual Correctness Coding */}
                   <div className="space-y-2.5">
@@ -1636,7 +1660,18 @@ export default function SchriftlicherTestmodus({
                           key={optIdx}
                           className={`p-3.5 rounded-xl border text-sm flex items-start justify-between gap-3 ${optionCardStyle}`}
                         >
-                          <div className="font-sans leading-relaxed">{optText}</div>
+                          <div className="font-sans leading-relaxed flex-1 min-w-0">
+                            <div>{optText}</div>
+                            {translationLang !== 'deaktiviert' && (
+                              <TranslatedSubline
+                                text={optText}
+                                questionId={`${activeReviewQ.id}_opt_${optIdx}`}
+                                targetLanguage={translationLang}
+                                type={`opt_${optIdx}`}
+                                className="text-xs text-slate-400 mt-0.5 font-normal"
+                              />
+                            )}
+                          </div>
                           {badge}
                         </div>
                       );
@@ -1653,6 +1688,15 @@ export default function SchriftlicherTestmodus({
                       <p className="text-xs text-slate-200 font-sans leading-relaxed">
                         {activeReviewQ.erklaerung}
                       </p>
+                      {translationLang !== 'deaktiviert' && (
+                        <TranslationView
+                          text={activeReviewQ.erklaerung}
+                          questionId={`${activeReviewQ.id}_explanation`}
+                          targetLanguage={translationLang}
+                          type="erklaerung"
+                          variant="collapsible"
+                        />
+                      )}
                     </div>
                   )}
 

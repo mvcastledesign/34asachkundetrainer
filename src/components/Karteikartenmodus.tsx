@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, RefreshCw, Layers, Shuffle, Volume2, VolumeX
 import { Question, KATEGORIEN } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
+import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
@@ -259,13 +260,14 @@ export default function Karteikartenmodus({ questions, translationLang = 'deakti
                       <h3 className="text-sm sm:text-base md:text-md font-bold font-sans text-white text-left leading-relaxed max-h-[180px] overflow-y-auto pr-1">
                         {cleanQuestionText(currentQuestion?.frage)}
                       </h3>
-                      {currentQuestion && (
+                      {currentQuestion && translationLang !== 'deaktiviert' && (
                         <div onClick={(e) => e.stopPropagation()}>
-                          <TranslationView 
+                          <TranslatedSubline 
                             text={cleanQuestionText(currentQuestion.frage)} 
-                            questionId={currentQuestion.id} 
+                            questionId={`${currentQuestion.id}_card_q`} 
                             targetLanguage={translationLang} 
                             type="frage" 
+                            className="text-xs text-amber-300/85 font-medium italic mt-1 leading-relaxed"
                           />
                         </div>
                       )}
@@ -349,14 +351,15 @@ export default function Karteikartenmodus({ questions, translationLang = 'deakti
                       <span className="text-[#ff9966] text-[10px] font-bold uppercase tracking-widest block mb-2 font-display">
                         LÖSUNG:
                       </span>
-                      {formatSolutionText(currentQuestion)}
-                      {currentQuestion && (
+                      <div>{formatSolutionText(currentQuestion)}</div>
+                      {currentQuestion && translationLang !== 'deaktiviert' && (
                         <div onClick={(e) => e.stopPropagation()}>
                           <TranslationView 
                             text={formatSolutionText(currentQuestion)} 
-                            questionId={currentQuestion.id} 
+                            questionId={`${currentQuestion.id}_card_ans`} 
                             targetLanguage={translationLang} 
                             type="antwort" 
+                            variant="collapsible"
                           />
                         </div>
                       )}

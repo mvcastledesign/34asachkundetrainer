@@ -8,6 +8,7 @@ import { Layers, RefreshCw, AlertCircle, Sparkles, CheckCircle2, Shuffle, Volume
 import { Question, UserProgressMap } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
+import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface WiederholungsmodusProps {
@@ -260,12 +261,13 @@ export default function Wiederholungsmodus({
               <h3 className="text-base md:text-lg font-bold text-slate-100 leading-snug">
                 {cleanQuestionText(currentQuestion?.frage)}
               </h3>
-              {currentQuestion && (
-                <TranslationView 
+              {currentQuestion && translationLang !== 'deaktiviert' && (
+                <TranslatedSubline 
                   text={cleanQuestionText(currentQuestion.frage)} 
-                  questionId={currentQuestion.id} 
+                  questionId={`${currentQuestion.id}_repeat_q`} 
                   targetLanguage={translationLang} 
                   type="frage" 
+                  className="text-xs text-amber-300/85 font-medium italic mt-1 leading-relaxed"
                 />
               )}
             </div>
@@ -333,12 +335,13 @@ export default function Wiederholungsmodus({
                     </div>
                   </div>
                   <div>{formatSolutionText(currentQuestion)}</div>
-                  {currentQuestion && (
+                  {currentQuestion && translationLang !== 'deaktiviert' && (
                     <TranslationView 
                       text={formatSolutionText(currentQuestion)} 
-                      questionId={currentQuestion.id} 
+                      questionId={`${currentQuestion.id}_repeat_ans`} 
                       targetLanguage={translationLang} 
                       type="antwort" 
+                      variant="collapsible"
                     />
                   )}
                 </div>

@@ -8,6 +8,7 @@ import { Play, Clipboard, Clock, AlertTriangle, RefreshCw, CheckCircle, XCircle,
 import { Question, UserProgressMap, KATEGORIEN } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
+import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
 interface PruefungsmodusProps {
@@ -492,17 +493,20 @@ export default function Pruefungsmodus({
             </div>
 
             {/* Question Text */}
-            <h3 className="text-base md:text-lg font-bold text-slate-100">
-              {examQuestions[currentIndex]?.frage}
-            </h3>
-            {examQuestions[currentIndex] && (
-              <TranslationView 
-                text={examQuestions[currentIndex].frage} 
-                questionId={examQuestions[currentIndex].id} 
-                targetLanguage={translationLang} 
-                type="frage" 
-              />
-            )}
+            <div>
+              <h3 className="text-base md:text-lg font-bold text-slate-100">
+                {examQuestions[currentIndex]?.frage}
+              </h3>
+              {examQuestions[currentIndex] && translationLang !== 'deaktiviert' && (
+                <TranslatedSubline 
+                  text={examQuestions[currentIndex].frage} 
+                  questionId={`${examQuestions[currentIndex].id}_exam_q`} 
+                  targetLanguage={translationLang} 
+                  type="frage" 
+                  className="text-xs text-amber-300/85 font-medium italic mt-1 leading-relaxed"
+                />
+              )}
+            </div>
 
             {/* Mock draft sheet to write down key notes */}
             <div className="space-y-2">
@@ -587,12 +591,13 @@ export default function Pruefungsmodus({
                     </div>
                   </div>
                   <div>{examQuestions[currentIndex]?.antwort}</div>
-                  {examQuestions[currentIndex] && (
+                  {examQuestions[currentIndex] && translationLang !== 'deaktiviert' && (
                     <TranslationView 
                       text={examQuestions[currentIndex].antwort} 
-                      questionId={examQuestions[currentIndex].id} 
+                      questionId={`${examQuestions[currentIndex].id}_exam_ans`} 
                       targetLanguage={translationLang} 
                       type="antwort" 
+                      variant="collapsible"
                     />
                   )}
                 </div>

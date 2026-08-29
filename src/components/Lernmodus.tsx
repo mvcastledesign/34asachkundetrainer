@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Eye, CheckCircle2, XCircle, RefreshCw, Layer
 import { Question, UserProgressMap, KATEGORIEN, Schwierigkeit } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
+import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
@@ -301,12 +302,13 @@ export default function Lernmodus({
                 <h2 className="text-base md:text-lg font-bold font-sans text-white leading-relaxed">
                   {cleanQuestionText(currentQuestion?.frage)}
                 </h2>
-                {currentQuestion && (
-                  <TranslationView 
+                {currentQuestion && translationLang !== 'deaktiviert' && (
+                  <TranslatedSubline 
                     text={cleanQuestionText(currentQuestion.frage)} 
-                    questionId={currentQuestion.id} 
+                    questionId={`${currentQuestion.id}_learn_q`} 
                     targetLanguage={translationLang} 
                     type="frage" 
+                    className="text-xs sm:text-sm text-amber-300/85 font-medium italic mt-1 leading-relaxed"
                   />
                 )}
               </div>
@@ -377,14 +379,15 @@ export default function Lernmodus({
                   </div>
 
                   {/* Text container (shows complete content without forced scrolling) */}
-                  <div className="flex-grow text-slate-200 text-sm md:text-base leading-relaxed space-y-4 whitespace-pre-wrap font-medium font-sans pr-1 font-sans">
+                  <div className="flex-grow text-slate-200 text-sm md:text-base leading-relaxed space-y-4 whitespace-pre-wrap font-medium font-sans pr-1">
                     <div>{formatSolutionText(currentQuestion)}</div>
-                    {currentQuestion && (
+                    {currentQuestion && translationLang !== 'deaktiviert' && (
                       <TranslationView 
                         text={formatSolutionText(currentQuestion)} 
-                        questionId={currentQuestion.id} 
+                        questionId={`${currentQuestion.id}_learn_ans`} 
                         targetLanguage={translationLang} 
                         type="antwort" 
+                        variant="collapsible"
                       />
                     )}
                   </div>
