@@ -31,7 +31,7 @@ export function mapRowToStudentDetail(r: any): StudentDetail {
     securityQuestion: r.security_question || r.securityQuestion || '',
     securityAnswer: r.security_answer || r.securityAnswer || '',
     avatarInitials: initials,
-    courseId: r.course_code || r.course_id || r.courseId || 'SK-2026-A',
+    courseId: r.course_code || r.course_id || r.courseId || '',
     courseName: 'Aktueller Kurs: Sachkunde § 34a',
     progressPercent: typeof r.progress_percent === 'number' ? r.progress_percent : (typeof r.progressPercent === 'number' ? r.progressPercent : 0),
     successRatePercent: typeof r.success_rate_percent === 'number' ? r.success_rate_percent : (typeof r.successRatePercent === 'number' ? r.successRatePercent : 0),
@@ -39,7 +39,7 @@ export function mapRowToStudentDetail(r: any): StudentDetail {
     lastActive: r.last_active || r.lastActive || 'Gerade eben',
     maxStreak: typeof r.max_streak === 'number' ? r.max_streak : (typeof r.maxStreak === 'number' ? r.maxStreak : (typeof r.streak === 'number' ? r.streak : 0)),
     registeredAt: r.registered_at || r.registeredAt || new Date().toLocaleDateString('de-DE'),
-    invitationCode: r.course_code || r.invitation_code || 'SK-2026-A',
+    invitationCode: r.course_code || r.invitation_code || '',
     categoryPerformance: r.category_performance || r.categoryPerformance || [
       { category: 'Recht der öffentlichen Sicherheit', percentage: 0, questionsAnswered: 0 },
       { category: 'Gewerberecht (GewO / BewachV)', percentage: 0, questionsAnswered: 0 },
@@ -93,7 +93,7 @@ export async function createStudentInSupabase(data: {
     const firstName = data.vorname.trim();
     const lastName = data.nachname.trim();
     const fullName = `${firstName} ${lastName}`;
-    const courseCode = data.courseCode || 'SK-2026-A';
+    const courseCode = data.courseCode ? data.courseCode.trim().toUpperCase() : '';
 
     const insertPayload = {
       first_name: firstName,

@@ -346,26 +346,53 @@ export function getStudent10ModeStats(
   ];
 }
 
-const DEFAULT_COURSES: CourseCohort[] = [
-  { 
-    id: 'SK-2026-A', 
-    name: 'Sachkunde § 34a (Sommer 2026)', 
-    period: '01.07.2026 – 15.08.2026',
-    description: 'Hauptlehrgang Vollzeit (Abschlussprüfung August 2026)'
-  },
-  { 
-    id: 'SK-2026-B', 
-    name: 'Sachkunde § 34a (Herbst 2026)', 
-    period: '01.09.2026 – 15.10.2026',
-    description: 'Kompaktlehrgang Herbst (Abschlussprüfung Oktober 2026)'
-  },
-  { 
-    id: 'SK-2026-C', 
-    name: 'Sachkunde § 34a (Wochenend-Kurs)', 
-    period: '15.10.2026 – 30.11.2026',
-    description: 'Berufsbegleitender Abend- & Wochenendlehrgang'
+// Helper to purge legacy / dummy cohorts (e.g. SK-2026-A/B/C) from localStorage
+const purgeLegacyCohortCache = () => {
+  try {
+    const dummyIds = new Set(['SK-2026-A', 'SK-2026-B', 'SK-2026-C']);
+    
+    // Clean custom courses
+    const savedCustom = localStorage.getItem('moredu_custom_courses');
+    if (savedCustom) {
+      const parsed = JSON.parse(savedCustom);
+      if (Array.isArray(parsed)) {
+        const cleaned = parsed.filter((c: any) => c && c.id && !dummyIds.has(String(c.id).toUpperCase()));
+        localStorage.setItem('moredu_custom_courses', JSON.stringify(cleaned));
+      }
+    }
+    
+    // Clean archived courses
+    const savedArchived = localStorage.getItem('moredu_archived_courses');
+    if (savedArchived) {
+      const parsed = JSON.parse(savedArchived);
+      if (Array.isArray(parsed)) {
+        const cleaned = parsed.filter((id: any) => !dummyIds.has(String(id).toUpperCase()));
+        localStorage.setItem('moredu_archived_courses', JSON.stringify(cleaned));
+      }
+    }
+
+    // Clean old deleted course keys
+    const oldDeleted = localStorage.getItem('moredu_deleted_course_ids');
+    if (oldDeleted) {
+      const parsed = JSON.parse(oldDeleted);
+      if (Array.isArray(parsed)) {
+        const cleaned = parsed.filter((id: any) => !dummyIds.has(String(id).toUpperCase()));
+        localStorage.setItem('moredu_deleted_course_ids', JSON.stringify(cleaned));
+      }
+    }
+
+    const savedPerm = localStorage.getItem('moredu_permanently_deleted_courses');
+    if (savedPerm) {
+      const parsed = JSON.parse(savedPerm);
+      if (Array.isArray(parsed)) {
+        const cleaned = parsed.filter((id: any) => !dummyIds.has(String(id).toUpperCase()));
+        localStorage.setItem('moredu_permanently_deleted_courses', JSON.stringify(cleaned));
+      }
+    }
+  } catch (e) {
+    console.warn('Error purging legacy cohort cache:', e);
   }
-];
+};
 
 // Helper: Format ISO date string (YYYY-MM-DD) into German date string (DD.MM.YYYY)
 const formatGermanDateOnly = (d: string) => {
@@ -613,6 +640,7 @@ export default function DozentenDashboard({
   });
 
   const [courses, setCourses] = useState<CourseCohort[]>(() => {
+    purgeLegacyCohortCache();
     try {
       const savedPerm = localStorage.getItem('moredu_permanently_deleted_courses');
       const permDeleted: string[] = savedPerm ? JSON.parse(savedPerm) : [];
@@ -621,20 +649,17 @@ export default function DozentenDashboard({
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          // Merge defaults with saved custom courses (prevent duplicates by ID)
-          const map = new Map<string, CourseCohort>();
-          DEFAULT_COURSES.filter(c => !permDeleted.includes(c.id.toUpperCase())).forEach(c => map.set(c.id.toUpperCase(), c));
-          parsed.forEach(c => {
-            if (c && c.id && !permDeleted.includes(c.id.toUpperCase())) map.set(c.id.toUpperCase(), c);
-          });
-          return Array.from(map.values());
+          return parsed.filter(
+            c => c && c.id &&
+            !permDeleted.includes(c.id.toUpperCase()) &&
+            !['SK-2026-A', 'SK-2026-B', 'SK-2026-C'].includes(c.id.toUpperCase())
+          );
         }
       }
-      return DEFAULT_COURSES.filter(c => !permDeleted.includes(c.id.toUpperCase()));
     } catch (e) {
       console.warn('Could not read moredu_custom_courses from localStorage', e);
     }
-    return DEFAULT_COURSES;
+    return [];
   });
 
   // Date helpers for course period calendar
@@ -733,35 +758,40 @@ export default function DozentenDashboard({
     student?: StudentDetail;
   } | null>(null);
 
-  // Dynamically resolve all raw courses including any from students list
+  // Dynamically resolve all raw courses strictly derived from students list (and any active custom courses)
   const allKnownCourses = useMemo(() => {
     const courseMap = new Map<string, CourseCohort>();
-    // First register all courses from state (excluding permanently deleted)
-    courses.forEach(c => {
-      if (!permanentlyDeletedCourseIds.includes(c.id.toUpperCase())) {
-        courseMap.set(c.id.toUpperCase(), c);
-      }
-    });
 
-    // Then register any course code found in students list (if not permanently deleted)
+    // 1. Primary Source of Truth: Distinct course codes from studentsList (loaded directly from Supabase DB)
     studentsList.forEach(s => {
       const rawId = (s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode;
       if (rawId && typeof rawId === 'string' && rawId.trim()) {
         const code = rawId.trim();
         const codeUpper = code.toUpperCase();
-        if (!permanentlyDeletedCourseIds.includes(codeUpper) && !courseMap.has(codeUpper)) {
-          courseMap.set(codeUpper, {
-            id: code,
-            name: `Sachkunde § 34a (${code})`,
-            period: 'Fortlaufend / Flexibel',
-            description: `Zugeordneter Kohorten-Code: ${code}`
-          });
+        if (!['SK-2026-A', 'SK-2026-B', 'SK-2026-C'].includes(codeUpper) && !permanentlyDeletedCourseIds.includes(codeUpper)) {
+          if (!courseMap.has(codeUpper)) {
+            const meta = courses.find(c => c.id.toUpperCase() === codeUpper);
+            courseMap.set(codeUpper, meta || {
+              id: code,
+              name: `Sachkunde § 34a (${code})`,
+              period: 'Fortlaufend / Flexibel',
+              description: `Zugeordneter Kohorten-Code: ${code}`
+            });
+          }
         }
       }
     });
 
+    // 2. Also register any active custom course created in the current dashboard (if not permanently deleted)
+    courses.forEach(c => {
+      const idUpper = c.id.toUpperCase();
+      if (!['SK-2026-A', 'SK-2026-B', 'SK-2026-C'].includes(idUpper) && !permanentlyDeletedCourseIds.includes(idUpper) && !courseMap.has(idUpper)) {
+        courseMap.set(idUpper, c);
+      }
+    });
+
     return Array.from(courseMap.values());
-  }, [courses, studentsList, permanentlyDeletedCourseIds]);
+  }, [studentsList, courses, permanentlyDeletedCourseIds]);
 
   // Active (non-archived) courses
   const availableCourses = useMemo(() => {
@@ -977,14 +1007,14 @@ export default function DozentenDashboard({
       return {
         id: 'ALL',
         name: 'Alle Kurse (Gesamtübersicht)',
-        period: '01.07.2026 – 30.11.2026 (Alle Kohorten)',
+        period: 'Fortlaufend (Alle Kohorten)',
         description: 'Aggregierte Ansicht aller Lehrgänge & Teilnehmer'
       };
     }
     return availableCourses.find(c => c.id.toUpperCase() === selectedCourseId.toUpperCase()) || {
       id: selectedCourseId,
       name: `Sachkunde § 34a (${selectedCourseId})`,
-      period: '01.07.2026 – 15.08.2026',
+      period: 'Fortlaufend / Flexibel',
       description: `Lehrgang ${selectedCourseId}`
     };
   }, [selectedCourseId, availableCourses]);
@@ -994,8 +1024,10 @@ export default function DozentenDashboard({
     const counts: Record<string, number> = {};
     availableCourses.forEach(c => { counts[c.id.toUpperCase()] = 0; });
     studentsList.forEach(s => {
-      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'SK-2026-A').trim().toUpperCase();
-      counts[sCourse] = (counts[sCourse] || 0) + 1;
+      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || '').trim().toUpperCase();
+      if (sCourse) {
+        counts[sCourse] = (counts[sCourse] || 0) + 1;
+      }
     });
     return counts;
   }, [availableCourses, studentsList]);
@@ -1006,7 +1038,7 @@ export default function DozentenDashboard({
       return studentsList;
     }
     return studentsList.filter(s => {
-      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || 'SK-2026-A').trim().toUpperCase();
+      const sCourse = ((s as any).course_code || (s as any).courseCode || s.courseId || s.invitationCode || '').trim().toUpperCase();
       return sCourse === selectedCourseId.toUpperCase();
     });
   }, [studentsList, selectedCourseId]);
@@ -1349,7 +1381,8 @@ export default function DozentenDashboard({
 
   // Copy invitation code for active course
   const handleCopyInviteLink = () => {
-    const code = activeCourse.id === 'ALL' ? 'SK-2026-A' : activeCourse.id;
+    const fallbackCode = availableCourses[0]?.id || 'MOREDU34a';
+    const code = activeCourse.id === 'ALL' ? fallbackCode : activeCourse.id;
     navigator.clipboard.writeText(code);
     showToast(`Pflicht-Kurs-Code "${code}" in die Zwischenablage kopiert!`);
   };
@@ -2607,7 +2640,7 @@ export default function DozentenDashboard({
                             <Users className="w-8 h-8 text-slate-600 mx-auto" />
                             <p className="text-xs font-semibold text-slate-300">Keine Schüler für die aktuelle Auswahl gefunden.</p>
                             <p className="text-[11px] text-slate-500">
-                              Schüler können sich mit dem jeweiligen Kurs-Code (z. B. <strong className="text-[#dfb871] font-mono">{selectedCourseId === 'ALL' ? 'SK-2026-A' : selectedCourseId}</strong>) registrieren.
+                              Schüler können sich mit dem jeweiligen Kurs-Code (z. B. <strong className="text-[#dfb871] font-mono">{selectedCourseId === 'ALL' ? (availableCourses[0]?.id || 'MOREDU34a') : selectedCourseId}</strong>) registrieren.
                             </p>
                           </div>
                         </td>
@@ -2625,7 +2658,7 @@ export default function DozentenDashboard({
                               <div>
                                 <p className="font-bold text-white text-xs">{student.name}</p>
                                 <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                                  Kurs-Code: <span className="text-[#dfb871] font-bold">{student.courseId || student.invitationCode || 'SK-2026-A'}</span>
+                                  Kurs-Code: <span className="text-[#dfb871] font-bold">{student.courseId || student.invitationCode || '–'}</span>
                                 </p>
                               </div>
                             </div>
@@ -3160,7 +3193,7 @@ export default function DozentenDashboard({
                   </div>
                   <div className="space-y-1">
                     <span className="text-slate-400 block text-[10px] uppercase">Pflicht-Kurs-Code</span>
-                    <span className="text-base font-bold text-[#dfb871]">{selectedStudent.courseId || selectedStudent.invitationCode || 'SK-2026-A'}</span>
+                    <span className="text-base font-bold text-[#dfb871]">{selectedStudent.courseId || selectedStudent.invitationCode || '–'}</span>
                   </div>
                   <div className="space-y-1">
                     <span className="text-slate-400 block text-[10px] uppercase">Registriert seit</span>
@@ -3348,7 +3381,7 @@ export default function DozentenDashboard({
 
               <div className="space-y-2 text-xs text-slate-300">
                 <p>
-                  Möchten Sie den Schüler <strong className="text-white">{studentToDelete.name}</strong> (Kurs-Code: {studentToDelete.courseId || studentToDelete.invitationCode || 'SK-2026-A'}) wirklich unwiderruflich aus der Datenbank löschen?
+                  Möchten Sie den Schüler <strong className="text-white">{studentToDelete.name}</strong> (Kurs-Code: {studentToDelete.courseId || studentToDelete.invitationCode || '–'}) wirklich unwiderruflich aus der Datenbank löschen?
                 </p>
                 <p className="text-[11px] text-slate-400">
                   Alle Prüfungs- und Lernfortschritte dieses Teilnehmers werden dabei dauerhaft entfernt.
@@ -3423,13 +3456,13 @@ export default function DozentenDashboard({
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider flex items-center justify-between">
                     <span>Kurs-Code (Pflicht-Registrierungscode):</span>
-                    <span className="text-[10px] text-[#dfb871] font-mono lowercase font-normal">z. B. SK-2026-B</span>
+                    <span className="text-[10px] text-[#dfb871] font-mono lowercase font-normal">z. B. MOREDU34a</span>
                   </label>
                   <input
                     type="text"
                     value={newCourseCode}
                     onChange={(e) => setNewCourseCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
-                    placeholder="KURS-34a-2026"
+                    placeholder="MOREDU34a"
                     className="w-full bg-slate-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-[#dfb871] font-mono font-bold tracking-widest focus:outline-none focus:border-[#dfb871] focus:ring-1 focus:ring-[#dfb871]"
                     required
                   />

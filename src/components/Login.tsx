@@ -54,45 +54,39 @@ const formatTitleCase = (str: string): string => {
     .join('');
 };
 
-// Helper to gather all legitimate course codes (Standard courses, Dozenten custom courses from localStorage, and Supabase)
+// Helper to gather all legitimate course codes (Dynamically from Supabase and custom courses)
 const getExistingValidCourseCodes = async (): Promise<Set<string>> => {
-  const codes = new Set<string>(['SK-2026-A', 'SK-2026-B', 'SK-2026-C']);
+  const codes = new Set<string>();
 
-  // 1. From localStorage 'moredu_custom_courses'
+  // 1. Primary source: From Supabase existing student cohorts
+  try {
+    const students = await fetchStudentsFromSupabase();
+    students.forEach((s: any) => {
+      const c = s.courseId || s.courseCode || s.course_code || s.invitationCode;
+      if (c && typeof c === 'string' && c.trim().length >= 2) {
+        codes.add(c.trim().toUpperCase());
+      }
+    });
+  } catch (e) {
+    console.warn('Could not load course codes from Supabase:', e);
+  }
+
+  // 2. From localStorage 'moredu_custom_courses' if any valid custom created
   try {
     const raw1 = localStorage.getItem('moredu_custom_courses');
     if (raw1) {
       const parsed = JSON.parse(raw1);
       if (Array.isArray(parsed)) {
         parsed.forEach((c: any) => {
-          if (c && c.id) codes.add(String(c.id).trim().toUpperCase());
+          if (c && c.id) {
+            const idUpper = String(c.id).trim().toUpperCase();
+            if (!idUpper.startsWith('SK-2026-')) {
+              codes.add(idUpper);
+            }
+          }
         });
       }
     }
-  } catch (e) {}
-
-  // 2. From localStorage 'custom_courses'
-  try {
-    const raw2 = localStorage.getItem('custom_courses');
-    if (raw2) {
-      const parsed = JSON.parse(raw2);
-      if (Array.isArray(parsed)) {
-        parsed.forEach((c: any) => {
-          if (c && c.id) codes.add(String(c.id).trim().toUpperCase());
-        });
-      }
-    }
-  } catch (e) {}
-
-  // 3. From Supabase existing student cohorts
-  try {
-    const students = await fetchStudentsFromSupabase();
-    students.forEach((s: any) => {
-      const c = s.courseId || s.courseCode || s.course_code || s.invitationCode;
-      if (c && typeof c === 'string' && c.trim().length >= 3) {
-        codes.add(c.trim().toUpperCase());
-      }
-    });
   } catch (e) {}
 
   return codes;
@@ -209,7 +203,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       return;
     }
 
-    const studentCourse = foundStudent.courseId || foundStudent.invitationCode || 'SK-2026-A';
+    const studentCourse = foundStudent.courseId || foundStudent.invitationCode || '';
 
     const studentProfile: UserProfile = {
       id: foundStudent.id,
@@ -774,7 +768,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                   required
                   value={kursCode}
                   onChange={(e) => setKursCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
-                  placeholder="z. B. SK-2026-A oder TESTKURS"
+                  placeholder="z. B. MOREDU34a oder TEST123"
                   className="w-full bg-slate-950/70 border border-[#dfb871]/30 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#dfb871] transition-all font-mono font-bold uppercase tracking-wider"
                   disabled={loading}
                 />
