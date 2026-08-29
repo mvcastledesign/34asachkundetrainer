@@ -10,6 +10,8 @@ import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface PruefungsmodusProps {
   questions: Question[];
@@ -24,8 +26,13 @@ export default function Pruefungsmodus({
   progress,
   onAnswerBulk,
   onRecordHistory,
-  translationLang = 'deaktiviert'
+  translationLang: propTranslationLang
 }: PruefungsmodusProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   // Exam states
   const [examStarted, setExamStarted] = useState<boolean>(false);
   const [examFinished, setExamFinished] = useState<boolean>(false);

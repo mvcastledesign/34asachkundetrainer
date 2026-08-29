@@ -1,152 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Globe, AlertCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Globe, AlertCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { translateText, isRtlLanguage, LANGUAGE_LABELS } from '../lib/translator.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface TranslationViewProps {
   text: string;
   questionId: string;
-  targetLanguage: string; // 'farsi' | 'arabisch' | 'russisch' | 'englisch' | 'deaktiviert'
-  type: 'frage' | 'antwort' | 'erklaerung';
+  targetLanguage?: string; // Optional override, otherwise inherits from context/storage
+  type?: 'frage' | 'antwort' | 'erklaerung';
   variant?: 'default' | 'compact' | 'collapsible';
   collapsible?: boolean;
   defaultExpanded?: boolean;
 }
 
-// Map key to display names
-export const LANGUAGE_LABELS: Record<string, string> = {
-  farsi: 'Farsi (فارسی)',
-  arabisch: 'Arabisch (العربية)',
-  russisch: 'Russisch (Русский)',
-  englisch: 'Englisch (English)',
-};
+export { LANGUAGE_LABELS };
 
 export default function TranslationView({
   text,
   questionId,
-  targetLanguage,
-  type,
+  targetLanguage: propLanguage,
+  type = 'frage',
   variant = 'default',
   collapsible = false,
   defaultExpanded = false,
 }: TranslationViewProps) {
+  const context = useLanguage();
+  const activeLanguage = propLanguage || context.selectedLanguage || safeStorage.getSelectedLanguage();
+
   const [translatedText, setTranslatedText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [retryCount, setRetryCount] = useState<number>(0);
   const [isExpanded, setIsExpanded] = useState<boolean>(defaultExpanded);
 
-  const isRtl = targetLanguage === 'farsi' || targetLanguage === 'arabisch';
+  const isRtl = isRtlLanguage(activeLanguage);
   const isCollapsible = collapsible || variant === 'collapsible';
 
-  useEffect(() => {
-    if (!targetLanguage || targetLanguage === 'deaktiviert' || !text || !text.trim()) {
+  const performTranslation = useCallback(async () => {
+    if (!activeLanguage || activeLanguage === 'deaktiviert' || !text || !text.trim()) {
       setTranslatedText('');
+      setLoading(false);
+      setHasError(false);
       return;
     }
 
-    const cleanId = String(questionId || 'gen').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const cacheKey = `sachkunde_34a_trans_${cleanId}_${targetLanguage}_${type}`;
-    const cached = localStorage.getItem(cacheKey);
+    setLoading(true);
+    setHasError(false);
+    setErrorMessage('');
 
-    if (cached) {
-      setTranslatedText(cached);
-      setError('');
-      return;
-    }
-
-    let isMounted = true;
-
-    // Trigger on-the-fly translation via Gemini API
-    const fetchTranslation = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const response = await fetch('/api/translate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: text.trim(),
-            targetLanguage: LANGUAGE_LABELS[targetLanguage] || targetLanguage,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Translation request failed.');
-        }
-
-        const data = await response.json();
-        if (data?.translation && isMounted) {
-          localStorage.setItem(cacheKey, data.translation);
-          setTranslatedText(data.translation);
-        } else {
-          throw new Error('No translation text returned.');
-        }
-      } catch (err: any) {
-        // Client-side fallback via Google Translate free GTX endpoint
-        try {
-          const langCodes: Record<string, string> = { farsi: 'fa', arabisch: 'ar', russisch: 'ru', englisch: 'en' };
-          const code = langCodes[targetLanguage] || 'en';
-          const gtxUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${code}&dt=t&q=${encodeURIComponent(text.trim())}`;
-          const gtxRes = await fetch(gtxUrl);
-          if (gtxRes.ok) {
-            const gtxData = await gtxRes.json();
-            if (Array.isArray(gtxData) && Array.isArray(gtxData[0])) {
-              const resText = gtxData[0]
-                .filter((seg: any) => Array.isArray(seg) && typeof seg[0] === 'string')
-                .map((seg: any) => seg[0])
-                .join('');
-              if (resText && isMounted) {
-                localStorage.setItem(cacheKey, resText);
-                setTranslatedText(resText);
-                return;
-              }
-            }
-          }
-        } catch {
-          // Ignore fallback error
-        }
-
-        if (isMounted) {
-          setTranslatedText(text);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+    try {
+      const result = await translateText(text, activeLanguage, questionId, type);
+      if (result.success && result.translation) {
+        setTranslatedText(result.translation);
+        setHasError(false);
+      } else {
+        setHasError(true);
+        setErrorMessage(result.error || 'Verbindung fehlgeschlagen');
       }
-    };
-
-    fetchTranslation();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [text, questionId, targetLanguage, type]);
-
-  if (!targetLanguage || targetLanguage === 'deaktiviert' || !text) {
-    return null;
-  }
-
-  // Compact variant: Subtle 1-2 line subtitle directly underneath without extra borders or padding
-  if (variant === 'compact') {
-    if (loading) {
-      return (
-        <div className="flex items-center gap-1.5 text-slate-400 font-mono text-[10px] sm:text-xs mt-1 animate-pulse">
-          <Loader2 className="w-2.5 h-2.5 animate-spin text-[#dfb871]" />
-          <span>Übersetze...</span>
-        </div>
-      );
+    } catch (err: any) {
+      setHasError(true);
+      setErrorMessage('Übersetzung fehlgeschlagen');
+    } finally {
+      setLoading(false);
     }
-    if (error || !translatedText || translatedText.trim() === text.trim()) return null;
+  }, [text, activeLanguage, questionId, type]);
 
-    return (
-      <div 
-        className={`text-xs text-amber-300/90 font-medium italic mt-1 leading-snug break-words whitespace-normal ${isRtl ? 'text-right' : 'text-left'}`}
-        dir={isRtl ? 'rtl' : 'ltr'}
-      >
-        {translatedText}
-      </div>
-    );
+  useEffect(() => {
+    performTranslation();
+  }, [performTranslation, retryCount]);
+
+  if (!activeLanguage || activeLanguage === 'deaktiviert' || !text) {
+    return null;
   }
 
   // Collapsible mode (for long answers, model solutions, flashcard back)
@@ -159,40 +85,57 @@ export default function TranslationView({
             e.stopPropagation();
             setIsExpanded(!isExpanded);
           }}
-          className="flex items-center justify-between w-full px-3 py-1.5 rounded-lg bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 text-xs text-slate-300 hover:text-white transition-all group"
+          className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 text-xs text-slate-300 hover:text-white transition-all group"
         >
           <div className="flex items-center gap-2 text-[11px] font-medium text-[#dfb871]">
-            <Globe className="w-3.5 h-3.5 text-[#dfb871]/80" />
+            <Globe className="w-3.5 h-3.5 text-[#dfb871]/80 shrink-0" />
             <span>
-              {LANGUAGE_LABELS[targetLanguage] || targetLanguage} Übersetzung {isExpanded ? 'ausblenden' : 'anzeigen'}
+              {LANGUAGE_LABELS[activeLanguage] || activeLanguage} Übersetzung {isExpanded ? 'ausblenden' : 'anzeigen'}
             </span>
           </div>
           {isExpanded ? (
-            <ChevronUp className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
+            <ChevronUp className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0" />
           ) : (
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-white" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0" />
           )}
         </button>
 
         {isExpanded && (
-          <div className="mt-2 p-3 rounded-xl bg-slate-950/70 border border-[#dfb871]/20 text-xs md:text-sm text-slate-200 leading-relaxed animate-fadeIn">
+          <div className="mt-2 p-3.5 rounded-xl bg-slate-950/80 border border-[#dfb871]/20 text-xs md:text-sm text-slate-200 leading-relaxed animate-fadeIn">
             {loading && (
-              <div className="flex items-center gap-2 text-slate-400 py-1 text-xs animate-pulse">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#dfb871]" />
-                <span>Lade Übersetzung...</span>
+              <div className="space-y-2 py-1">
+                <div className="flex items-center gap-2 text-slate-400 text-xs mb-2">
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-[#dfb871] border-t-transparent animate-spin shrink-0" />
+                  <span>Lade Übersetzung...</span>
+                </div>
+                <div className="h-3 w-full bg-amber-400/10 rounded animate-pulse" />
+                <div className="h-3 w-4/5 bg-amber-400/10 rounded animate-pulse" />
               </div>
             )}
 
-            {error && (
-              <div className="flex items-center gap-1.5 text-rose-400 py-1 text-xs">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                <span>{error}</span>
+            {hasError && !loading && (
+              <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{errorMessage || 'Verbindungsfehler bei der Übersetzung.'}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setRetryCount((c) => c + 1);
+                  }}
+                  className="flex items-center gap-1 px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-white font-medium text-[11px] transition-colors"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  <span>Erneut versuchen</span>
+                </button>
               </div>
             )}
 
-            {!loading && !error && translatedText && (
-              <div 
-                className={`font-sans ${isRtl ? 'text-right leading-loose' : 'text-left leading-relaxed'} text-amber-100/90`}
+            {!loading && !hasError && translatedText && (
+              <div
+                className={`font-sans ${isRtl ? 'text-right leading-loose' : 'text-left leading-relaxed'} text-amber-100/90 whitespace-pre-wrap`}
                 dir={isRtl ? 'rtl' : 'ltr'}
               >
                 {translatedText}
@@ -204,32 +147,83 @@ export default function TranslationView({
     );
   }
 
+  // Compact inline badge variant
+  if (variant === 'compact') {
+    if (loading) {
+      return (
+        <div className="mt-1 flex items-center gap-1.5 animate-pulse">
+          <div className="h-2 w-16 bg-amber-400/20 rounded"></div>
+        </div>
+      );
+    }
+    if (hasError) {
+      return (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setRetryCount((c) => c + 1);
+          }}
+          className="mt-1 inline-flex items-center gap-1 text-[10px] text-amber-400/80 hover:text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20"
+        >
+          <RefreshCw className="w-2.5 h-2.5" />
+          <span>Übersetzung wiederholen</span>
+        </button>
+      );
+    }
+    if (!translatedText || translatedText.trim() === text.trim()) return null;
+
+    return (
+      <div
+        className={`mt-1 text-xs text-amber-300/85 font-medium leading-snug ${isRtl ? 'text-right' : 'text-left'}`}
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        {translatedText}
+      </div>
+    );
+  }
+
   // Default block variant
   return (
     <div className="mt-2.5 pt-2 border-t border-white/[0.04] text-[12.5px] leading-relaxed transition-all duration-200">
-      {/* Small badge */}
-      <div className="flex items-center gap-1.5 text-[9.5px] text-[#dfb871]/70 font-mono tracking-wider uppercase mb-1">
-        <Globe className="w-2.5 h-2.5" />
-        <span>{LANGUAGE_LABELS[targetLanguage] || targetLanguage} Übersetzung:</span>
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#dfb871]/10 text-[#dfb871] text-[10.5px] font-bold border border-[#dfb871]/20">
+          <Globe className="w-2.5 h-2.5 shrink-0" />
+          <span>{LANGUAGE_LABELS[activeLanguage] || activeLanguage} Übersetzung</span>
+        </div>
+
+        {hasError && !loading && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setRetryCount((c) => c + 1);
+            }}
+            className="flex items-center gap-1 text-[11px] text-amber-400 hover:text-amber-300 transition-colors"
+          >
+            <RefreshCw className="w-3 h-3" />
+            <span>Neu laden</span>
+          </button>
+        )}
       </div>
 
       {loading && (
-        <div className="flex items-center gap-2 text-slate-500 py-1 font-mono text-xs animate-pulse">
-          <Loader2 className="w-3 h-3 animate-spin text-[#dfb871]" />
-          <span>Lade Übersetzung...</span>
+        <div className="space-y-1.5 py-1">
+          <div className="h-3 w-full bg-amber-400/15 rounded animate-pulse" />
+          <div className="h-3 w-3/4 bg-amber-400/10 rounded animate-pulse" />
         </div>
       )}
 
-      {error && (
-        <div className="flex items-center gap-1.5 text-rose-400 font-medium py-1 text-xs">
+      {hasError && !loading && (
+        <div className="flex items-center gap-1.5 text-amber-400/90 text-xs py-1">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-          <span>{error}</span>
+          <span>Übersetzung konnte nicht geladen werden. Bitte Internetverbindung prüfen oder erneut laden.</span>
         </div>
       )}
 
-      {!loading && !error && translatedText && (
-        <div 
-          className={`text-[#c8a97e] font-sans antialiased ${isRtl ? 'text-right font-normal text-md leading-loose bg-[#dfb871]/[0.02] p-2.5 rounded-lg border border-white/[0.02]' : 'text-slate-300'}`}
+      {!loading && !hasError && translatedText && (
+        <div
+          className={`text-amber-200/90 font-sans tracking-wide ${isRtl ? 'text-right leading-loose' : 'text-left'} whitespace-pre-wrap`}
           dir={isRtl ? 'rtl' : 'ltr'}
         >
           {translatedText}

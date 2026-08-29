@@ -32,6 +32,8 @@ import {
 } from '../data/glossaryData.ts';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface FachbegriffeTrainerProps {
   translationLang?: string;
@@ -51,7 +53,12 @@ const languageDropdownOptions = SUPPORTED_LANGUAGES.map(lang => ({
   icon: <span className="text-sm">{lang.flag}</span>
 }));
 
-export default function FachbegriffeTrainer({ translationLang = 'deaktiviert', onRecordHistory }: FachbegriffeTrainerProps) {
+export default function FachbegriffeTrainer({ translationLang: propTranslationLang, onRecordHistory }: FachbegriffeTrainerProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   // Active Tab: 'glossar' | 'pruefungsdeutsch'
   const [activeTab, setActiveTab] = useState<'glossar' | 'pruefungsdeutsch'>('glossar');
 
@@ -66,7 +73,7 @@ export default function FachbegriffeTrainer({ translationLang = 'deaktiviert', o
     return 'englisch';
   });
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
-    const saved = localStorage.getItem('sachkunde_34a_glossary_bookmarks');
+    const saved = safeStorage.getItem('sachkunde_34a_glossary_bookmarks');
     return saved ? JSON.parse(saved) : [];
   });
   const [onlyBookmarks, setOnlyBookmarks] = useState<boolean>(false);

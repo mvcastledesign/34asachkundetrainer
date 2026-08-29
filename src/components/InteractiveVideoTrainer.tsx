@@ -13,6 +13,8 @@ import { ALL_SCENARIOS, SCENARIO_DATA } from '../data/videoScenarios.ts';
 import { ScenarioScene, ScenarioAnswer, InteractiveScenarioData } from '../types/videoScenario.ts';
 import TranslationView from './TranslationView.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface InteractiveVideoTrainerProps {
   translationLang?: string;
@@ -31,9 +33,13 @@ const cleanOptionText = (text: string): string => {
 };
 
 export default function InteractiveVideoTrainer({
-  translationLang = 'deaktiviert',
+  translationLang: propTranslationLang,
   onRecordHistory
 }: InteractiveVideoTrainerProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
   // Scenario Selection (unterstützt mehrere Videos oder genau 1 Video-Szenario)
   const scenariosList: InteractiveScenarioData[] = ALL_SCENARIOS && ALL_SCENARIOS.length > 0 
     ? ALL_SCENARIOS 

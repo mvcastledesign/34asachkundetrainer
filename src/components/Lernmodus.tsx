@@ -11,6 +11,8 @@ import TranslationView from './TranslationView.tsx';
 import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface LernmodusProps {
   questions: Question[];
@@ -41,8 +43,13 @@ export default function Lernmodus({
   progress,
   onAnswer,
   onResetProgress,
-  translationLang = 'deaktiviert'
+  translationLang: propTranslationLang
 }: LernmodusProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [selectedSchwierigkeit, setSelectedSchwierigkeit] = useState<string>('Alle');
   const [currentIndex, setCurrentIndex] = useState<number>(0);

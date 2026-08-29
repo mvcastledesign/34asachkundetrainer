@@ -1,142 +1,101 @@
-import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { RefreshCw } from 'lucide-react';
+import { translateText, isRtlLanguage } from '../lib/translator.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface TranslatedSublineProps {
   text: string;
   questionId: string;
-  targetLanguage?: string; // 'farsi' | 'arabisch' | 'russisch' | 'englisch' | 'deaktiviert'
+  targetLanguage?: string; // Optional override, otherwise inherits from LanguageContext/safeStorage
   type?: string; // e.g. 'frage', 'opt_0', 'opt_1', 'subline'
   className?: string;
   showLoader?: boolean;
 }
 
-const LANGUAGE_LABELS: Record<string, string> = {
-  farsi: 'Farsi (فارسی)',
-  arabisch: 'Arabisch (العربية)',
-  russisch: 'Russisch (Русский)',
-  englisch: 'Englisch (English)',
-};
-
-export const isRtlLanguage = (lang?: string): boolean => {
-  return lang === 'farsi' || lang === 'arabisch';
-};
-
 /**
- * Dezente Unterzeilen-Komponente für übersetzte Texte (z. B. Multiple-Choice-Optionen A-D, Untertitel).
+ * Dezente Unterzeilen-Komponente für übersetzte Texte (z. B. Multiple-Choice-Optionen A-D, Fragenunterzeilen).
+ * Beinhaltet Shimmer-Ladezustand, automatisches Retry-Handling und manuelle Wiederholungsoption bei Verbindungsfehlern.
  */
 export default function TranslatedSubline({
   text,
   questionId,
-  targetLanguage = 'deaktiviert',
+  targetLanguage: propLanguage,
   type = 'subline',
   className = 'text-xs text-slate-400 mt-0.5',
-  showLoader = false,
+  showLoader = true,
 }: TranslatedSublineProps) {
+  const context = useLanguage();
+  // Determine effective language: explicit prop if provided, else context, else safeStorage
+  const activeLanguage = propLanguage || context.selectedLanguage || safeStorage.getSelectedLanguage();
+
   const [translatedText, setTranslatedText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
-  const isRtl = isRtlLanguage(targetLanguage);
+  const isRtl = isRtlLanguage(activeLanguage);
 
-  useEffect(() => {
-    if (!targetLanguage || targetLanguage === 'deaktiviert' || !text || !text.trim()) {
+  const performTranslation = useCallback(async () => {
+    if (!activeLanguage || activeLanguage === 'deaktiviert' || !text || !text.trim()) {
       setTranslatedText('');
       setLoading(false);
+      setHasError(false);
       return;
     }
 
-    const cleanId = String(questionId || 'gen').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const cleanType = String(type || 'subline').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const cacheKey = `sachkunde_34a_trans_${cleanId}_${targetLanguage}_${cleanType}`;
-    const cached = localStorage.getItem(cacheKey);
+    setLoading(true);
+    setHasError(false);
 
-    if (cached) {
-      setTranslatedText(cached);
-      return;
-    }
-
-    let isMounted = true;
-
-    const fetchTranslation = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/translate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: text.trim(),
-            targetLanguage: LANGUAGE_LABELS[targetLanguage] || targetLanguage,
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data?.translation && isMounted) {
-            localStorage.setItem(cacheKey, data.translation);
-            setTranslatedText(data.translation);
-            return;
-          }
-        }
-        throw new Error('API translation failed');
-      } catch {
-        // Client-side fallback via Google Translate free endpoint
-        try {
-          const langCodes: Record<string, string> = {
-            farsi: 'fa',
-            arabisch: 'ar',
-            russisch: 'ru',
-            englisch: 'en',
-          };
-          const code = langCodes[targetLanguage] || 'en';
-          const gtxUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${code}&dt=t&q=${encodeURIComponent(text.trim())}`;
-          const gtxRes = await fetch(gtxUrl);
-          if (gtxRes.ok) {
-            const gtxData = await gtxRes.json();
-            if (Array.isArray(gtxData) && Array.isArray(gtxData[0])) {
-              const resText = gtxData[0]
-                .filter((seg: any) => Array.isArray(seg) && typeof seg[0] === 'string')
-                .map((seg: any) => seg[0])
-                .join('');
-              if (resText && isMounted) {
-                localStorage.setItem(cacheKey, resText);
-                setTranslatedText(resText);
-                return;
-              }
-            }
-          }
-        } catch {
-          // Graceful fallback
-        }
-
-        if (isMounted) {
-          setTranslatedText('');
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+    try {
+      const result = await translateText(text, activeLanguage, questionId, type);
+      if (result.success && result.translation) {
+        setTranslatedText(result.translation);
+        setHasError(false);
+      } else if (!result.success) {
+        setHasError(true);
       }
-    };
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [text, activeLanguage, questionId, type]);
 
-    fetchTranslation();
+  useEffect(() => {
+    performTranslation();
+  }, [performTranslation, retryCount]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [text, questionId, targetLanguage, type]);
-
-  if (!targetLanguage || targetLanguage === 'deaktiviert' || !text) {
+  if (!activeLanguage || activeLanguage === 'deaktiviert' || !text) {
     return null;
   }
 
+  // Loading state with smooth shimmer bar
   if (loading) {
     if (!showLoader) return null;
     return (
-      <div className="flex items-center gap-1.5 text-slate-500 text-[10px] mt-0.5 animate-pulse">
-        <Loader2 className="w-2.5 h-2.5 animate-spin text-[#dfb871]" />
-        <span>Übersetze...</span>
+      <div className="mt-1 flex items-center gap-1.5 animate-pulse select-none">
+        <div className="h-2.5 w-24 bg-amber-400/20 rounded-md"></div>
+        <div className="h-2.5 w-16 bg-amber-400/10 rounded-md"></div>
       </div>
+    );
+  }
+
+  // Error state: Show a subtle reload chip so mobile users can retry without silent failure
+  if (hasError && !translatedText) {
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setRetryCount((prev) => prev + 1);
+        }}
+        className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-amber-400/75 hover:text-amber-300 transition-colors py-0.5 px-1 rounded bg-amber-500/10 border border-amber-500/20"
+        title="Übersetzung konnte nicht geladen werden. Klicken zum Wiederholen."
+      >
+        <RefreshCw className="w-2.5 h-2.5 shrink-0" />
+        <span>Übersetzung neu laden</span>
+      </button>
     );
   }
 

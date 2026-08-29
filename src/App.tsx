@@ -55,6 +55,8 @@ import LegalConceptGuesser from './components/LegalConceptGuesser.tsx';
 import StreakChallengeMode from './components/StreakChallengeMode.tsx';
 import FachbegriffeTrainer from './components/FachbegriffeTrainer.tsx';
 import CustomDropdown from './components/CustomDropdown.tsx';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext.tsx';
+import { safeStorage } from './lib/storage.ts';
 
 const languageOptions = [
   { value: 'deaktiviert', label: 'Deaktiviert (Nur Deutsch)' },
@@ -64,15 +66,22 @@ const languageOptions = [
   { value: 'englisch', label: 'Englisch (English)' }
 ];
 
-export default function App() {
+function AppContent() {
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
+  const translationLang = selectedLanguage || safeStorage.getSelectedLanguage() || 'deaktiviert';
+
+  const handleSetTranslationLang = (lang: string) => {
+    setSelectedLanguage(lang);
+  };
+
   // Current user authentication state
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    const savedLocal = localStorage.getItem('sachkunde_34a_current_user');
+    const savedLocal = safeStorage.getItem('sachkunde_34a_current_user');
     if (savedLocal) {
       try {
         return JSON.parse(savedLocal);
       } catch (err) {
-        localStorage.removeItem('sachkunde_34a_current_user');
+        safeStorage.removeItem('sachkunde_34a_current_user');
       }
     }
     const savedSession = sessionStorage.getItem('sachkunde_34a_current_user');
@@ -96,19 +105,11 @@ export default function App() {
   const [history, setHistory] = useState<LernhistorieItem[]>([]);
   const [dailyGoal, setDailyGoal] = useState<number>(10);
   const [studyDuration, setStudyDuration] = useState<number>(0);
-  const [translationLang, setTranslationLang] = useState<string>(() => {
-    return localStorage.getItem('sachkunde_34a_translation_lang') || 'deaktiviert';
-  });
-
-  const handleSetTranslationLang = (lang: string) => {
-    setTranslationLang(lang);
-    localStorage.setItem('sachkunde_34a_translation_lang', lang);
-  };
 
   // 1. Load data from LocalStorage
   useEffect(() => {
     // Questions catalog
-    const localQuestions = localStorage.getItem('sachkunde_34a_questions');
+    const localQuestions = safeStorage.getItem('sachkunde_34a_questions');
     let loadedQuestions: Question[] = [];
     let needsReset = false;
     if (localQuestions) {
@@ -136,7 +137,7 @@ export default function App() {
     // Progress
     if (currentUser) {
       const userProgressKey = `sachkunde_34a_progress_${currentUser.id}`;
-      const localUserProgress = localStorage.getItem(userProgressKey) || localStorage.getItem('sachkunde_34a_progress');
+      const localUserProgress = safeStorage.getItem(userProgressKey) || safeStorage.getItem('sachkunde_34a_progress');
       if (localUserProgress && !needsReset) {
         try {
           setProgress(JSON.parse(localUserProgress));
@@ -149,7 +150,7 @@ export default function App() {
 
       // Historial logs
       const userHistoryKey = `sachkunde_34a_history_${currentUser.id}`;
-      const localUserHistory = localStorage.getItem(userHistoryKey) || localStorage.getItem('sachkunde_34a_history');
+      const localUserHistory = safeStorage.getItem(userHistoryKey) || safeStorage.getItem('sachkunde_34a_history');
       if (localUserHistory) {
         try {
           setHistory(JSON.parse(localUserHistory));
@@ -163,12 +164,12 @@ export default function App() {
       // Clear progress and history if not logged in
       setProgress({});
       setHistory([]);
-      localStorage.removeItem('sachkunde_34a_progress');
-      localStorage.removeItem('sachkunde_34a_history');
+      safeStorage.removeItem('sachkunde_34a_progress');
+      safeStorage.removeItem('sachkunde_34a_history');
     }
 
     // Daily Goals
-    const localGoal = localStorage.getItem('sachkunde_34a_daily_goal');
+    const localGoal = safeStorage.getItem('sachkunde_34a_daily_goal');
     if (localGoal) {
       setDailyGoal(parseInt(localGoal, 10) || 10);
     }
@@ -178,7 +179,7 @@ export default function App() {
   useEffect(() => {
     if (currentUser?.id && currentUser.role === 'schueler') {
       const userDurationKey = `sachkunde_34a_study_duration_${currentUser.id}`;
-      const savedDuration = localStorage.getItem(userDurationKey);
+      const savedDuration = safeStorage.getItem(userDurationKey);
       setStudyDuration(savedDuration ? parseInt(savedDuration, 10) || 0 : 0);
     } else {
       setStudyDuration(0);
@@ -199,14 +200,14 @@ export default function App() {
   // Persist study duration every 5 seconds user-specifically
   useEffect(() => {
     if (currentUser?.id && currentUser.role === 'schueler' && studyDuration > 0 && studyDuration % 5 === 0) {
-      localStorage.setItem(`sachkunde_34a_study_duration_${currentUser.id}`, studyDuration.toString());
+      safeStorage.setItem(`sachkunde_34a_study_duration_${currentUser.id}`, studyDuration.toString());
     }
   }, [studyDuration, currentUser?.id, currentUser?.role]);
 
   // Sync state mutation actions with local storage
   const saveQuestionsToLocal = (newQuestions: Question[]) => {
     setQuestions(newQuestions);
-    localStorage.setItem('sachkunde_34a_questions', JSON.stringify(newQuestions));
+    safeStorage.setItem('sachkunde_34a_questions', JSON.stringify(newQuestions));
   };
 
   const syncProgressToSupabase = (
@@ -218,8 +219,8 @@ export default function App() {
     if (!studentId || (currentUser && currentUser.role !== 'schueler' && !overrideStudentId)) return;
 
     // Save progress to user-bound storage and active session storage
-    localStorage.setItem(`sachkunde_34a_progress_${studentId}`, JSON.stringify(updatedProgress));
-    localStorage.setItem('sachkunde_34a_progress', JSON.stringify(updatedProgress));
+    safeStorage.setItem(`sachkunde_34a_progress_${studentId}`, JSON.stringify(updatedProgress));
+    safeStorage.setItem('sachkunde_34a_progress', JSON.stringify(updatedProgress));
 
     const totalQuestions = questions.length || INITIAL_QUESTIONS.length || 100;
     const progressEntries = Object.values(updatedProgress);
@@ -506,18 +507,18 @@ export default function App() {
     setHistory([]);
     setStudyDuration(0);
     if (currentUser?.id) {
-      localStorage.removeItem(`sachkunde_34a_progress_${currentUser.id}`);
-      localStorage.removeItem(`sachkunde_34a_history_${currentUser.id}`);
-      localStorage.removeItem(`sachkunde_34a_study_duration_${currentUser.id}`);
+      safeStorage.removeItem(`sachkunde_34a_progress_${currentUser.id}`);
+      safeStorage.removeItem(`sachkunde_34a_history_${currentUser.id}`);
+      safeStorage.removeItem(`sachkunde_34a_study_duration_${currentUser.id}`);
     }
-    localStorage.removeItem('sachkunde_34a_progress');
-    localStorage.removeItem('sachkunde_34a_history');
-    localStorage.removeItem('sachkunde_34a_study_duration');
+    safeStorage.removeItem('sachkunde_34a_progress');
+    safeStorage.removeItem('sachkunde_34a_history');
+    safeStorage.removeItem('sachkunde_34a_study_duration');
   };
 
   const handleSetDailyGoal = (goal: number) => {
     setDailyGoal(goal);
-    localStorage.setItem('sachkunde_34a_daily_goal', goal.toString());
+    safeStorage.setItem('sachkunde_34a_daily_goal', goal.toString());
   };
 
   // Auth Handlers
@@ -525,8 +526,8 @@ export default function App() {
     // Completely reset previous local progress and history state
     setProgress({});
     setHistory([]);
-    localStorage.removeItem('sachkunde_34a_progress');
-    localStorage.removeItem('sachkunde_34a_history');
+    safeStorage.removeItem('sachkunde_34a_progress');
+    safeStorage.removeItem('sachkunde_34a_history');
 
     setCurrentUser(user);
 
@@ -537,15 +538,15 @@ export default function App() {
       // Progress setup
       if (user.questionProgress && Object.keys(user.questionProgress).length > 0) {
         setProgress(user.questionProgress);
-        localStorage.setItem(userProgressKey, JSON.stringify(user.questionProgress));
-        localStorage.setItem('sachkunde_34a_progress', JSON.stringify(user.questionProgress));
+        safeStorage.setItem(userProgressKey, JSON.stringify(user.questionProgress));
+        safeStorage.setItem('sachkunde_34a_progress', JSON.stringify(user.questionProgress));
       } else {
-        const cachedUserProgress = localStorage.getItem(userProgressKey);
+        const cachedUserProgress = safeStorage.getItem(userProgressKey);
         if (cachedUserProgress) {
           try {
             const parsed = JSON.parse(cachedUserProgress);
             setProgress(parsed);
-            localStorage.setItem('sachkunde_34a_progress', JSON.stringify(parsed));
+            safeStorage.setItem('sachkunde_34a_progress', JSON.stringify(parsed));
           } catch (e) {
             setProgress({});
           }
@@ -555,7 +556,7 @@ export default function App() {
       }
 
       // History setup
-      const cachedUserHistory = localStorage.getItem(userHistoryKey);
+      const cachedUserHistory = safeStorage.getItem(userHistoryKey);
       if (cachedUserHistory) {
         try {
           setHistory(JSON.parse(cachedUserHistory));
@@ -568,11 +569,11 @@ export default function App() {
     }
 
     if (rememberMe) {
-      localStorage.setItem('sachkunde_34a_current_user', JSON.stringify(user));
+      safeStorage.setItem('sachkunde_34a_current_user', JSON.stringify(user));
       sessionStorage.removeItem('sachkunde_34a_current_user');
     } else {
       sessionStorage.setItem('sachkunde_34a_current_user', JSON.stringify(user));
-      localStorage.removeItem('sachkunde_34a_current_user');
+      safeStorage.removeItem('sachkunde_34a_current_user');
     }
   };
 
@@ -581,10 +582,10 @@ export default function App() {
     setProgress({});
     setHistory([]);
     setStudyDuration(0);
-    localStorage.removeItem('sachkunde_34a_current_user');
+    safeStorage.removeItem('sachkunde_34a_current_user');
     sessionStorage.removeItem('sachkunde_34a_current_user');
-    localStorage.removeItem('sachkunde_34a_progress');
-    localStorage.removeItem('sachkunde_34a_history');
+    safeStorage.removeItem('sachkunde_34a_progress');
+    safeStorage.removeItem('sachkunde_34a_history');
     setActiveTab('dashboard');
   };
 
@@ -795,6 +796,22 @@ export default function App() {
                     );
                   })}
                 </nav>
+
+                {/* Mobile / Sidebar Language Selector */}
+                <div className="pt-2 border-t border-white/5 space-y-2">
+                  <div className="flex items-center gap-2 px-1">
+                    <Globe className="w-3.5 h-3.5 text-[#dfb871]" />
+                    <span className="text-[11px] font-bold text-slate-400 font-sans">Zweitsprache</span>
+                  </div>
+                  <CustomDropdown
+                    options={languageOptions}
+                    value={translationLang}
+                    onChange={handleSetTranslationLang}
+                    maxWidth="w-full"
+                    align="left"
+                    className="w-full"
+                  />
+                </div>
               </div>
 
               {/* Sidebar bottom logout button */}
@@ -986,5 +1003,13 @@ export default function App() {
         </>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

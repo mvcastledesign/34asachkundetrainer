@@ -10,6 +10,8 @@ import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface WiederholungsmodusProps {
   questions: Question[];
@@ -38,8 +40,13 @@ export default function Wiederholungsmodus({
   questions,
   progress,
   onAnswer,
-  translationLang = 'deaktiviert'
+  translationLang: propTranslationLang
 }: WiederholungsmodusProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [revisionType, setRevisionType] = useState<'wrong_only' | 'leitner_box_1'>('wrong_only');

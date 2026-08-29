@@ -8,6 +8,8 @@ import { Search, Eye, Filter, CheckCircle, XCircle, ChevronDown, ChevronUp, Laye
 import { Question, UserProgressMap, KATEGORIEN, Schwierigkeit } from '../types.ts';
 import TranslationView from './TranslationView.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface QuestionSearchProps {
   questions: Question[];
@@ -15,7 +17,12 @@ interface QuestionSearchProps {
   translationLang?: string;
 }
 
-export default function QuestionSearch({ questions, progress, translationLang = 'deaktiviert' }: QuestionSearchProps) {
+export default function QuestionSearch({ questions, progress, translationLang: propTranslationLang }: QuestionSearchProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [selectedSchwierigkeit, setSelectedSchwierigkeit] = useState<string>('Alle');

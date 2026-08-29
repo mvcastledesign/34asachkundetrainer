@@ -21,6 +21,8 @@ import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface StreakChallengeModeProps {
   questions?: Question[];
@@ -210,14 +212,19 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export default function StreakChallengeMode({
   currentUser,
-  translationLang = 'deaktiviert',
+  translationLang: propTranslationLang,
   onNavigate,
   onRecordHistory
 }: StreakChallengeModeProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   // --- STATE ---
   const [streak, setStreak] = useState<number>(0);
   const [personalBest, setPersonalBest] = useState<number>(() => {
-    const local = localStorage.getItem('34a_personal_max_streak');
+    const local = safeStorage.getItem('34a_personal_max_streak');
     if (local) return parseInt(local, 10) || 0;
     return currentUser?.maxStreak || 0;
   });

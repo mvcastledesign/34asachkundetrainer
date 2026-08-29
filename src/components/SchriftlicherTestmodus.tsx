@@ -45,6 +45,8 @@ import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 import { fetchWrittenQuestionsFromSupabase } from '../lib/supabase.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface SchriftlicherTestmodusProps {
   translationLang?: string;
@@ -246,9 +248,14 @@ type ConfigSubMode = 'ihk' | 'quick' | 'category';
 type ReviewFilter = 'all' | 'errors' | 'partial' | 'perfect';
 
 export default function SchriftlicherTestmodus({ 
-  translationLang = 'deaktiviert',
+  translationLang: propTranslationLang,
   onRecordHistory 
 }: SchriftlicherTestmodusProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   // Test State
   const [stage, setStage] = useState<TestMode>('config');
   const [subMode, setSubMode] = useState<ConfigSubMode>('ihk');

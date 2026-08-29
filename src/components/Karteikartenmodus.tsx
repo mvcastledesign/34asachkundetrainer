@@ -11,6 +11,8 @@ import TranslationView from './TranslationView.tsx';
 import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface KarteikartenmodusProps {
   questions: Question[];
@@ -33,7 +35,12 @@ function formatSolutionText(q?: Question | null): string {
   return text.trim();
 }
 
-export default function Karteikartenmodus({ questions, translationLang = 'deaktiviert' }: KarteikartenmodusProps) {
+export default function Karteikartenmodus({ questions, translationLang: propTranslationLang }: KarteikartenmodusProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);

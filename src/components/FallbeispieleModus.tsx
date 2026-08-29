@@ -24,6 +24,8 @@ import { INITIAL_FALLBEISPIELE, Fallbeispiel } from '../initialFallbeispiele.ts'
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
+import { useLanguage } from '../contexts/LanguageContext.tsx';
+import { safeStorage } from '../lib/storage.ts';
 
 interface FallbeispieleModusProps {
   translationLang?: string;
@@ -31,9 +33,14 @@ interface FallbeispieleModusProps {
 }
 
 export default function FallbeispieleModus({
-  translationLang = 'deaktiviert',
+  translationLang: propTranslationLang,
   onRecordHistory
 }: FallbeispieleModusProps) {
+  const { selectedLanguage } = useLanguage();
+  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
+    ? propTranslationLang 
+    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
