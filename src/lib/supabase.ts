@@ -433,7 +433,7 @@ export function mapRowToWrittenQuestion(r: any): WrittenQuestion {
   }
 
   let korrekteAntworten: number[] = [];
-  const rawCorrect = r.korrekte_antworten ?? r.correct_answers ?? r.korrekteAntworten ?? r.correctAnswers;
+  const rawCorrect = r.korrekte_antworten ?? r.korrekteAntworten ?? r.correct_answers ?? r.correctAnswers;
   if (Array.isArray(rawCorrect)) {
     korrekteAntworten = rawCorrect.map(Number).filter(n => !isNaN(n));
   } else if (typeof rawCorrect === 'string') {
@@ -465,7 +465,8 @@ export function mapRowToWrittenQuestion(r: any): WrittenQuestion {
     korrekteAntworten = [rawCorrect];
   }
 
-  if (korrekteAntworten.length === 0) {
+  // Fallback to [0] if no valid correct answer
+  if (!korrekteAntworten || korrekteAntworten.length === 0) {
     korrekteAntworten = [0];
   }
 
@@ -525,29 +526,29 @@ export function generateQuestionId(category?: string): string {
  */
 export async function fetchWrittenQuestionsFromSupabase(): Promise<WrittenQuestion[]> {
   try {
-    // 1. Try 'questions' table with target_mode filter
+    // 1. Explicitly try 'written_questions' table first
     let { data, error } = await supabase
-      .from('questions')
+      .from('written_questions')
       .select('*')
-      .eq('target_mode', 'written_test')
       .order('id', { ascending: true });
 
-    // Fallback 1: Try 'written_questions' table
-    if (error) {
+    // 2. Fallback: Try 'questions' table with target_mode filter
+    if (error || !data || data.length === 0) {
       const fb1 = await supabase
-        .from('written_questions')
+        .from('questions')
         .select('*')
+        .eq('target_mode', 'written_test')
         .order('id', { ascending: true });
-      if (!fb1.error && fb1.data) {
+      if (!fb1.error && fb1.data && fb1.data.length > 0) {
         data = fb1.data;
         error = null;
       } else {
-        // Fallback 2: 'questions' table without target_mode filter
+        // 3. Fallback: Try 'questions' table without target_mode filter
         const fb2 = await supabase
           .from('questions')
           .select('*')
           .order('id', { ascending: true });
-        if (!fb2.error && fb2.data) {
+        if (!fb2.error && fb2.data && fb2.data.length > 0) {
           data = fb2.data;
           error = null;
         }
@@ -615,7 +616,7 @@ export async function saveWrittenQuestionToSupabase(
       erklaerung: q.erklaerung.trim()
     };
 
-    const tablesToTry = ['questions', 'written_questions'];
+    const tablesToTry = ['written_questions', 'questions'];
 
     if (isExistingId && q.id) {
       // UPDATE existing question
@@ -741,16 +742,16 @@ export async function deleteWrittenQuestionFromSupabase(id: string): Promise<{ s
     const isNumericId = /^\d+$/.test(String(id));
     const targetId = isNumericId ? parseInt(String(id), 10) : id;
 
-    // Try 'questions' table
+    // 1. Try 'written_questions' table
     let { error } = await supabase
-      .from('questions')
+      .from('written_questions')
       .delete()
       .eq('id', targetId);
 
-    // Fallback to 'written_questions'
+    // 2. Fallback to 'questions'
     if (error) {
       const fb = await supabase
-        .from('written_questions')
+        .from('questions')
         .delete()
         .eq('id', targetId);
       if (!fb.error) {
