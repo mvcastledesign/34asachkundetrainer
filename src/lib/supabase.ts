@@ -485,15 +485,74 @@ export function mapRowToWrittenQuestion(r: any): WrittenQuestion {
 }
 
 /**
+ * Generates a neutral unique identifier for exam questions
+ */
+export function generateQuestionId(category?: string): string {
+  const catMap: Record<string, string> = {
+    'recht der öffentlichen sicherheit': 'OEFF',
+    'öffentliche sicherheit': 'OEFF',
+    'gewerberecht': 'GEW',
+    'datenschutz': 'DS',
+    'bürgerliches gesetzbuch': 'BGB',
+    'bgb': 'BGB',
+    'straf-': 'STRAF',
+    'strafrecht': 'STRAF',
+    'waffen': 'WAFF',
+    'unfallverhütung': 'UVV',
+    'uvv': 'UVV',
+    'umgang mit menschen': 'MENSCH',
+    'mensch': 'MENSCH',
+    'sicherheitstechnik': 'TECH',
+    'technik': 'TECH'
+  };
+
+  let prefix = 'FRAGE';
+  const lowerCat = (category || '').toLowerCase();
+  for (const [key, val] of Object.entries(catMap)) {
+    if (lowerCat.includes(key)) {
+      prefix = val;
+      break;
+    }
+  }
+
+  const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const timePart = Date.now().toString(36).toUpperCase().slice(-4);
+  return `SK-${prefix}-${timePart}${rand}`;
+}
+
+/**
  * Fetch all written test questions from Supabase (target_mode = 'written_test')
  */
 export async function fetchWrittenQuestionsFromSupabase(): Promise<WrittenQuestion[]> {
   try {
-    const { data, error } = await supabase
+    // 1. Try 'questions' table with target_mode filter
+    let { data, error } = await supabase
       .from('questions')
       .select('*')
       .eq('target_mode', 'written_test')
       .order('id', { ascending: true });
+
+    // Fallback 1: Try 'written_questions' table
+    if (error) {
+      const fb1 = await supabase
+        .from('written_questions')
+        .select('*')
+        .order('id', { ascending: true });
+      if (!fb1.error && fb1.data) {
+        data = fb1.data;
+        error = null;
+      } else {
+        // Fallback 2: 'questions' table without target_mode filter
+        const fb2 = await supabase
+          .from('questions')
+          .select('*')
+          .order('id', { ascending: true });
+        if (!fb2.error && fb2.data) {
+          data = fb2.data;
+          error = null;
+        }
+      }
+    }
 
     if (error) {
       console.warn('Supabase fetch written questions notice:', error.message);
@@ -518,9 +577,13 @@ export async function saveWrittenQuestionToSupabase(
   q: Omit<WrittenQuestion, 'id'> & { id?: string }
 ): Promise<{ success: boolean; data?: WrittenQuestion; error?: string }> {
   try {
-    const isEdit = Boolean(q.id && !q.id.startsWith('ihk-') && !q.id.startsWith('temp-') && !q.id.startsWith('local-'));
+    const isExistingId = Boolean(q.id && !q.id.startsWith('ihk-') && !q.id.startsWith('temp-') && !q.id.startsWith('local-'));
+    const generatedId = q.id && !q.id.startsWith('temp-') && !q.id.startsWith('local-') 
+      ? q.id 
+      : generateQuestionId(q.kategorie);
     
-    const payload: any = {
+    // 1. German schema payload (primary)
+    const germanPayload: Record<string, any> = {
       target_mode: 'written_test',
       kategorie: q.kategorie,
       frage: q.frage.trim(),
@@ -530,70 +593,139 @@ export async function saveWrittenQuestionToSupabase(
       erklaerung: q.erklaerung.trim()
     };
 
-    if (isEdit && q.id) {
+    // 2. English schema payload (fallback)
+    const englishPayload: Record<string, any> = {
+      target_mode: 'written_test',
+      category: q.kategorie,
+      question: q.frage.trim(),
+      options: q.optionen.map(opt => opt.trim()),
+      correct_answers: q.korrekteAntworten,
+      points: q.punkte === 2 ? 2 : 1,
+      explanation: q.erklaerung.trim()
+    };
+
+    // 3. German camelCase payload (fallback)
+    const camelPayload: Record<string, any> = {
+      target_mode: 'written_test',
+      kategorie: q.kategorie,
+      frage: q.frage.trim(),
+      optionen: q.optionen.map(opt => opt.trim()),
+      korrekteAntworten: q.korrekteAntworten,
+      punkte: q.punkte === 2 ? 2 : 1,
+      erklaerung: q.erklaerung.trim()
+    };
+
+    const tablesToTry = ['questions', 'written_questions'];
+
+    if (isExistingId && q.id) {
+      // UPDATE existing question
       const isNumericId = /^\d+$/.test(String(q.id));
       const targetId = isNumericId ? parseInt(String(q.id), 10) : q.id;
 
-      const { data, error } = await supabase
-        .from('questions')
-        .update(payload)
-        .eq('id', targetId)
-        .select();
+      let lastError: string = '';
 
-      if (error) {
-        // Fallback with english keys
-        const fallbackPayload = {
-          target_mode: 'written_test',
-          category: q.kategorie,
-          question: q.frage.trim(),
-          options: q.optionen.map(opt => opt.trim()),
-          correct_answers: q.korrekteAntworten,
-          points: q.punkte === 2 ? 2 : 1,
-          explanation: q.erklaerung.trim()
-        };
-        const { data: fbData, error: fbError } = await supabase
-          .from('questions')
-          .update(fallbackPayload)
+      for (const tableName of tablesToTry) {
+        // Try German snake_case
+        const { data, error } = await supabase
+          .from(tableName)
+          .update(germanPayload)
           .eq('id', targetId)
           .select();
 
-        if (fbError) {
-          return { success: false, error: error.message || fbError.message };
+        if (!error && data && data.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(data[0]) };
         }
-        return { success: true, data: fbData && fbData[0] ? mapRowToWrittenQuestion(fbData[0]) : undefined };
-      }
+        if (error) lastError = error.message;
 
-      return { success: true, data: data && data[0] ? mapRowToWrittenQuestion(data[0]) : undefined };
-    } else {
-      // Insert new question
-      const { data, error } = await supabase
-        .from('questions')
-        .insert([payload])
-        .select();
-
-      if (error) {
-        // Fallback with english keys
-        const fallbackPayload = {
-          target_mode: 'written_test',
-          category: q.kategorie,
-          question: q.frage.trim(),
-          options: q.optionen.map(opt => opt.trim()),
-          correct_answers: q.korrekteAntworten,
-          points: q.punkte === 2 ? 2 : 1,
-          explanation: q.erklaerung.trim()
-        };
+        // Try English
         const { data: fbData, error: fbError } = await supabase
-          .from('questions')
-          .insert([fallbackPayload])
+          .from(tableName)
+          .update(englishPayload)
+          .eq('id', targetId)
           .select();
 
-        if (fbError) {
-          return { success: false, error: error.message || fbError.message };
+        if (!fbError && fbData && fbData.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(fbData[0]) };
         }
-        return { success: true, data: fbData && fbData[0] ? mapRowToWrittenQuestion(fbData[0]) : undefined };
+        if (fbError) lastError = fbError.message;
+
+        // Try camelCase
+        const { data: cData, error: cError } = await supabase
+          .from(tableName)
+          .update(camelPayload)
+          .eq('id', targetId)
+          .select();
+
+        if (!cError && cData && cData.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(cData[0]) };
+        }
+        if (cError) lastError = cError.message;
       }
 
-      return { success: true, data: data && data[0] ? mapRowToWrittenQuestion(data[0]) : undefined };
+      return { success: false, error: lastError || 'Fehler beim Aktualisieren der Frage in der Datenbank.' };
+    } else {
+      // INSERT new question
+      let lastError: string = '';
+
+      for (const tableName of tablesToTry) {
+        // Try with generated text ID + German payload
+        const insertWithId = { id: generatedId, ...germanPayload };
+        const { data: d1, error: e1 } = await supabase
+          .from(tableName)
+          .insert([insertWithId])
+          .select();
+
+        if (!e1 && d1 && d1.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(d1[0]) };
+        }
+        if (e1) lastError = e1.message;
+
+        // Try without explicit ID (if column is auto-generated / serial integer)
+        const { data: d2, error: e2 } = await supabase
+          .from(tableName)
+          .insert([germanPayload])
+          .select();
+
+        if (!e2 && d2 && d2.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(d2[0]) };
+        }
+        if (e2) lastError = e2.message;
+
+        // Try with English payload (with id)
+        const { data: d3, error: e3 } = await supabase
+          .from(tableName)
+          .insert([{ id: generatedId, ...englishPayload }])
+          .select();
+
+        if (!e3 && d3 && d3.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(d3[0]) };
+        }
+        if (e3) lastError = e3.message;
+
+        // Try with English payload (without id)
+        const { data: d4, error: e4 } = await supabase
+          .from(tableName)
+          .insert([englishPayload])
+          .select();
+
+        if (!e4 && d4 && d4.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(d4[0]) };
+        }
+        if (e4) lastError = e4.message;
+
+        // Try with CamelCase payload
+        const { data: d5, error: e5 } = await supabase
+          .from(tableName)
+          .insert([camelPayload])
+          .select();
+
+        if (!e5 && d5 && d5.length > 0) {
+          return { success: true, data: mapRowToWrittenQuestion(d5[0]) };
+        }
+        if (e5) lastError = e5.message;
+      }
+
+      return { success: false, error: lastError || 'Fehler beim Einfügen der Frage in die Datenbank.' };
     }
   } catch (err: any) {
     console.error('Error saving written question to Supabase:', err);
@@ -609,10 +741,24 @@ export async function deleteWrittenQuestionFromSupabase(id: string): Promise<{ s
     const isNumericId = /^\d+$/.test(String(id));
     const targetId = isNumericId ? parseInt(String(id), 10) : id;
 
-    const { error } = await supabase
+    // Try 'questions' table
+    let { error } = await supabase
       .from('questions')
       .delete()
       .eq('id', targetId);
+
+    // Fallback to 'written_questions'
+    if (error) {
+      const fb = await supabase
+        .from('written_questions')
+        .delete()
+        .eq('id', targetId);
+      if (!fb.error) {
+        error = null;
+      } else {
+        error = fb.error;
+      }
+    }
 
     if (error) {
       return { success: false, error: error.message };
@@ -632,6 +778,7 @@ export async function importWrittenQuestionsToSupabase(
 ): Promise<{ success: boolean; count: number; error?: string }> {
   try {
     const payloads = questionsList.map(q => ({
+      id: q.id || generateQuestionId(q.kategorie),
       target_mode: 'written_test',
       kategorie: q.kategorie,
       frage: q.frage.trim(),
@@ -641,32 +788,66 @@ export async function importWrittenQuestionsToSupabase(
       erklaerung: q.erklaerung.trim()
     }));
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('questions')
       .insert(payloads)
       .select();
 
     if (error) {
-      // Fallback with english keys
-      const fallbackPayloads = questionsList.map(q => ({
+      // Fallback: without explicit ID or with written_questions table
+      const payloadsWithoutId = questionsList.map(q => ({
         target_mode: 'written_test',
-        category: q.kategorie,
-        question: q.frage.trim(),
-        options: q.optionen.map(opt => opt.trim()),
-        correct_answers: q.korrekteAntworten,
-        points: q.punkte === 2 ? 2 : 1,
-        explanation: q.erklaerung.trim()
+        kategorie: q.kategorie,
+        frage: q.frage.trim(),
+        optionen: q.optionen.map(opt => opt.trim()),
+        korrekte_antworten: q.korrekteAntworten,
+        punkte: q.punkte === 2 ? 2 : 1,
+        erklaerung: q.erklaerung.trim()
       }));
 
-      const { data: fbData, error: fbErr } = await supabase
+      const fb1 = await supabase
         .from('questions')
-        .insert(fallbackPayloads)
+        .insert(payloadsWithoutId)
         .select();
 
-      if (fbErr) {
-        return { success: false, count: 0, error: error.message || fbErr.message };
+      if (!fb1.error && fb1.data) {
+        data = fb1.data;
+        error = null;
+      } else {
+        const fb2 = await supabase
+          .from('written_questions')
+          .insert(payloads)
+          .select();
+        if (!fb2.error && fb2.data) {
+          data = fb2.data;
+          error = null;
+        } else {
+          // Try english fallback
+          const englishPayloads = questionsList.map(q => ({
+            target_mode: 'written_test',
+            category: q.kategorie,
+            question: q.frage.trim(),
+            options: q.optionen.map(opt => opt.trim()),
+            correct_answers: q.korrekteAntworten,
+            points: q.punkte === 2 ? 2 : 1,
+            explanation: q.erklaerung.trim()
+          }));
+          const fb3 = await supabase
+            .from('questions')
+            .insert(englishPayloads)
+            .select();
+          if (!fb3.error && fb3.data) {
+            data = fb3.data;
+            error = null;
+          } else {
+            error = fb1.error || fb2.error || fb3.error || error;
+          }
+        }
       }
-      return { success: true, count: fbData ? fbData.length : questionsList.length };
+    }
+
+    if (error) {
+      return { success: false, count: 0, error: error.message };
     }
 
     return { success: true, count: data ? data.length : questionsList.length };

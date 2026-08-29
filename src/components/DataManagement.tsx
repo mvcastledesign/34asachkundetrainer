@@ -250,7 +250,7 @@ export default function DataManagement({}: DataManagementProps) {
       await loadQuestions();
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err: any) {
-      setErrorMsg('Fehler beim Speichern. Bitte Eingaben prüfen.');
+      setErrorMsg(err?.message || 'Fehler beim Speichern. Bitte Eingaben prüfen.');
     } finally {
       setIsSaving(false);
     }
@@ -268,7 +268,7 @@ export default function DataManagement({}: DataManagementProps) {
       await loadQuestions();
       setTimeout(() => setSuccessMsg(''), 3500);
     } catch (err: any) {
-      setErrorMsg('Fehler beim Löschen der Frage.');
+      setErrorMsg(err?.message || 'Fehler beim Löschen der Frage.');
     }
   };
 
@@ -336,7 +336,7 @@ export default function DataManagement({}: DataManagementProps) {
         await loadQuestions();
         setTimeout(() => setSuccessMsg(''), 4500);
       } catch (err: any) {
-        setErrorMsg('Fehler beim Importieren. Bitte Dateiformat prüfen.');
+        setErrorMsg(err?.message || 'Fehler beim Importieren. Bitte Dateiformat prüfen.');
       } finally {
         setIsSaving(false);
         if (fileInputRef.current) fileInputRef.current.value = '';
