@@ -2,6 +2,8 @@
  * Fallbeispiele für § 34a GewO
  */
 
+import { QuestionTranslation } from './types.ts';
+
 export interface Fallbeispiel {
   id: string;
   title: string;
@@ -9,6 +11,7 @@ export interface Fallbeispiel {
   options: string[];
   correct: number;
   explanation: string;
+  translations?: Record<string, QuestionTranslation>;
 }
 
 export const INITIAL_FALLBEISPIELE: Fallbeispiel[] = [

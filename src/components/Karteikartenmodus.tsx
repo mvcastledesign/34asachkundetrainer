@@ -271,6 +271,7 @@ export default function Karteikartenmodus({ questions, translationLang: propTran
                         <div onClick={(e) => e.stopPropagation()}>
                           <TranslatedSubline 
                             text={cleanQuestionText(currentQuestion.frage)} 
+                            translations={currentQuestion.translations}
                             questionId={`${currentQuestion.id}_card_q`} 
                             targetLanguage={translationLang} 
                             type="frage" 
@@ -363,6 +364,7 @@ export default function Karteikartenmodus({ questions, translationLang: propTran
                         <div onClick={(e) => e.stopPropagation()}>
                           <TranslationView 
                             text={formatSolutionText(currentQuestion)} 
+                            translations={currentQuestion.translations}
                             questionId={`${currentQuestion.id}_card_ans`} 
                             targetLanguage={translationLang} 
                             type="antwort" 

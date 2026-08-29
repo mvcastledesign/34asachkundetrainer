@@ -5,12 +5,21 @@
 
 export type Schwierigkeit = 'Leicht' | 'Mittel' | 'Schwer';
 
+export interface QuestionTranslation {
+  frage?: string;
+  text?: string;
+  antwort?: string;
+  erklaerung?: string;
+  optionen?: string[];
+}
+
 export interface Question {
   id: string;
   kategorie: string;
   frage: string;
   antwort: string;
   schwierigkeit: Schwierigkeit;
+  translations?: Record<string, QuestionTranslation>;
 }
 
 export interface WrittenQuestion {
@@ -22,6 +31,7 @@ export interface WrittenQuestion {
   punkte: number; // point value (1 or 2)
   erklaerung: string; // solution explanation
   target_mode?: string; // 'written_test'
+  translations?: Record<string, QuestionTranslation>;
 }
 
 export type Lernstatus = 'neu' | 'gewusst' | 'nicht_gewusst';

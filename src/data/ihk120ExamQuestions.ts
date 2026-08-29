@@ -130,7 +130,39 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     ],
     korrekteAntworten: [0],
     punkte: 1,
-    erklaerung: 'Die öffentliche Sicherheit umfasst 3 Schutzbereiche: 1. Die gesamte geschriebene Rechtsordnung (Gesetze, Verordnungen), 2. Individualrechtsgüter (Leben, Gesundheit, Freiheit, Eigentum) und 3. Der Staat mit seinen Einrichtungen und Veranstaltungen.'
+    erklaerung: 'Die öffentliche Sicherheit umfasst 3 Schutzbereiche: 1. Die gesamte geschriebene Rechtsordnung (Gesetze, Verordnungen), 2. Individualrechtsgüter (Leben, Gesundheit, Freiheit, Eigentum) und 3. Der Staat mit seinen Einrichtungen und Veranstaltungen.',
+    translations: {
+      arabisch: {
+        frage: 'ما هو المقصود بمصطلح "الأمن العام" في القانون الألماني؟',
+        optionen: [
+          'أ) حماية سلامة النظام القانوني، والحقوق الفردية، ومؤسسات الدولة.',
+          'ب) فقط الحماية من الهجمات الإرهابية على المستوى الفيدرالي.',
+          'ج) مجموع القواعد غير المكتوبة للسلوك في الأماكن العامة (الأعراف والأخلاق).',
+          'د) ضمان دقة مواعيد القطارات ووسائل النقل العام.'
+        ],
+        erklaerung: 'يشمل الأمن العام 3 مجالات حماية: 1. النظام القانوني المكتوب بالكامل، 2. الحقوق الفردية (الحياة، الصحة، الحرية، الملكية)، 3. الدولة ومؤسساتها.'
+      },
+      farsi: {
+        frage: 'منظور از اصطلاح "امنیت عمومی" در حقوق آلمان چیست؟',
+        optionen: [
+          'الف) حفاظت از تمامیت نظام حقوقی، حقوق فردی و نهادهای دولتی.',
+          'ب) صرفاً حفاظت در برابر حملات تروریستی در سطح فدرال.',
+          'ج) مجموع تمام قوانین نانوشته برای رفتار در مکان‌های عمومی (عرف و اخلاق).',
+          'د) تضمین به موقع بودن حرکت قطارها و حمل و نقل عمومی.'
+        ],
+        erklaerung: 'امنیت عمومی شامل ۳ حوزه حفاظتی است: ۱. کل نظام حقوقی مدون، ۲. حقوق فردی (جان، سلامت، آزادی، مالکیت)، ۳. دولت و نهادهای آن.'
+      },
+      englisch: {
+        frage: 'What is meant by the term "Public Safety" (Öffentliche Sicherheit) in German law?',
+        optionen: [
+          'A) Protection of the legal order, individual legal rights, and state institutions.',
+          'B) Exclusively protection against terrorist attacks at the federal level.',
+          'C) The sum of all unwritten rules of public conduct (customs and morals).',
+          'D) Guaranteeing punctual trains and public transit.'
+        ],
+        erklaerung: 'Public safety encompasses 3 protection areas: 1. Written legal order, 2. Individual rights (life, health, freedom, property), and 3. The State and its institutions.'
+      }
+    }
   },
   {
     id: 'ihk-oeff-2',
@@ -144,7 +176,39 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     ],
     korrekteAntworten: [1],
     punkte: 1,
-    erklaerung: 'Kernaufgabe der Polizei- und Ordnungsbehörden ist die präventive Gefahrenabwehr zum Schutz der Allgemeinheit vor Schäden an der öffentlichen Sicherheit und Ordnung.'
+    erklaerung: 'Kernaufgabe der Polizei- und Ordnungsbehörden ist die präventive Gefahrenabwehr zum Schutz der Allgemeinheit vor Schäden an der öffentlichen Sicherheit und Ordnung.',
+    translations: {
+      arabisch: {
+        frage: 'ما هي المهام المنوطة بسلطات النظام العام والشرطة في إطار درء المخاطر؟',
+        optionen: [
+          'أ) فرض عقوبات السجن في الجرائم الخطيرة.',
+          'ب) درء المخاطر عن الأمن العام والنظام العام.',
+          'ج) إنفاذ المطالبات المالية للمؤجرين بموجب القانون المدني.',
+          'د) تولي حراسة الشركات الخاصة تلقائياً.'
+        ],
+        erklaerung: 'المهمة الأساسية لسلطات الشرطة والنظام العام هي درء المخاطر الوقائي لحماية المجتمع.'
+      },
+      farsi: {
+        frage: 'چه وظایفی در چارچوب دفع خطر بر عهده مقامات انتظامی و پلیس است؟',
+        optionen: [
+          'الف) اعمال مجازات حبس در جرایم سنگین.',
+          'ب) دفع خطرات تهدیدکننده امنیت و نظم عمومی.',
+          'ج) اجرای مطالبات مالی موجران خصوصی در حقوق مدنی.',
+          'د) به عهده گرفتن خودکار نگهبانی شرکت‌های خصوصی.'
+        ],
+        erklaerung: 'وظیفه اصلی پلیس و مقامات انتظامی، دفع پیشگیرانه خطرات برای حفاظت از جامعه است.'
+      },
+      englisch: {
+        frage: 'What tasks are incumbent upon regulatory authorities and the police in the context of danger prevention?',
+        optionen: [
+          'A) Imposing prison sentences for serious crimes.',
+          'B) Averting dangers to public safety and order.',
+          'C) Civil law enforcement of financial claims by private landlords.',
+          'D) Automatic assumption of private corporate guarding duties.'
+        ],
+        erklaerung: 'The core task of police and regulatory authorities is preventive danger aversion.'
+      }
+    }
   },
   {
     id: 'ihk-oeff-3',

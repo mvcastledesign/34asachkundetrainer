@@ -14,7 +14,7 @@ import {
   ShieldAlert, 
   LayoutDashboard 
 } from 'lucide-react';
-import { Question } from '../types.ts';
+import { Question, QuestionTranslation } from '../types.ts';
 import { UserProfile } from '../types/auth.ts';
 import { supabase } from '../lib/supabase.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
@@ -38,6 +38,7 @@ interface RawStreakQuestion {
   options: string[];
   correct: string;
   category: string;
+  translations?: Record<string, QuestionTranslation>;
 }
 
 interface ShuffledStreakQuestion {
@@ -47,6 +48,7 @@ interface ShuffledStreakQuestion {
   correctIndex: number;
   correctAnswer: string;
   category: string;
+  translations?: Record<string, QuestionTranslation>;
 }
 
 interface StudentLeaderboardEntry {
@@ -273,7 +275,8 @@ export default function StreakChallengeMode({
         options: randomizedOptions,
         correctIndex: newCorrectIndex >= 0 ? newCorrectIndex : 0,
         correctAnswer: q.correct,
-        category: q.category
+        category: q.category,
+        translations: q.translations
       };
     });
   };
@@ -590,6 +593,7 @@ export default function StreakChallengeMode({
                     <div className="mt-2">
                       <TranslatedSubline 
                         text={currentQuestion.question} 
+                        translations={currentQuestion.translations}
                         questionId={`${currentQuestion.id}_q`}
                         targetLanguage={translationLang} 
                         type="frage" 
@@ -645,6 +649,7 @@ export default function StreakChallengeMode({
                             {translationLang !== 'deaktiviert' && (
                               <TranslatedSubline
                                 text={option}
+                                translations={currentQuestion.translations}
                                 questionId={`${currentQuestion.id}_opt_${idx}`}
                                 targetLanguage={translationLang}
                                 type={`opt_${idx}`}

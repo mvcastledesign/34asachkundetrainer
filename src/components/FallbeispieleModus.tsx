@@ -297,6 +297,7 @@ export default function FallbeispieleModus({
           </p>
           <TranslationView 
             text={currentCase.question} 
+            translations={currentCase.translations}
             questionId={currentCase.id} 
             targetLanguage={translationLang} 
             type="frage" 
@@ -356,6 +357,7 @@ export default function FallbeispieleModus({
                     <div onClick={(e) => e.stopPropagation()}>
                       <TranslationView 
                         text={optionText} 
+                        translations={currentCase.translations}
                         questionId={`${currentCase.id}-opt-${optIdx}`} 
                         targetLanguage={translationLang} 
                         type="antwort" 
@@ -412,6 +414,7 @@ export default function FallbeispieleModus({
 
             <TranslationView 
               text={currentCase.explanation} 
+              translations={currentCase.translations}
               questionId={`${currentCase.id}-exp`} 
               targetLanguage={translationLang} 
               type="antwort" 

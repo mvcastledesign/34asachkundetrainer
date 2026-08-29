@@ -312,6 +312,7 @@ export default function Lernmodus({
                 {currentQuestion && translationLang !== 'deaktiviert' && (
                   <TranslatedSubline 
                     text={cleanQuestionText(currentQuestion.frage)} 
+                    translations={currentQuestion.translations}
                     questionId={`${currentQuestion.id}_learn_q`} 
                     targetLanguage={translationLang} 
                     type="frage" 
@@ -391,6 +392,7 @@ export default function Lernmodus({
                     {currentQuestion && translationLang !== 'deaktiviert' && (
                       <TranslationView 
                         text={formatSolutionText(currentQuestion)} 
+                        translations={currentQuestion.translations}
                         questionId={`${currentQuestion.id}_learn_ans`} 
                         targetLanguage={translationLang} 
                         type="antwort" 

@@ -972,6 +972,7 @@ export default function SchriftlicherTestmodus({
                   <div className="mb-5">
                     <TranslatedSubline 
                       text={activeQuestion.frage} 
+                      translations={activeQuestion.translations}
                       questionId={`${activeQuestion.id}_q`}
                       targetLanguage={translationLang}
                       type="frage"
@@ -1035,6 +1036,7 @@ export default function SchriftlicherTestmodus({
                           {translationLang !== 'deaktiviert' && (
                             <TranslatedSubline
                               text={optText}
+                              translations={activeQuestion.translations}
                               questionId={`${activeQuestion.id}_opt_${optIdx}`}
                               targetLanguage={translationLang}
                               type={`opt_${optIdx}`}
@@ -1619,6 +1621,7 @@ export default function SchriftlicherTestmodus({
                     {translationLang !== 'deaktiviert' && (
                       <TranslatedSubline
                         text={activeReviewQ.frage}
+                        translations={activeReviewQ.translations}
                         questionId={`${activeReviewQ.id}_review_q`}
                         targetLanguage={translationLang}
                         type="frage"
@@ -1672,6 +1675,7 @@ export default function SchriftlicherTestmodus({
                             {translationLang !== 'deaktiviert' && (
                               <TranslatedSubline
                                 text={optText}
+                                translations={activeReviewQ.translations}
                                 questionId={`${activeReviewQ.id}_opt_${optIdx}`}
                                 targetLanguage={translationLang}
                                 type={`opt_${optIdx}`}
@@ -1698,6 +1702,7 @@ export default function SchriftlicherTestmodus({
                       {translationLang !== 'deaktiviert' && (
                         <TranslationView
                           text={activeReviewQ.erklaerung}
+                          translations={activeReviewQ.translations}
                           questionId={`${activeReviewQ.id}_explanation`}
                           targetLanguage={translationLang}
                           type="erklaerung"

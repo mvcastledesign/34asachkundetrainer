@@ -473,6 +473,15 @@ export function mapRowToWrittenQuestion(r: any): WrittenQuestion {
   const rawPunkte = typeof r.punkte === 'number' ? r.punkte : (typeof r.points === 'number' ? r.points : (korrekteAntworten.length === 2 ? 2 : 1));
   const punkte = rawPunkte === 2 ? 2 : 1;
 
+  let translations = undefined;
+  if (r.translations && typeof r.translations === 'object') {
+    translations = r.translations;
+  } else if (typeof r.translations === 'string') {
+    try {
+      translations = JSON.parse(r.translations);
+    } catch {}
+  }
+
   return {
     id: String(r.id),
     kategorie: r.kategorie || r.category || 'Recht der öffentlichen Sicherheit und Ordnung',
@@ -481,7 +490,8 @@ export function mapRowToWrittenQuestion(r: any): WrittenQuestion {
     korrekteAntworten: korrekteAntworten,
     punkte: punkte,
     erklaerung: r.erklaerung || r.explanation || r.begruendung || '',
-    target_mode: r.target_mode || 'written_test'
+    target_mode: r.target_mode || 'written_test',
+    translations: translations
   };
 }
 

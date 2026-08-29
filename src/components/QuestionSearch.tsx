@@ -217,6 +217,7 @@ export default function QuestionSearch({ questions, progress, translationLang: p
                         <span className="text-[#dfb871] text-[10px] font-black uppercase tracking-wider block mb-1">Frage Übersetzung:</span>
                         <TranslationView 
                           text={q.frage} 
+                          translations={q.translations}
                           questionId={q.id} 
                           targetLanguage={translationLang} 
                           type="frage" 
@@ -231,6 +232,7 @@ export default function QuestionSearch({ questions, progress, translationLang: p
                       {translationLang !== 'deaktiviert' && (
                         <TranslationView 
                           text={q.antwort} 
+                          translations={q.translations}
                           questionId={q.id} 
                           targetLanguage={translationLang} 
                           type="antwort" 

@@ -291,6 +291,7 @@ export default function Pruefungsmodus({
                     <p className="text-slate-200 font-medium">{q.frage}</p>
                     <TranslationView 
                       text={q.frage} 
+                      translations={q.translations}
                       questionId={q.id} 
                       targetLanguage={translationLang} 
                       type="frage" 
@@ -299,6 +300,7 @@ export default function Pruefungsmodus({
                       <strong className="text-slate-400">Antwort:</strong> {q.antwort}
                       <TranslationView 
                         text={q.antwort} 
+                        translations={q.translations}
                         questionId={q.id} 
                         targetLanguage={translationLang} 
                         type="antwort" 
@@ -507,6 +509,7 @@ export default function Pruefungsmodus({
               {examQuestions[currentIndex] && translationLang !== 'deaktiviert' && (
                 <TranslatedSubline 
                   text={examQuestions[currentIndex].frage} 
+                  translations={examQuestions[currentIndex].translations}
                   questionId={`${examQuestions[currentIndex].id}_exam_q`} 
                   targetLanguage={translationLang} 
                   type="frage" 
@@ -601,6 +604,7 @@ export default function Pruefungsmodus({
                   {examQuestions[currentIndex] && translationLang !== 'deaktiviert' && (
                     <TranslationView 
                       text={examQuestions[currentIndex].antwort} 
+                      translations={examQuestions[currentIndex].translations}
                       questionId={`${examQuestions[currentIndex].id}_exam_ans`} 
                       targetLanguage={translationLang} 
                       type="antwort" 
