@@ -165,6 +165,7 @@ export default function FallbeispieleModus({
 
           <div className="flex justify-center gap-4">
             <button
+              type="button"
               onClick={handleRestart}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#dfb871] to-[#9a7836] text-slate-950 font-extrabold text-xs tracking-wide transition-all cursor-pointer flex items-center gap-2 shadow-lg active:scale-95"
             >
@@ -201,6 +202,7 @@ export default function FallbeispieleModus({
           </div>
 
           <button
+            type="button"
             onClick={handleRestart}
             className="p-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 active:scale-95"
             title="Neustarten"
@@ -307,7 +309,7 @@ export default function FallbeispieleModus({
               const isSelected = selectedAnswer === optIdx;
               const isCorrectOption = optIdx === currentCase.correct;
 
-              let styleClasses = "bg-white/[0.02] hover:bg-white/[0.06] text-slate-200 border-white/5 hover:border-white/10";
+              let styleClasses = "bg-white/[0.02] hover:bg-white/[0.06] text-slate-200 border-white/5 hover:border-white/10 hover:border-[#dfb871]/30";
               
               if (hasAnswered) {
                 if (isCorrectOption) {
@@ -322,11 +324,12 @@ export default function FallbeispieleModus({
               return (
                 <button
                   key={optIdx}
+                  type="button"
                   disabled={hasAnswered}
                   onClick={() => handleSelectOption(optIdx)}
                   className={`w-full p-4 rounded-2xl border text-left text-xs md:text-sm transition-all flex items-start gap-3 relative cursor-pointer active:scale-[0.99] font-sans ${styleClasses}`}
                 >
-                  <div className="shrink-0 mt-0.5">
+                  <div className="shrink-0 mt-0.5 pointer-events-none">
                     {hasAnswered ? (
                       isCorrectOption ? (
                         <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -344,9 +347,9 @@ export default function FallbeispieleModus({
                     )}
                   </div>
 
-                  <div className="flex-1 leading-relaxed">
-                    <div>{optionText}</div>
-                    <div onClick={(e) => e.stopPropagation()}>
+                  <div className="flex-1 leading-relaxed pointer-events-none">
+                    <div className="text-slate-100">{optionText}</div>
+                    <div className="w-full">
                       <TranslationView 
                         text={optionText} 
                         questionId={`${currentCase.id}-opt-${optIdx}`} 
@@ -415,6 +418,7 @@ export default function FallbeispieleModus({
         {/* Footer Navigation Buttons */}
         <div className="flex justify-between items-center pt-4 border-t border-white/5">
           <button
+            type="button"
             disabled={currentIndex === 0}
             onClick={handlePrev}
             className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 ${
@@ -431,6 +435,7 @@ export default function FallbeispieleModus({
           </span>
 
           <button
+            type="button"
             onClick={handleNext}
             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#dfb871] via-[#f5db9f] to-[#dfb871] text-slate-950 font-extrabold text-xs tracking-wide transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5"
           >

@@ -6,6 +6,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { StudentDetail } from '../types/auth.ts';
 import { WrittenQuestion } from '../types.ts';
+import { calculateCategoryPerformance } from '../utils/categoryPerformance.ts';
+import { INITIAL_QUESTIONS } from '../initialQuestions.ts';
 
 const SUPABASE_URL = "https://tfkwxkpbnklwauljauta.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRma3d4a3Bibmtsd2F1bGphdXRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ1OTAsImV4cCI6MjEwMDIzMDU5MH0.i1-YXijqWsG6wfY550_svsPE-7hrTZe7m_dlgmTM87s";
@@ -40,16 +42,23 @@ export function mapRowToStudentDetail(r: any): StudentDetail {
     maxStreak: typeof r.max_streak === 'number' ? r.max_streak : (typeof r.maxStreak === 'number' ? r.maxStreak : (typeof r.streak === 'number' ? r.streak : 0)),
     registeredAt: r.registered_at || r.registeredAt || new Date().toLocaleDateString('de-DE'),
     invitationCode: r.course_code || r.invitation_code || '',
-    categoryPerformance: r.category_performance || r.categoryPerformance || [
-      { category: 'Recht der öffentlichen Sicherheit', percentage: 0, questionsAnswered: 0 },
-      { category: 'Gewerberecht (GewO / BewachV)', percentage: 0, questionsAnswered: 0 },
-      { category: 'Bürgerliches Gesetzbuch (BGB)', percentage: 0, questionsAnswered: 0 },
-      { category: 'Straf- und Strafverfahrensrecht', percentage: 0, questionsAnswered: 0 },
-      { category: 'Umgang mit Menschen', percentage: 0, questionsAnswered: 0 },
-      { category: 'Unfallverhütungsvorschriften', percentage: 0, questionsAnswered: 0 },
-      { category: 'Sicherheitstechnik', percentage: 0, questionsAnswered: 0 },
-      { category: 'Datenschutzrecht', percentage: 0, questionsAnswered: 0 }
-    ],
+    categoryPerformance: (() => {
+      const rawProg = r.question_progress || r.questionProgress || r.raw_progress;
+      if (rawProg && typeof rawProg === 'object' && Object.keys(rawProg).length > 0) {
+        return calculateCategoryPerformance(rawProg, INITIAL_QUESTIONS);
+      }
+      return r.category_performance || r.categoryPerformance || [
+        { category: 'Umgang mit Waffen', percentage: 0, questionsAnswered: 0 },
+        { category: 'Recht der öffentlichen Sicherheit und Ordnung', percentage: 0, questionsAnswered: 0 },
+        { category: 'Gewerberecht (GewO / BewachV)', percentage: 0, questionsAnswered: 0 },
+        { category: 'Bürgerliches Gesetzbuch (BGB)', percentage: 0, questionsAnswered: 0 },
+        { category: 'Straf- und Strafverfahrensrecht (StGB / StPO)', percentage: 0, questionsAnswered: 0 },
+        { category: 'Umgang mit Menschen und Verhalten in Gefahrensituationen', percentage: 0, questionsAnswered: 0 },
+        { category: 'Unfallverhütungsvorschriften (UVV)', percentage: 0, questionsAnswered: 0 },
+        { category: 'Grundsätze der Sicherheitstechnik', percentage: 0, questionsAnswered: 0 },
+        { category: 'Datenschutzrecht', percentage: 0, questionsAnswered: 0 }
+      ];
+    })(),
     examHistory: r.exam_history || r.examHistory || [],
     questionProgress: r.question_progress || r.questionProgress || r.raw_progress || undefined
   };

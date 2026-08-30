@@ -56,6 +56,7 @@ import StreakChallengeMode from './components/StreakChallengeMode.tsx';
 import FachbegriffeTrainer from './components/FachbegriffeTrainer.tsx';
 import CustomDropdown from './components/CustomDropdown.tsx';
 import { safeStorage } from './utils/safeStorage.ts';
+import { calculateCategoryPerformance } from './utils/categoryPerformance.ts';
 
 const languageOptions = [
   { value: 'deaktiviert', label: 'Deaktiviert (Nur Deutsch)' },
@@ -250,31 +251,56 @@ export default function App() {
       status = 'kritisch';
     }
 
-    // Category performance breakdown calculation across all 8 official §34a categories
+    // Category performance breakdown calculation across all official §34a categories
     const categoryStatsMap: Record<string, { answered: number; correct: number }> = {};
     KATEGORIEN.forEach(cat => {
       categoryStatsMap[cat] = { answered: 0, correct: 0 };
     });
 
-    questions.forEach(q => {
+    const activeQuestionsList = questions.length > 0 ? questions : INITIAL_QUESTIONS;
+
+    activeQuestionsList.forEach(q => {
       const p = updatedProgress[q.id];
       if (p && p.status !== 'neu') {
-        const correct = p.correctCount || 0;
-        const incorrect = p.incorrectCount || 0;
-        const total = correct + incorrect;
-        if (!categoryStatsMap[q.kategorie]) {
-          categoryStatsMap[q.kategorie] = { answered: 0, correct: 0 };
+        const correct = typeof p.correctCount === 'number' ? p.correctCount : (p.status === 'gewusst' ? 1 : 0);
+        const incorrect = typeof p.incorrectCount === 'number' ? p.incorrectCount : 0;
+        const total = (typeof p.correctCount === 'number' && typeof p.incorrectCount === 'number')
+          ? (p.correctCount + p.incorrectCount)
+          : 1;
+
+        const matchedCat = KATEGORIEN.find(c => 
+          c === q.kategorie || 
+          q.kategorie?.toLowerCase().includes(c.toLowerCase()) || 
+          c.toLowerCase().includes(q.kategorie?.toLowerCase())
+        ) || q.kategorie;
+
+        if (!categoryStatsMap[matchedCat]) {
+          categoryStatsMap[matchedCat] = { answered: 0, correct: 0 };
         }
-        categoryStatsMap[q.kategorie].answered += total;
-        categoryStatsMap[q.kategorie].correct += correct;
+        categoryStatsMap[matchedCat].answered += total > 0 ? total : 1;
+        const isCorrect = p.status === 'gewusst' || correct > 0;
+        categoryStatsMap[matchedCat].correct += isCorrect ? 1 : 0;
       }
     });
 
-    const categoryPerformance = Object.entries(categoryStatsMap).map(([category, stats]) => ({
-      category,
-      percentage: stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0,
-      questionsAnswered: stats.answered
-    }));
+    const categoryPerformance = Object.entries(categoryStatsMap).map(([category, stats]) => {
+      const totalCategoryQuestions = activeQuestionsList.filter(q => 
+        q.kategorie === category || 
+        q.kategorie?.toLowerCase().includes(category.toLowerCase()) || 
+        category.toLowerCase().includes(q.kategorie?.toLowerCase())
+      ).length;
+
+      // Safe division by zero with fallback
+      const percentage = totalCategoryQuestions > 0
+        ? Math.min(100, Math.round((stats.correct / totalCategoryQuestions) * 100))
+        : 0;
+
+      return {
+        category,
+        percentage,
+        questionsAnswered: stats.answered
+      };
+    });
 
     const formattedTime = new Date().toLocaleString('de-DE', {
       day: '2-digit',
@@ -327,6 +353,13 @@ export default function App() {
       );
 
       if (found) {
+        const qProg = (found as any).questionProgress;
+        const activeQuestionsList = questions.length > 0 ? questions : INITIAL_QUESTIONS;
+        let freshCatPerf = found.categoryPerformance;
+        if (qProg && typeof qProg === 'object' && Object.keys(qProg).length > 0) {
+          freshCatPerf = calculateCategoryPerformance(qProg, activeQuestionsList);
+        }
+
         // Restore progressPercent, successRatePercent, etc. directly from Supabase
         setCurrentUser(prev => prev ? {
           ...prev,
@@ -335,13 +368,12 @@ export default function App() {
           successRatePercent: found.successRatePercent,
           status: found.status,
           lastActive: found.lastActive,
-          categoryPerformance: found.categoryPerformance,
+          categoryPerformance: freshCatPerf,
           examHistory: found.examHistory
         } : null);
 
         // If Supabase has saved questionProgress, sync to local state & user-bound storage
-        if ((found as any).questionProgress && Object.keys((found as any).questionProgress).length > 0) {
-          const qProg = (found as any).questionProgress;
+        if (qProg && Object.keys(qProg).length > 0) {
           setProgress(qProg);
           localStorage.setItem(`sachkunde_34a_progress_${found.id}`, JSON.stringify(qProg));
           localStorage.setItem('sachkunde_34a_progress', JSON.stringify(qProg));
@@ -536,7 +568,25 @@ export default function App() {
     localStorage.removeItem('sachkunde_34a_progress');
     localStorage.removeItem('sachkunde_34a_history');
 
-    setCurrentUser(user);
+    let userToSet = user;
+    if (user.role === 'schueler') {
+      const qProg = user.questionProgress || (user.id ? (() => {
+        try {
+          const cached = localStorage.getItem(`sachkunde_34a_progress_${user.id}`);
+          return cached ? JSON.parse(cached) : null;
+        } catch { return null; }
+      })() : null);
+
+      if (qProg && typeof qProg === 'object' && Object.keys(qProg).length > 0) {
+        const freshCatPerf = calculateCategoryPerformance(qProg, questions.length > 0 ? questions : INITIAL_QUESTIONS);
+        userToSet = {
+          ...user,
+          categoryPerformance: freshCatPerf
+        };
+      }
+    }
+
+    setCurrentUser(userToSet);
 
     if (user.role === 'schueler') {
       const userProgressKey = `sachkunde_34a_progress_${user.id}`;

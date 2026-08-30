@@ -62,6 +62,7 @@ import {
   deleteStudentFromSupabase,
   cleanupLocalStudentData
 } from '../lib/supabase.ts';
+import { calculateCategoryPerformance } from '../utils/categoryPerformance.ts';
 
 export interface CourseCohort {
   id: string;
@@ -1064,7 +1065,19 @@ export default function DozentenDashboard({
   const loadStudents = async () => {
     setLoadingStudents(true);
     const list = await fetchStudentsFromSupabase();
-    setStudentsList(list);
+    const activeQuestions = questions && questions.length > 0 ? questions : INITIAL_QUESTIONS;
+    const enrichedList = list.map(student => {
+      const qProg = student.questionProgress;
+      if (qProg && typeof qProg === 'object' && Object.keys(qProg).length > 0) {
+        const freshCatPerf = calculateCategoryPerformance(qProg, activeQuestions);
+        return {
+          ...student,
+          categoryPerformance: freshCatPerf
+        };
+      }
+      return student;
+    });
+    setStudentsList(enrichedList);
     setLoadingStudents(false);
   };
 
