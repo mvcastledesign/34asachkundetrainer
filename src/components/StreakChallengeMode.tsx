@@ -14,15 +14,12 @@ import {
   ShieldAlert, 
   LayoutDashboard 
 } from 'lucide-react';
-import { Question, QuestionTranslation } from '../types.ts';
+import { Question } from '../types.ts';
 import { UserProfile } from '../types/auth.ts';
 import { supabase } from '../lib/supabase.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface StreakChallengeModeProps {
   questions?: Question[];
@@ -38,7 +35,6 @@ interface RawStreakQuestion {
   options: string[];
   correct: string;
   category: string;
-  translations?: Record<string, QuestionTranslation>;
 }
 
 interface ShuffledStreakQuestion {
@@ -48,7 +44,6 @@ interface ShuffledStreakQuestion {
   correctIndex: number;
   correctAnswer: string;
   category: string;
-  translations?: Record<string, QuestionTranslation>;
 }
 
 interface StudentLeaderboardEntry {
@@ -214,19 +209,14 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export default function StreakChallengeMode({
   currentUser,
-  translationLang: propTranslationLang,
+  translationLang = 'deaktiviert',
   onNavigate,
   onRecordHistory
 }: StreakChallengeModeProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
   // --- STATE ---
   const [streak, setStreak] = useState<number>(0);
   const [personalBest, setPersonalBest] = useState<number>(() => {
-    const local = safeStorage.getItem('34a_personal_max_streak');
+    const local = localStorage.getItem('34a_personal_max_streak');
     if (local) return parseInt(local, 10) || 0;
     return currentUser?.maxStreak || 0;
   });
@@ -275,8 +265,7 @@ export default function StreakChallengeMode({
         options: randomizedOptions,
         correctIndex: newCorrectIndex >= 0 ? newCorrectIndex : 0,
         correctAnswer: q.correct,
-        category: q.category,
-        translations: q.translations
+        category: q.category
       };
     });
   };
@@ -589,19 +578,19 @@ export default function StreakChallengeMode({
                   <h3 className="text-lg sm:text-xl font-bold font-display text-white leading-snug tracking-tight">
                     {currentQuestion.question}
                   </h3>
-                  {translationLang !== 'deaktiviert' && (
-                    <div className="mt-2">
-                      <TranslatedSubline 
-                        text={currentQuestion.question} 
-                        translations={currentQuestion.translations}
-                        questionId={`${currentQuestion.id}_q`}
-                        targetLanguage={translationLang} 
-                        type="frage" 
-                        className="text-xs sm:text-sm text-amber-300/85 font-medium italic leading-relaxed"
-                      />
-                    </div>
-                  )}
                 </div>
+
+                {/* Translation View */}
+                {translationLang !== 'deaktiviert' && (
+                  <div className="pt-2 border-t border-white/5">
+                    <TranslationView 
+                      text={currentQuestion.question} 
+                      questionId={currentQuestion.id}
+                      targetLanguage={translationLang} 
+                      type="frage" 
+                    />
+                  </div>
+                )}
 
                 {/* 4 ANSWER BUTTONS */}
                 <div className="space-y-2.5 pt-1">
@@ -631,8 +620,8 @@ export default function StreakChallengeMode({
                         disabled={gameState !== 'playing'}
                         className={`w-full p-3.5 rounded-xl border transition-all text-left flex items-center justify-between gap-3 group active:scale-[0.99] cursor-pointer ${buttonClasses}`}
                       >
-                        <div className="flex items-start gap-3 min-w-0 flex-1">
-                          <span className={`w-7 h-7 rounded-lg font-bold font-mono text-xs flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <span className={`w-7 h-7 rounded-lg font-bold font-mono text-xs flex items-center justify-center shrink-0 transition-colors ${
                             gameState === 'answered' && isSelected && isCorrect
                               ? 'bg-emerald-500 text-slate-950'
                               : gameState === 'answered' && isSelected && !isCorrect
@@ -642,21 +631,9 @@ export default function StreakChallengeMode({
                             {letter}
                           </span>
 
-                          <div className="flex flex-col min-w-0 flex-1">
-                            <span className="font-semibold text-xs sm:text-sm font-sans leading-snug">
-                              {option}
-                            </span>
-                            {translationLang !== 'deaktiviert' && (
-                              <TranslatedSubline
-                                text={option}
-                                translations={currentQuestion.translations}
-                                questionId={`${currentQuestion.id}_opt_${idx}`}
-                                targetLanguage={translationLang}
-                                type={`opt_${idx}`}
-                                className="text-xs text-slate-400 mt-0.5 font-normal"
-                              />
-                            )}
-                          </div>
+                          <span className="font-semibold text-xs sm:text-sm font-sans leading-snug">
+                            {option}
+                          </span>
                         </div>
 
                         {gameState === 'answered' && isSelected && isCorrect && (

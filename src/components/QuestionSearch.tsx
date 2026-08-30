@@ -8,8 +8,6 @@ import { Search, Eye, Filter, CheckCircle, XCircle, ChevronDown, ChevronUp, Laye
 import { Question, UserProgressMap, KATEGORIEN, Schwierigkeit } from '../types.ts';
 import TranslationView from './TranslationView.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface QuestionSearchProps {
   questions: Question[];
@@ -17,12 +15,7 @@ interface QuestionSearchProps {
   translationLang?: string;
 }
 
-export default function QuestionSearch({ questions, progress, translationLang: propTranslationLang }: QuestionSearchProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
+export default function QuestionSearch({ questions, progress, translationLang = 'deaktiviert' }: QuestionSearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [selectedSchwierigkeit, setSelectedSchwierigkeit] = useState<string>('Alle');
@@ -217,7 +210,6 @@ export default function QuestionSearch({ questions, progress, translationLang: p
                         <span className="text-[#dfb871] text-[10px] font-black uppercase tracking-wider block mb-1">Frage Übersetzung:</span>
                         <TranslationView 
                           text={q.frage} 
-                          translations={q.translations}
                           questionId={q.id} 
                           targetLanguage={translationLang} 
                           type="frage" 
@@ -232,7 +224,6 @@ export default function QuestionSearch({ questions, progress, translationLang: p
                       {translationLang !== 'deaktiviert' && (
                         <TranslationView 
                           text={q.antwort} 
-                          translations={q.translations}
                           questionId={q.id} 
                           targetLanguage={translationLang} 
                           type="antwort" 

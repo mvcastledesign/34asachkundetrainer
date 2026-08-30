@@ -1,136 +1,164 @@
-import React, { useState } from 'react';
-import { Globe, ChevronDown, ChevronUp } from 'lucide-react';
-import { isRtlLanguage, LANGUAGE_LABELS } from '../lib/translator.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
-import { QuestionTranslation } from '../types.ts';
+import React, { useState, useEffect } from 'react';
+import { Globe, AlertCircle, Loader2 } from 'lucide-react';
 
 interface TranslationViewProps {
-  text?: string;
-  translatedText?: string;
-  translations?: Record<string, QuestionTranslation>;
-  questionId?: string;
-  targetLanguage?: string; // Optional override, otherwise inherits from context/storage
-  type?: 'frage' | 'antwort' | 'erklaerung' | 'text';
-  variant?: 'default' | 'compact' | 'collapsible';
-  collapsible?: boolean;
-  defaultExpanded?: boolean;
-  className?: string;
+  text: string;
+  questionId: string;
+  targetLanguage: string; // 'farsi' | 'arabisch' | 'russisch' | 'englisch' | 'deaktiviert'
+  type: 'frage' | 'antwort';
+  variant?: 'default' | 'compact';
 }
 
-export { LANGUAGE_LABELS };
+// Map key to display names
+const LANGUAGE_LABELS: Record<string, string> = {
+  farsi: 'Farsi (فارسی)',
+  arabisch: 'Arabisch (العربية)',
+  russisch: 'Russisch (Русский)',
+  englisch: 'Englisch (English)',
+};
 
-/**
- * Purely static translation view component.
- * Displays pre-defined translations from question.translations or explicit props.
- * Silent fallback: if no translation is found for the chosen language, renders null without error banners.
- */
-export default function TranslationView({
-  text: _text,
-  translatedText,
-  translations,
-  questionId: _questionId,
-  targetLanguage: propLanguage,
-  type = 'frage',
-  variant = 'default',
-  collapsible = false,
-  defaultExpanded = false,
-  className = '',
-}: TranslationViewProps) {
-  const context = useLanguage();
-  const activeLanguage = propLanguage || context?.selectedLanguage || safeStorage.getSelectedLanguage();
-  const [isExpanded, setIsExpanded] = useState<boolean>(defaultExpanded);
+export default function TranslationView({ text, questionId, targetLanguage, type, variant = 'default' }: TranslationViewProps) {
+  const [translatedText, setTranslatedText] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
-  if (!activeLanguage || activeLanguage === 'deaktiviert') {
-    return null;
-  }
+  const isRtl = targetLanguage === 'farsi' || targetLanguage === 'arabisch';
 
-  // 1. Check explicit translation text
-  let content = translatedText;
-
-  // 2. Check static translations mapping
-  if (!content && translations && translations[activeLanguage]) {
-    const entry = translations[activeLanguage];
-    if (type === 'frage') {
-      content = entry.frage || entry.text;
-    } else if (type === 'text') {
-      content = entry.text || entry.frage;
-    } else if (type === 'antwort') {
-      content = entry.antwort;
-    } else if (type === 'erklaerung') {
-      content = entry.erklaerung;
+  useEffect(() => {
+    if (!targetLanguage || targetLanguage === 'deaktiviert') {
+      setTranslatedText('');
+      return;
     }
-  }
 
-  // Silent fallback: if no translation is available, do NOT display any error box or empty placeholder
-  if (!content || !content.trim()) {
+    const cacheKey = `sachkunde_34a_trans_${questionId}_${targetLanguage}_${type}`;
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      setTranslatedText(cached);
+      setError('');
+      return;
+    }
+
+    // Trigger on-the-fly translation via Gemini API
+    const fetchTranslation = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/translate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text,
+            targetLanguage: LANGUAGE_LABELS[targetLanguage] || targetLanguage,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Translation request failed.');
+        }
+
+        const data = await response.json();
+        if (data.translation) {
+          localStorage.setItem(cacheKey, data.translation);
+          setTranslatedText(data.translation);
+        } else {
+          throw new Error('No translation text returned.');
+        }
+      } catch (err: any) {
+        console.warn('Backend translation unavailable, attempting client-side translate:', err);
+        
+        // Client-side fallback via Google Translate free GTX endpoint
+        try {
+          const langCodes: Record<string, string> = { farsi: 'fa', arabisch: 'ar', russisch: 'ru', englisch: 'en' };
+          const code = langCodes[targetLanguage] || 'en';
+          const gtxUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${code}&dt=t&q=${encodeURIComponent(text)}`;
+          const gtxRes = await fetch(gtxUrl);
+          if (gtxRes.ok) {
+            const gtxData = await gtxRes.json();
+            if (Array.isArray(gtxData) && Array.isArray(gtxData[0])) {
+              const resText = gtxData[0]
+                .filter((seg: any) => Array.isArray(seg) && typeof seg[0] === 'string')
+                .map((seg: any) => seg[0])
+                .join('');
+              if (resText) {
+                localStorage.setItem(cacheKey, resText);
+                setTranslatedText(resText);
+                return;
+              }
+            }
+          }
+        } catch (gtxErr) {
+          console.warn('Client GTX translation failed:', gtxErr);
+        }
+
+        // Final graceful fallback without red error banner
+        setTranslatedText(text);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTranslation();
+  }, [text, questionId, targetLanguage, type]);
+
+  if (!targetLanguage || targetLanguage === 'deaktiviert') {
     return null;
   }
 
-  const isRtl = isRtlLanguage(activeLanguage);
-  const isCollapsible = collapsible || variant === 'collapsible';
-
-  if (isCollapsible) {
-    return (
-      <div className={`mt-3 pt-2.5 border-t border-white/5 transition-all ${className}`}>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsExpanded(!isExpanded);
-          }}
-          className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-slate-900/60 hover:bg-slate-900/90 border border-white/10 text-xs text-slate-300 hover:text-white transition-all group"
-        >
-          <div className="flex items-center gap-2 text-[11px] font-medium text-[#dfb871]">
-            <Globe className="w-3.5 h-3.5 text-[#dfb871]/80 shrink-0" />
-            <span>
-              {LANGUAGE_LABELS[activeLanguage] || activeLanguage} Übersetzung {isExpanded ? 'ausblenden' : 'anzeigen'}
-            </span>
-          </div>
-          {isExpanded ? (
-            <ChevronUp className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0" />
-          ) : (
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0" />
-          )}
-        </button>
-
-        {isExpanded && (
-          <div
-            dir={isRtl ? 'rtl' : 'ltr'}
-            className={`mt-2 p-3 rounded-lg bg-slate-900/80 border border-white/10 text-slate-200 text-xs sm:text-sm leading-relaxed ${
-              isRtl ? 'font-sans text-right' : 'font-sans'
-            }`}
-          >
-            {content}
-          </div>
-        )}
-      </div>
-    );
-  }
-
+  // Compact variant: Subtle 1-2 line subtitle directly underneath without extra borders or padding
   if (variant === 'compact') {
+    if (loading) {
+      return (
+        <div className="flex items-center gap-1.5 text-slate-400 font-mono text-[10px] sm:text-xs mt-1 animate-pulse">
+          <Loader2 className="w-2.5 h-2.5 animate-spin text-[#dfb871]" />
+          <span>Übersetze...</span>
+        </div>
+      );
+    }
+    if (error || !translatedText) return null;
+
     return (
-      <div
+      <div 
+        className={`text-xs text-amber-300/90 font-medium italic mt-1 leading-snug break-words whitespace-normal ${isRtl ? 'text-right' : 'text-left'}`}
         dir={isRtl ? 'rtl' : 'ltr'}
-        className={`mt-1 text-xs text-amber-300/80 italic font-sans ${isRtl ? 'text-right' : ''} ${className}`}
       >
-        {content}
+        {translatedText}
       </div>
     );
   }
 
   return (
-    <div
-      dir={isRtl ? 'rtl' : 'ltr'}
-      className={`mt-2.5 p-3 rounded-xl bg-slate-900/70 border border-amber-400/20 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm ${
-        isRtl ? 'font-sans text-right' : 'font-sans'
-      } ${className}`}
-    >
-      <div className="flex items-center gap-1.5 mb-1 text-[11px] font-bold text-[#dfb871]">
-        <Globe className="w-3 h-3 text-[#dfb871]" />
-        <span>{LANGUAGE_LABELS[activeLanguage] || activeLanguage}</span>
+    <div className="mt-2.5 pt-2 border-t border-white/[0.04] text-[12.5px] leading-relaxed transition-all duration-200">
+      {/* Small badge */}
+      <div className="flex items-center gap-1.5 text-[9.5px] text-[#dfb871]/70 font-mono tracking-wider uppercase mb-1">
+        <Globe className="w-2.5 h-2.5" />
+        <span>{LANGUAGE_LABELS[targetLanguage]} Übersetzung:</span>
       </div>
-      <div className="text-slate-100">{content}</div>
+
+      {loading && (
+        <div className="flex items-center gap-2 text-slate-500 py-1 font-mono text-xs animate-pulse">
+          <Loader2 className="w-3 h-3 animate-spin text-[#dfb871]" />
+          <span>Lade Übersetzung...</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="flex items-center gap-1.5 text-rose-400 font-medium py-1 text-xs">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {!loading && !error && translatedText && (
+        <div 
+          className={`text-[#c8a97e] font-sans antialiased ${isRtl ? 'text-right font-normal text-md leading-loose bg-[#dfb871]/[0.02] p-2.5 rounded-lg border border-white/[0.02]' : 'text-slate-300'}`}
+          dir={isRtl ? 'rtl' : 'ltr'}
+        >
+          {translatedText}
+        </div>
+      )}
     </div>
   );
 }

@@ -24,8 +24,6 @@ import { INITIAL_FALLBEISPIELE, Fallbeispiel } from '../initialFallbeispiele.ts'
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface FallbeispieleModusProps {
   translationLang?: string;
@@ -33,14 +31,9 @@ interface FallbeispieleModusProps {
 }
 
 export default function FallbeispieleModus({
-  translationLang: propTranslationLang,
+  translationLang = 'deaktiviert',
   onRecordHistory
 }: FallbeispieleModusProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
@@ -297,7 +290,6 @@ export default function FallbeispieleModus({
           </p>
           <TranslationView 
             text={currentCase.question} 
-            translations={currentCase.translations}
             questionId={currentCase.id} 
             targetLanguage={translationLang} 
             type="frage" 
@@ -357,7 +349,6 @@ export default function FallbeispieleModus({
                     <div onClick={(e) => e.stopPropagation()}>
                       <TranslationView 
                         text={optionText} 
-                        translations={currentCase.translations}
                         questionId={`${currentCase.id}-opt-${optIdx}`} 
                         targetLanguage={translationLang} 
                         type="antwort" 
@@ -414,7 +405,6 @@ export default function FallbeispieleModus({
 
             <TranslationView 
               text={currentCase.explanation} 
-              translations={currentCase.translations}
               questionId={`${currentCase.id}-exp`} 
               targetLanguage={translationLang} 
               type="antwort" 

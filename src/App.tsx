@@ -55,8 +55,7 @@ import LegalConceptGuesser from './components/LegalConceptGuesser.tsx';
 import StreakChallengeMode from './components/StreakChallengeMode.tsx';
 import FachbegriffeTrainer from './components/FachbegriffeTrainer.tsx';
 import CustomDropdown from './components/CustomDropdown.tsx';
-import { LanguageProvider, useLanguage } from './contexts/LanguageContext.tsx';
-import { safeStorage } from './lib/storage.ts';
+import { safeStorage } from './utils/safeStorage.ts';
 
 const languageOptions = [
   { value: 'deaktiviert', label: 'Deaktiviert (Nur Deutsch)' },
@@ -66,22 +65,15 @@ const languageOptions = [
   { value: 'englisch', label: 'Englisch (English)' }
 ];
 
-function AppContent() {
-  const { selectedLanguage, setSelectedLanguage } = useLanguage();
-  const translationLang = selectedLanguage || safeStorage.getSelectedLanguage() || 'deaktiviert';
-
-  const handleSetTranslationLang = (lang: string) => {
-    setSelectedLanguage(lang);
-  };
-
+export default function App() {
   // Current user authentication state
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    const savedLocal = safeStorage.getItem('sachkunde_34a_current_user');
+    const savedLocal = localStorage.getItem('sachkunde_34a_current_user');
     if (savedLocal) {
       try {
         return JSON.parse(savedLocal);
       } catch (err) {
-        safeStorage.removeItem('sachkunde_34a_current_user');
+        localStorage.removeItem('sachkunde_34a_current_user');
       }
     }
     const savedSession = sessionStorage.getItem('sachkunde_34a_current_user');
@@ -96,7 +88,14 @@ function AppContent() {
     return null;
   });
 
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    return safeStorage.getItem('sachkunde_34a_active_tab') || 'dashboard';
+  });
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    safeStorage.setItem('sachkunde_34a_active_tab', tab);
+  };
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   // Persistence States
@@ -105,11 +104,19 @@ function AppContent() {
   const [history, setHistory] = useState<LernhistorieItem[]>([]);
   const [dailyGoal, setDailyGoal] = useState<number>(10);
   const [studyDuration, setStudyDuration] = useState<number>(0);
+  const [translationLang, setTranslationLang] = useState<string>(() => {
+    return localStorage.getItem('sachkunde_34a_translation_lang') || 'deaktiviert';
+  });
+
+  const handleSetTranslationLang = (lang: string) => {
+    setTranslationLang(lang);
+    localStorage.setItem('sachkunde_34a_translation_lang', lang);
+  };
 
   // 1. Load data from LocalStorage
   useEffect(() => {
     // Questions catalog
-    const localQuestions = safeStorage.getItem('sachkunde_34a_questions');
+    const localQuestions = localStorage.getItem('sachkunde_34a_questions');
     let loadedQuestions: Question[] = [];
     let needsReset = false;
     if (localQuestions) {
@@ -137,7 +144,7 @@ function AppContent() {
     // Progress
     if (currentUser) {
       const userProgressKey = `sachkunde_34a_progress_${currentUser.id}`;
-      const localUserProgress = safeStorage.getItem(userProgressKey) || safeStorage.getItem('sachkunde_34a_progress');
+      const localUserProgress = localStorage.getItem(userProgressKey) || localStorage.getItem('sachkunde_34a_progress');
       if (localUserProgress && !needsReset) {
         try {
           setProgress(JSON.parse(localUserProgress));
@@ -150,7 +157,7 @@ function AppContent() {
 
       // Historial logs
       const userHistoryKey = `sachkunde_34a_history_${currentUser.id}`;
-      const localUserHistory = safeStorage.getItem(userHistoryKey) || safeStorage.getItem('sachkunde_34a_history');
+      const localUserHistory = localStorage.getItem(userHistoryKey) || localStorage.getItem('sachkunde_34a_history');
       if (localUserHistory) {
         try {
           setHistory(JSON.parse(localUserHistory));
@@ -164,12 +171,12 @@ function AppContent() {
       // Clear progress and history if not logged in
       setProgress({});
       setHistory([]);
-      safeStorage.removeItem('sachkunde_34a_progress');
-      safeStorage.removeItem('sachkunde_34a_history');
+      localStorage.removeItem('sachkunde_34a_progress');
+      localStorage.removeItem('sachkunde_34a_history');
     }
 
     // Daily Goals
-    const localGoal = safeStorage.getItem('sachkunde_34a_daily_goal');
+    const localGoal = localStorage.getItem('sachkunde_34a_daily_goal');
     if (localGoal) {
       setDailyGoal(parseInt(localGoal, 10) || 10);
     }
@@ -179,7 +186,7 @@ function AppContent() {
   useEffect(() => {
     if (currentUser?.id && currentUser.role === 'schueler') {
       const userDurationKey = `sachkunde_34a_study_duration_${currentUser.id}`;
-      const savedDuration = safeStorage.getItem(userDurationKey);
+      const savedDuration = localStorage.getItem(userDurationKey);
       setStudyDuration(savedDuration ? parseInt(savedDuration, 10) || 0 : 0);
     } else {
       setStudyDuration(0);
@@ -200,14 +207,14 @@ function AppContent() {
   // Persist study duration every 5 seconds user-specifically
   useEffect(() => {
     if (currentUser?.id && currentUser.role === 'schueler' && studyDuration > 0 && studyDuration % 5 === 0) {
-      safeStorage.setItem(`sachkunde_34a_study_duration_${currentUser.id}`, studyDuration.toString());
+      localStorage.setItem(`sachkunde_34a_study_duration_${currentUser.id}`, studyDuration.toString());
     }
   }, [studyDuration, currentUser?.id, currentUser?.role]);
 
   // Sync state mutation actions with local storage
   const saveQuestionsToLocal = (newQuestions: Question[]) => {
     setQuestions(newQuestions);
-    safeStorage.setItem('sachkunde_34a_questions', JSON.stringify(newQuestions));
+    localStorage.setItem('sachkunde_34a_questions', JSON.stringify(newQuestions));
   };
 
   const syncProgressToSupabase = (
@@ -219,8 +226,8 @@ function AppContent() {
     if (!studentId || (currentUser && currentUser.role !== 'schueler' && !overrideStudentId)) return;
 
     // Save progress to user-bound storage and active session storage
-    safeStorage.setItem(`sachkunde_34a_progress_${studentId}`, JSON.stringify(updatedProgress));
-    safeStorage.setItem('sachkunde_34a_progress', JSON.stringify(updatedProgress));
+    localStorage.setItem(`sachkunde_34a_progress_${studentId}`, JSON.stringify(updatedProgress));
+    localStorage.setItem('sachkunde_34a_progress', JSON.stringify(updatedProgress));
 
     const totalQuestions = questions.length || INITIAL_QUESTIONS.length || 100;
     const progressEntries = Object.values(updatedProgress);
@@ -507,18 +514,18 @@ function AppContent() {
     setHistory([]);
     setStudyDuration(0);
     if (currentUser?.id) {
-      safeStorage.removeItem(`sachkunde_34a_progress_${currentUser.id}`);
-      safeStorage.removeItem(`sachkunde_34a_history_${currentUser.id}`);
-      safeStorage.removeItem(`sachkunde_34a_study_duration_${currentUser.id}`);
+      localStorage.removeItem(`sachkunde_34a_progress_${currentUser.id}`);
+      localStorage.removeItem(`sachkunde_34a_history_${currentUser.id}`);
+      localStorage.removeItem(`sachkunde_34a_study_duration_${currentUser.id}`);
     }
-    safeStorage.removeItem('sachkunde_34a_progress');
-    safeStorage.removeItem('sachkunde_34a_history');
-    safeStorage.removeItem('sachkunde_34a_study_duration');
+    localStorage.removeItem('sachkunde_34a_progress');
+    localStorage.removeItem('sachkunde_34a_history');
+    localStorage.removeItem('sachkunde_34a_study_duration');
   };
 
   const handleSetDailyGoal = (goal: number) => {
     setDailyGoal(goal);
-    safeStorage.setItem('sachkunde_34a_daily_goal', goal.toString());
+    localStorage.setItem('sachkunde_34a_daily_goal', goal.toString());
   };
 
   // Auth Handlers
@@ -526,8 +533,8 @@ function AppContent() {
     // Completely reset previous local progress and history state
     setProgress({});
     setHistory([]);
-    safeStorage.removeItem('sachkunde_34a_progress');
-    safeStorage.removeItem('sachkunde_34a_history');
+    localStorage.removeItem('sachkunde_34a_progress');
+    localStorage.removeItem('sachkunde_34a_history');
 
     setCurrentUser(user);
 
@@ -538,15 +545,15 @@ function AppContent() {
       // Progress setup
       if (user.questionProgress && Object.keys(user.questionProgress).length > 0) {
         setProgress(user.questionProgress);
-        safeStorage.setItem(userProgressKey, JSON.stringify(user.questionProgress));
-        safeStorage.setItem('sachkunde_34a_progress', JSON.stringify(user.questionProgress));
+        localStorage.setItem(userProgressKey, JSON.stringify(user.questionProgress));
+        localStorage.setItem('sachkunde_34a_progress', JSON.stringify(user.questionProgress));
       } else {
-        const cachedUserProgress = safeStorage.getItem(userProgressKey);
+        const cachedUserProgress = localStorage.getItem(userProgressKey);
         if (cachedUserProgress) {
           try {
             const parsed = JSON.parse(cachedUserProgress);
             setProgress(parsed);
-            safeStorage.setItem('sachkunde_34a_progress', JSON.stringify(parsed));
+            localStorage.setItem('sachkunde_34a_progress', JSON.stringify(parsed));
           } catch (e) {
             setProgress({});
           }
@@ -556,7 +563,7 @@ function AppContent() {
       }
 
       // History setup
-      const cachedUserHistory = safeStorage.getItem(userHistoryKey);
+      const cachedUserHistory = localStorage.getItem(userHistoryKey);
       if (cachedUserHistory) {
         try {
           setHistory(JSON.parse(cachedUserHistory));
@@ -569,11 +576,11 @@ function AppContent() {
     }
 
     if (rememberMe) {
-      safeStorage.setItem('sachkunde_34a_current_user', JSON.stringify(user));
+      localStorage.setItem('sachkunde_34a_current_user', JSON.stringify(user));
       sessionStorage.removeItem('sachkunde_34a_current_user');
     } else {
       sessionStorage.setItem('sachkunde_34a_current_user', JSON.stringify(user));
-      safeStorage.removeItem('sachkunde_34a_current_user');
+      localStorage.removeItem('sachkunde_34a_current_user');
     }
   };
 
@@ -582,11 +589,11 @@ function AppContent() {
     setProgress({});
     setHistory([]);
     setStudyDuration(0);
-    safeStorage.removeItem('sachkunde_34a_current_user');
+    localStorage.removeItem('sachkunde_34a_current_user');
     sessionStorage.removeItem('sachkunde_34a_current_user');
-    safeStorage.removeItem('sachkunde_34a_progress');
-    safeStorage.removeItem('sachkunde_34a_history');
-    setActiveTab('dashboard');
+    localStorage.removeItem('sachkunde_34a_progress');
+    localStorage.removeItem('sachkunde_34a_history');
+    handleTabChange('dashboard');
   };
 
   const handleLoginAsStudent = () => {
@@ -663,6 +670,7 @@ function AppContent() {
             </div>
 
             <button
+              type="button"
               onClick={handleLogout}
               className="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-sm"
             >
@@ -696,8 +704,9 @@ function AppContent() {
           <header className="lg:hidden bg-slate-950/90 backdrop-blur-md border-b border-white/5 px-5 py-3 flex items-center justify-between sticky top-0 z-40 relative">
             <div 
               id="mobile-logo-back-to-dashboard"
-              onClick={() => {
-                setActiveTab('dashboard');
+              onClick={(e) => {
+                e.preventDefault();
+                handleTabChange('dashboard');
                 setMobileMenuOpen(false);
               }}
               className="flex items-center gap-2 cursor-pointer hover:opacity-85 active:scale-95 transition-all select-none"
@@ -714,7 +723,11 @@ function AppContent() {
                 {currentUser.name}
               </span>
               <button 
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(!mobileMenuOpen);
+                }}
                 className="p-1.5 text-slate-400 hover:text-slate-200 transition-colors"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -746,7 +759,10 @@ function AppContent() {
                 {/* Logo & Student Header Badge */}
                 <div 
                   id="desktop-logo-back-to-dashboard"
-                  onClick={() => setActiveTab('dashboard')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleTabChange('dashboard');
+                  }}
                   className="hidden lg:flex items-center gap-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all select-none"
                 >
                   <div className="p-2 bg-gradient-to-br from-[#dfb871] via-[#dfb871] to-[#9a7836] rounded-xl text-slate-950 shadow-lg shadow-amber-500/15">
@@ -780,8 +796,10 @@ function AppContent() {
                     return (
                       <button
                         key={tab.id}
-                        onClick={() => {
-                          setActiveTab(tab.id);
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleTabChange(tab.id);
                           setMobileMenuOpen(false);
                         }}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold select-none cursor-pointer transition-all ${
@@ -796,27 +814,12 @@ function AppContent() {
                     );
                   })}
                 </nav>
-
-                {/* Mobile / Sidebar Language Selector */}
-                <div className="pt-2 border-t border-white/5 space-y-2">
-                  <div className="flex items-center gap-2 px-1">
-                    <Globe className="w-3.5 h-3.5 text-[#dfb871]" />
-                    <span className="text-[11px] font-bold text-slate-400 font-sans">Zweitsprache</span>
-                  </div>
-                  <CustomDropdown
-                    options={languageOptions}
-                    value={translationLang}
-                    onChange={handleSetTranslationLang}
-                    maxWidth="w-full"
-                    align="left"
-                    className="w-full"
-                  />
-                </div>
               </div>
 
               {/* Sidebar bottom logout button */}
               <div className="p-6 border-t border-white/5 bg-white/[0.01] space-y-3">
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-rose-500/5 hover:bg-rose-500/15 text-rose-300 hover:text-rose-250 border border-rose-500/10 rounded-xl text-xs font-bold transition-all cursor-pointer select-none active:scale-95 font-sans"
                 >
@@ -876,7 +879,7 @@ function AppContent() {
                     studyDuration={studyDuration}
                     dailyGoal={dailyGoal}
                     setDailyGoal={handleSetDailyGoal}
-                    onNavigate={setActiveTab}
+                    onNavigate={handleTabChange}
                   />
                 )}
 
@@ -892,7 +895,7 @@ function AppContent() {
                     questions={questions}
                     currentUser={currentUser}
                     translationLang={translationLang}
-                    onNavigate={setActiveTab}
+                    onNavigate={handleTabChange}
                     onRecordHistory={handleRecordHistoryItem}
                   />
                 )}
@@ -1003,13 +1006,5 @@ function AppContent() {
         </>
       )}
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
   );
 }

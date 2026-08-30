@@ -12,9 +12,6 @@ import {
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
-import { QuestionTranslation } from '../types.ts';
 
 interface RawRiddleItem {
   id: number;
@@ -22,7 +19,6 @@ interface RawRiddleItem {
   options: string[];
   correct: string;
   explanation: string;
-  translations?: Record<string, QuestionTranslation>;
 }
 
 interface ShuffledRiddleItem {
@@ -31,7 +27,6 @@ interface ShuffledRiddleItem {
   options: string[];
   correct: string;
   explanation: string;
-  translations?: Record<string, QuestionTranslation>;
 }
 
 const RAW_RIDDLE_QUESTIONS: RawRiddleItem[] = [
@@ -193,14 +188,9 @@ interface LegalConceptGuesserProps {
 }
 
 export default function LegalConceptGuesser({
-  translationLang: propTranslationLang,
+  translationLang = 'deaktiviert',
   onRecordHistory
 }: LegalConceptGuesserProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
   const [riddles, setRiddles] = useState<ShuffledRiddleItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -436,7 +426,6 @@ export default function LegalConceptGuesser({
               <div className="pt-2 border-t border-white/5">
                 <TranslationView 
                   text={currentRiddle.riddle} 
-                  translations={currentRiddle.translations}
                   questionId={`riddle-${currentRiddle.id}`}
                   targetLanguage={translationLang} 
                   type="frage" 

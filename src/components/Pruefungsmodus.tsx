@@ -8,10 +8,7 @@ import { Play, Clipboard, Clock, AlertTriangle, RefreshCw, CheckCircle, XCircle,
 import { Question, UserProgressMap, KATEGORIEN } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface PruefungsmodusProps {
   questions: Question[];
@@ -26,13 +23,8 @@ export default function Pruefungsmodus({
   progress,
   onAnswerBulk,
   onRecordHistory,
-  translationLang: propTranslationLang
+  translationLang = 'deaktiviert'
 }: PruefungsmodusProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
   // Exam states
   const [examStarted, setExamStarted] = useState<boolean>(false);
   const [examFinished, setExamFinished] = useState<boolean>(false);
@@ -291,7 +283,6 @@ export default function Pruefungsmodus({
                     <p className="text-slate-200 font-medium">{q.frage}</p>
                     <TranslationView 
                       text={q.frage} 
-                      translations={q.translations}
                       questionId={q.id} 
                       targetLanguage={translationLang} 
                       type="frage" 
@@ -300,7 +291,6 @@ export default function Pruefungsmodus({
                       <strong className="text-slate-400">Antwort:</strong> {q.antwort}
                       <TranslationView 
                         text={q.antwort} 
-                        translations={q.translations}
                         questionId={q.id} 
                         targetLanguage={translationLang} 
                         type="antwort" 
@@ -502,21 +492,17 @@ export default function Pruefungsmodus({
             </div>
 
             {/* Question Text */}
-            <div>
-              <h3 className="text-base md:text-lg font-bold text-slate-100">
-                {examQuestions[currentIndex]?.frage}
-              </h3>
-              {examQuestions[currentIndex] && translationLang !== 'deaktiviert' && (
-                <TranslatedSubline 
-                  text={examQuestions[currentIndex].frage} 
-                  translations={examQuestions[currentIndex].translations}
-                  questionId={`${examQuestions[currentIndex].id}_exam_q`} 
-                  targetLanguage={translationLang} 
-                  type="frage" 
-                  className="text-xs text-amber-300/85 font-medium italic mt-1 leading-relaxed"
-                />
-              )}
-            </div>
+            <h3 className="text-base md:text-lg font-bold text-slate-100">
+              {examQuestions[currentIndex]?.frage}
+            </h3>
+            {examQuestions[currentIndex] && (
+              <TranslationView 
+                text={examQuestions[currentIndex].frage} 
+                questionId={examQuestions[currentIndex].id} 
+                targetLanguage={translationLang} 
+                type="frage" 
+              />
+            )}
 
             {/* Mock draft sheet to write down key notes */}
             <div className="space-y-2">
@@ -601,14 +587,12 @@ export default function Pruefungsmodus({
                     </div>
                   </div>
                   <div>{examQuestions[currentIndex]?.antwort}</div>
-                  {examQuestions[currentIndex] && translationLang !== 'deaktiviert' && (
+                  {examQuestions[currentIndex] && (
                     <TranslationView 
                       text={examQuestions[currentIndex].antwort} 
-                      translations={examQuestions[currentIndex].translations}
-                      questionId={`${examQuestions[currentIndex].id}_exam_ans`} 
+                      questionId={examQuestions[currentIndex].id} 
                       targetLanguage={translationLang} 
                       type="antwort" 
-                      variant="collapsible"
                     />
                   )}
                 </div>

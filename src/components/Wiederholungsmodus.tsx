@@ -8,10 +8,7 @@ import { Layers, RefreshCw, AlertCircle, Sparkles, CheckCircle2, Shuffle, Volume
 import { Question, UserProgressMap } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import TranslatedSubline from './TranslatedSubline.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface WiederholungsmodusProps {
   questions: Question[];
@@ -40,13 +37,8 @@ export default function Wiederholungsmodus({
   questions,
   progress,
   onAnswer,
-  translationLang: propTranslationLang
+  translationLang = 'deaktiviert'
 }: WiederholungsmodusProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [revisionType, setRevisionType] = useState<'wrong_only' | 'leitner_box_1'>('wrong_only');
@@ -268,14 +260,12 @@ export default function Wiederholungsmodus({
               <h3 className="text-base md:text-lg font-bold text-slate-100 leading-snug">
                 {cleanQuestionText(currentQuestion?.frage)}
               </h3>
-              {currentQuestion && translationLang !== 'deaktiviert' && (
-                <TranslatedSubline 
+              {currentQuestion && (
+                <TranslationView 
                   text={cleanQuestionText(currentQuestion.frage)} 
-                  translations={currentQuestion.translations}
-                  questionId={`${currentQuestion.id}_repeat_q`} 
+                  questionId={currentQuestion.id} 
                   targetLanguage={translationLang} 
                   type="frage" 
-                  className="text-xs text-amber-300/85 font-medium italic mt-1 leading-relaxed"
                 />
               )}
             </div>
@@ -343,14 +333,12 @@ export default function Wiederholungsmodus({
                     </div>
                   </div>
                   <div>{formatSolutionText(currentQuestion)}</div>
-                  {currentQuestion && translationLang !== 'deaktiviert' && (
+                  {currentQuestion && (
                     <TranslationView 
                       text={formatSolutionText(currentQuestion)} 
-                      translations={currentQuestion.translations}
-                      questionId={`${currentQuestion.id}_repeat_ans`} 
+                      questionId={currentQuestion.id} 
                       targetLanguage={translationLang} 
                       type="antwort" 
-                      variant="collapsible"
                     />
                   )}
                 </div>

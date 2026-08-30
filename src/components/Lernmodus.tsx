@@ -8,11 +8,8 @@ import { ChevronLeft, ChevronRight, Eye, CheckCircle2, XCircle, RefreshCw, Layer
 import { Question, UserProgressMap, KATEGORIEN, Schwierigkeit } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface LernmodusProps {
   questions: Question[];
@@ -43,13 +40,8 @@ export default function Lernmodus({
   progress,
   onAnswer,
   onResetProgress,
-  translationLang: propTranslationLang
+  translationLang = 'deaktiviert'
 }: LernmodusProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [selectedSchwierigkeit, setSelectedSchwierigkeit] = useState<string>('Alle');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -309,14 +301,12 @@ export default function Lernmodus({
                 <h2 className="text-base md:text-lg font-bold font-sans text-white leading-relaxed">
                   {cleanQuestionText(currentQuestion?.frage)}
                 </h2>
-                {currentQuestion && translationLang !== 'deaktiviert' && (
-                  <TranslatedSubline 
+                {currentQuestion && (
+                  <TranslationView 
                     text={cleanQuestionText(currentQuestion.frage)} 
-                    translations={currentQuestion.translations}
-                    questionId={`${currentQuestion.id}_learn_q`} 
+                    questionId={currentQuestion.id} 
                     targetLanguage={translationLang} 
                     type="frage" 
-                    className="text-xs sm:text-sm text-amber-300/85 font-medium italic mt-1 leading-relaxed"
                   />
                 )}
               </div>
@@ -387,16 +377,14 @@ export default function Lernmodus({
                   </div>
 
                   {/* Text container (shows complete content without forced scrolling) */}
-                  <div className="flex-grow text-slate-200 text-sm md:text-base leading-relaxed space-y-4 whitespace-pre-wrap font-medium font-sans pr-1">
+                  <div className="flex-grow text-slate-200 text-sm md:text-base leading-relaxed space-y-4 whitespace-pre-wrap font-medium font-sans pr-1 font-sans">
                     <div>{formatSolutionText(currentQuestion)}</div>
-                    {currentQuestion && translationLang !== 'deaktiviert' && (
+                    {currentQuestion && (
                       <TranslationView 
                         text={formatSolutionText(currentQuestion)} 
-                        translations={currentQuestion.translations}
-                        questionId={`${currentQuestion.id}_learn_ans`} 
+                        questionId={currentQuestion.id} 
                         targetLanguage={translationLang} 
                         type="antwort" 
-                        variant="collapsible"
                       />
                     )}
                   </div>

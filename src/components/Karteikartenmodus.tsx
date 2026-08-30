@@ -8,11 +8,8 @@ import { ChevronLeft, ChevronRight, RefreshCw, Layers, Shuffle, Volume2, VolumeX
 import { Question, KATEGORIEN } from '../types.ts';
 import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
-import TranslatedSubline from './TranslatedSubline.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { useLanguage } from '../contexts/LanguageContext.tsx';
-import { safeStorage } from '../lib/storage.ts';
 
 interface KarteikartenmodusProps {
   questions: Question[];
@@ -35,12 +32,7 @@ function formatSolutionText(q?: Question | null): string {
   return text.trim();
 }
 
-export default function Karteikartenmodus({ questions, translationLang: propTranslationLang }: KarteikartenmodusProps) {
-  const { selectedLanguage } = useLanguage();
-  const translationLang = (propTranslationLang && propTranslationLang !== 'deaktiviert')
-    ? propTranslationLang 
-    : (safeStorage.getSelectedLanguage() || selectedLanguage || 'deaktiviert');
-
+export default function Karteikartenmodus({ questions, translationLang = 'deaktiviert' }: KarteikartenmodusProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
@@ -267,15 +259,13 @@ export default function Karteikartenmodus({ questions, translationLang: propTran
                       <h3 className="text-sm sm:text-base md:text-md font-bold font-sans text-white text-left leading-relaxed max-h-[180px] overflow-y-auto pr-1">
                         {cleanQuestionText(currentQuestion?.frage)}
                       </h3>
-                      {currentQuestion && translationLang !== 'deaktiviert' && (
+                      {currentQuestion && (
                         <div onClick={(e) => e.stopPropagation()}>
-                          <TranslatedSubline 
+                          <TranslationView 
                             text={cleanQuestionText(currentQuestion.frage)} 
-                            translations={currentQuestion.translations}
-                            questionId={`${currentQuestion.id}_card_q`} 
+                            questionId={currentQuestion.id} 
                             targetLanguage={translationLang} 
                             type="frage" 
-                            className="text-xs text-amber-300/85 font-medium italic mt-1 leading-relaxed"
                           />
                         </div>
                       )}
@@ -359,16 +349,14 @@ export default function Karteikartenmodus({ questions, translationLang: propTran
                       <span className="text-[#ff9966] text-[10px] font-bold uppercase tracking-widest block mb-2 font-display">
                         LÖSUNG:
                       </span>
-                      <div>{formatSolutionText(currentQuestion)}</div>
-                      {currentQuestion && translationLang !== 'deaktiviert' && (
+                      {formatSolutionText(currentQuestion)}
+                      {currentQuestion && (
                         <div onClick={(e) => e.stopPropagation()}>
                           <TranslationView 
                             text={formatSolutionText(currentQuestion)} 
-                            translations={currentQuestion.translations}
-                            questionId={`${currentQuestion.id}_card_ans`} 
+                            questionId={currentQuestion.id} 
                             targetLanguage={translationLang} 
                             type="antwort" 
-                            variant="collapsible"
                           />
                         </div>
                       )}
