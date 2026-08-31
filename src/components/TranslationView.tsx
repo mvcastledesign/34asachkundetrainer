@@ -1,21 +1,26 @@
 import React, { useMemo } from 'react';
 import { Globe } from 'lucide-react';
-import { getStaticTranslation } from '../data/translationsData.ts';
+import { getTranslation } from '../data/translationsData.ts';
 
 interface TranslationViewProps {
   text: string;
   questionId?: string;
-  targetLanguage: string; // 'farsi' | 'arabisch' | 'russisch' | 'englisch' | 'deaktiviert'
-  type?: 'frage' | 'antwort';
+  targetLanguage: string; // 'farsi' | 'arabisch' | 'russisch' | 'englisch' | 'fa' | 'ar' | 'ru' | 'en' | 'deaktiviert'
+  type?: 'frage' | 'antwort' | 'loesung' | 'option';
+  optionKey?: string;
   variant?: 'default' | 'compact';
 }
 
 // Display labels for language badges
 const LANGUAGE_LABELS: Record<string, string> = {
   farsi: 'Farsi (فارسی)',
+  fa: 'Farsi (فارسی)',
   arabisch: 'Arabisch (العربية)',
+  ar: 'Arabisch (العربية)',
   russisch: 'Russisch (Русский)',
+  ru: 'Russisch (Русский)',
   englisch: 'Englisch (English)',
+  en: 'Englisch (English)',
 };
 
 export default function TranslationView({ 
@@ -23,17 +28,37 @@ export default function TranslationView({
   questionId, 
   targetLanguage, 
   type = 'frage', 
+  optionKey,
   variant = 'default' 
 }: TranslationViewProps) {
-  const isRtl = targetLanguage === 'farsi' || targetLanguage === 'arabisch';
+  const isRtl = 
+    targetLanguage === 'farsi' || 
+    targetLanguage === 'fa' || 
+    targetLanguage === 'arabisch' || 
+    targetLanguage === 'ar';
 
   // Instant static translation in 0 ms without any network calls
   const translatedText = useMemo(() => {
-    if (!targetLanguage || targetLanguage === 'deaktiviert' || !text) {
-      return '';
+    if (!targetLanguage || targetLanguage === 'deaktiviert' || (!text && !questionId)) {
+      return undefined;
     }
-    return getStaticTranslation(text, questionId, targetLanguage, type);
-  }, [text, questionId, targetLanguage, type]);
+
+    const queryType = type === 'antwort' ? 'loesung' : type;
+
+    // 1. First attempt: Direct ID lookup
+    if (questionId) {
+      const hit = getTranslation(questionId, queryType, optionKey, targetLanguage);
+      if (hit) return hit;
+    }
+
+    // 2. Second attempt: Text query
+    if (text) {
+      const hit = getTranslation(text, queryType, optionKey, targetLanguage);
+      if (hit) return hit;
+    }
+
+    return undefined;
+  }, [text, questionId, targetLanguage, type, optionKey]);
 
   if (!targetLanguage || targetLanguage === 'deaktiviert' || !translatedText) {
     return null;
@@ -43,7 +68,7 @@ export default function TranslationView({
   if (variant === 'compact') {
     return (
       <div 
-        className={`text-xs text-amber-300/90 font-medium italic mt-1 leading-snug break-words whitespace-normal pointer-events-none select-none ${isRtl ? 'text-right' : 'text-left'}`}
+        className={`text-xs text-amber-300/90 font-medium italic mt-1 leading-snug break-words whitespace-normal pointer-events-none select-none ${isRtl ? 'text-right font-sans' : 'text-left'}`}
         dir={isRtl ? 'rtl' : 'ltr'}
       >
         {translatedText}

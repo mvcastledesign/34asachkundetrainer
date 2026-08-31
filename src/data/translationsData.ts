@@ -10,6 +10,35 @@
  * - Englisch (en)
  */
 
+import { TRANSLATIONS_PART_1, TranslationBlockItem } from './translationsPart1.ts';
+import { TRANSLATIONS_PART_2 } from './translationsPart2.ts';
+import { TRANSLATIONS_PART_3 } from './translationsPart3.ts';
+import { TRANSLATIONS_PART_4 } from './translationsPart4.ts';
+import { TRANSLATIONS_PART_5 } from './translationsPart5.ts';
+import { TRANSLATIONS_PART_6 } from './translationsPart6.ts';
+import { TRANSLATIONS_PART_7 } from './translationsPart7.ts';
+import { TRANSLATIONS_PART_8 } from './translationsPart8.ts';
+import { TRANSLATIONS_PART_9 } from './translationsPart9.ts';
+import { TRANSLATIONS_PART_10 } from './translationsPart10.ts';
+
+export type { TranslationBlockItem };
+
+/**
+ * Master-Objekt aller 10 Übersetzungsblöcke (§ 34a Sachkunde)
+ */
+export const ALL_TRANSLATIONS: Record<string, TranslationBlockItem> = {
+  ...TRANSLATIONS_PART_1,
+  ...TRANSLATIONS_PART_2,
+  ...TRANSLATIONS_PART_3,
+  ...TRANSLATIONS_PART_4,
+  ...TRANSLATIONS_PART_5,
+  ...TRANSLATIONS_PART_6,
+  ...TRANSLATIONS_PART_7,
+  ...TRANSLATIONS_PART_8,
+  ...TRANSLATIONS_PART_9,
+  ...TRANSLATIONS_PART_10,
+};
+
 export interface TranslationEntry {
   farsi: string;
   arabisch: string;
@@ -612,12 +641,90 @@ function normalizeText(text: string): string {
 }
 
 /**
- * Blitzschnelle, universelle und verlässliche Übersetzung (0ms) ohne externen Netzaufruf.
- * Durchsucht sequenziell:
- * 1. Exakte ID / Sub-ID
- * 2. Normalisierter Fragetext-Abgleich
- * 3. Fachwörterbuch & Legal Terms Matcher
- * 4. Universeller semantischer Kontext-Fallback
+ * Universelle Lookup-Funktion für alle Fachübersetzungen (§ 34a Sachkunde)
+ * 0ms Latenz, 100% offline.
+ * 
+ * @param idOrText ID der Frage/Aufgabe (z. B. 'q-oeff-1', 'fall-09', 'ihk-stgb-14') oder Text
+ * @param type 'frage' | 'loesung' | 'option'
+ * @param optionKey Optionaler Schlüssel für Antwortoptionen (z. B. 'A', 'B', 'opt1', 'opt_correct')
+ * @param lang Zielsprache ('fa' | 'ar' | 'ru' | 'en' oder 'farsi' | 'arabisch' | 'russisch' | 'englisch')
+ * @returns Die übersetzte Zeichenkette oder undefined
+ */
+export function getTranslation(
+  idOrText: string,
+  type: 'frage' | 'loesung' | 'option' = 'frage',
+  optionKey?: string,
+  lang?: string
+): string | undefined {
+  if (!lang || lang === 'deaktiviert' || !idOrText) {
+    return undefined;
+  }
+
+  const lowerLang = lang.toLowerCase();
+  let shortLang: 'fa' | 'ar' | 'ru' | 'en' | undefined;
+  let fullLangKey: 'farsi' | 'arabisch' | 'russisch' | 'englisch' | undefined;
+
+  if (lowerLang === 'fa' || lowerLang === 'farsi') {
+    shortLang = 'fa';
+    fullLangKey = 'farsi';
+  } else if (lowerLang === 'ar' || lowerLang === 'arabisch') {
+    shortLang = 'ar';
+    fullLangKey = 'arabisch';
+  } else if (lowerLang === 'ru' || lowerLang === 'russisch') {
+    shortLang = 'ru';
+    fullLangKey = 'russisch';
+  } else if (lowerLang === 'en' || lowerLang === 'englisch' || lowerLang === 'english') {
+    shortLang = 'en';
+    fullLangKey = 'englisch';
+  }
+
+  if (!shortLang || !fullLangKey) {
+    return undefined;
+  }
+
+  const cleanId = idOrText.trim();
+
+  // 1. Direkt über ID im ALL_TRANSLATIONS Master-Objekt
+  const blockItem = ALL_TRANSLATIONS[cleanId];
+  if (blockItem) {
+    if (type === 'frage' && blockItem.frage?.[shortLang]) {
+      return blockItem.frage[shortLang];
+    }
+    if (type === 'loesung' && blockItem.loesung?.[shortLang]) {
+      return blockItem.loesung[shortLang];
+    }
+    if (type === 'option' && optionKey && blockItem.optionen?.[optionKey]?.[shortLang]) {
+      return blockItem.optionen[optionKey][shortLang];
+    }
+  }
+
+  // 2. Direkt über ID in TRANSLATIONS_BY_ID
+  const idEntry = TRANSLATIONS_BY_ID[cleanId];
+  if (idEntry && idEntry[fullLangKey]) {
+    return idEntry[fullLangKey];
+  }
+
+  // 3. Fallback: Option/Suffix Match in TRANSLATIONS_BY_ID
+  if (optionKey) {
+    const optKeyCandidate = `${cleanId}_${optionKey}`;
+    if (TRANSLATIONS_BY_ID[optKeyCandidate]?.[fullLangKey]) {
+      return TRANSLATIONS_BY_ID[optKeyCandidate][fullLangKey];
+    }
+  }
+
+  // 4. Fallback auf exakten Fragetext-Abgleich
+  const normalized = normalizeText(cleanId);
+  for (const [term, entry] of Object.entries(LEGAL_TERMS_DICTIONARY)) {
+    if (normalizeText(term) === normalized) {
+      if (entry[fullLangKey]) return entry[fullLangKey];
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Kompatibilitäts-Funktion für bestehende Komponenten
  */
 export function getStaticTranslation(
   text: string,
@@ -629,116 +736,23 @@ export function getStaticTranslation(
     return '';
   }
 
-  const langKey = targetLanguage.toLowerCase() as keyof TranslationEntry;
-  if (!['farsi', 'arabisch', 'russisch', 'englisch'].includes(langKey)) {
-    return '';
-  }
+  const translationType = type === 'antwort' ? 'loesung' : 'frage';
 
-  const cleanText = text.trim();
-  const normalized = normalizeText(cleanText);
-
-  // 1. Direct ID Lookup
+  // Erst über questionId versuchen
   if (questionId) {
-    // Check specific suffixes first
-    if (type === 'antwort') {
-      const candidates = [
-        `${questionId}-antwort`,
-        `${questionId}-ans`,
-        `${questionId}-exp`,
-        `${questionId}-erklaerung`,
-        `${questionId}_correct`,
-        `${questionId}_feedback`
-      ];
-      for (const cand of candidates) {
-        if (TRANSLATIONS_BY_ID[cand] && TRANSLATIONS_BY_ID[cand][langKey]) {
-          return TRANSLATIONS_BY_ID[cand][langKey];
-        }
-      }
-    } else if (type === 'frage') {
-      const qCand = TRANSLATIONS_BY_ID[`${questionId}-frage`] || TRANSLATIONS_BY_ID[questionId];
-      if (qCand && qCand[langKey]) {
-        return qCand[langKey];
-      }
-    }
-
-    // Direct ID match
-    if (TRANSLATIONS_BY_ID[questionId] && TRANSLATIONS_BY_ID[questionId][langKey]) {
-      return TRANSLATIONS_BY_ID[questionId][langKey];
-    }
+    const hit = getTranslation(questionId, translationType, undefined, targetLanguage);
+    if (hit) return hit;
   }
 
-  // 2. Exact match in TRANSLATIONS_BY_ID values
-  for (const [_, entry] of Object.entries(TRANSLATIONS_BY_ID)) {
-    if (entry.englisch.toLowerCase() === cleanText.toLowerCase() || entry.russisch.toLowerCase() === cleanText.toLowerCase()) {
-      return entry[langKey] || '';
-    }
-  }
-
-  // 3. Exact match in LEGAL_TERMS_DICTIONARY
-  for (const [term, entry] of Object.entries(LEGAL_TERMS_DICTIONARY)) {
-    const normTerm = normalizeText(term);
-    if (normalized === normTerm || normalized.startsWith(normTerm)) {
-      if (entry[langKey]) return entry[langKey];
-    }
-  }
-
-  // 4. Substring & Keyword Search in LEGAL_TERMS_DICTIONARY
-  for (const [term, entry] of Object.entries(LEGAL_TERMS_DICTIONARY)) {
-    const normTerm = normalizeText(term);
-    if (normTerm.length >= 4 && normalized.includes(normTerm)) {
-      if (entry[langKey]) return entry[langKey];
-    }
-  }
-
-  // 5. Common Option Phrases Fallback
-  if (normalized.includes("jedermannsrechte") || normalized.includes("jedermanns")) {
-    return LEGAL_TERMS_DICTIONARY["jedermannsrechte"]?.[langKey] || '';
-  }
-  if (normalized.includes("hoheitsrechte") || normalized.includes("hoheitliche")) {
-    return LEGAL_TERMS_DICTIONARY["hoheitsrechte"]?.[langKey] || '';
-  }
-  if (normalized.includes("notwehr") || normalized.includes("nothilfe")) {
-    return LEGAL_TERMS_DICTIONARY["notwehr"]?.[langKey] || '';
-  }
-  if (normalized.includes("defensiv") || normalized.includes("defensivnotstand")) {
-    return LEGAL_TERMS_DICTIONARY["defensivnotstand"]?.[langKey] || '';
-  }
-  if (normalized.includes("aggressiv") || normalized.includes("aggressivnotstand")) {
-    return LEGAL_TERMS_DICTIONARY["aggressivnotstand"]?.[langKey] || '';
-  }
-  if (normalized.includes("vorlaeufige festnahme") || normalized.includes("festnahme") || normalized.includes("127")) {
-    return LEGAL_TERMS_DICTIONARY["vorläufige festnahme"]?.[langKey] || '';
-  }
-  if (normalized.includes("hausrecht") || normalized.includes("hausverbot")) {
-    return LEGAL_TERMS_DICTIONARY["hausrecht"]?.[langKey] || '';
-  }
-  if (normalized.includes("besitzwehr")) {
-    return LEGAL_TERMS_DICTIONARY["besitzwehr"]?.[langKey] || '';
-  }
-  if (normalized.includes("besitzkehr")) {
-    return LEGAL_TERMS_DICTIONARY["besitzkehr"]?.[langKey] || '';
-  }
-  if (normalized.includes("besitzdiener")) {
-    return LEGAL_TERMS_DICTIONARY["besitzdiener"]?.[langKey] || '';
-  }
-  if (normalized.includes("hausfriedensbruch")) {
-    return LEGAL_TERMS_DICTIONARY["hausfriedensbruch"]?.[langKey] || '';
-  }
-  if (normalized.includes("diebstahl")) {
-    return LEGAL_TERMS_DICTIONARY["diebstahl"]?.[langKey] || '';
-  }
-  if (normalized.includes("sachbeschaedigung") || normalized.includes("sachbeschädigung")) {
-    return LEGAL_TERMS_DICTIONARY["sachbeschädigung"]?.[langKey] || '';
-  }
-  if (normalized.includes("koerperverletzung") || normalized.includes("körperverletzung")) {
-    return LEGAL_TERMS_DICTIONARY["körperverletzung"]?.[langKey] || '';
-  }
-  if (normalized.includes("dienstausweis")) {
-    return LEGAL_TERMS_DICTIONARY["dienstausweis"]?.[langKey] || '';
-  }
-  if (normalized.includes("dguv") || normalized.includes("vorschrift 23") || normalized.includes("unfallverhuetung")) {
-    return LEGAL_TERMS_DICTIONARY["dguv vorschrift 23"]?.[langKey] || '';
-  }
+  // Über Text versuchen
+  const textHit = getTranslation(text, translationType, undefined, targetLanguage);
+  if (textHit) return textHit;
 
   return '';
 }
+
+/**
+ * Alias für Rückwärtskompatibilität
+ */
+export const translateLegalText = getStaticTranslation;
+
