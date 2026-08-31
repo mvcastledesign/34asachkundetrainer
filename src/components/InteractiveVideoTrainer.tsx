@@ -358,29 +358,40 @@ export default function InteractiveVideoTrainer({
   // --------------------------------------------------------------------------
   // Frage & Antwort / Feedback Overlay
   // --------------------------------------------------------------------------
+  // INTERACTION OVERLAY (Mobile-Optimized & Compact)
+  // --------------------------------------------------------------------------
   const renderInteractionOverlay = () => {
     // 1. Feedback bei Fehlentscheidung
     if (showFailFeedback && selectedAnswer) {
       return (
-        <div className="backdrop-blur-md bg-slate-950/90 border border-rose-500/30 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 space-y-2 sm:space-y-3 shadow-2xl animate-scale-up">
+        <div className="backdrop-blur-md bg-slate-950/92 border border-rose-500/30 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 space-y-1.5 sm:space-y-2.5 shadow-2xl animate-scale-up max-h-[85%] overflow-y-auto">
           <div className="flex items-start gap-2 sm:gap-2.5">
             <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/30 mt-0.5">
               <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+            <div className="space-y-0.5 min-w-0 flex-1">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-[10px] sm:text-xs font-bold text-rose-400 uppercase tracking-wider font-display">
                   Falsche Entscheidung!
                 </span>
-                <span className="text-[9px] sm:text-[10px] font-mono text-slate-400 bg-white/5 px-1.5 py-0.5 rounded">
+                <span className="text-[9px] font-mono text-slate-400 bg-white/5 px-1.5 py-0.5 rounded">
                   Szene {currentScene.id}
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-200 font-sans leading-snug">
+              <p className="text-xs text-slate-200 font-sans leading-snug">
                 {selectedAnswer.feedback}
               </p>
+              {translationLang !== 'deaktiviert' && (
+                <TranslationView
+                  text={selectedAnswer.feedback}
+                  questionId={`video_${activeScenario.id}_scene_${currentScene.id}_feedback`}
+                  targetLanguage={translationLang}
+                  type="antwort"
+                  variant="compact"
+                />
+              )}
               {selectedAnswer.legal_basis && (
-                <p className="text-[10px] sm:text-[11px] text-amber-400 font-mono flex items-center gap-1 mt-0.5">
+                <p className="text-[10px] text-amber-400 font-mono flex items-center gap-1 mt-0.5">
                   <Scale className="w-3 h-3 shrink-0" />
                   <span className="truncate">{selectedAnswer.legal_basis}</span>
                 </p>
@@ -391,7 +402,7 @@ export default function InteractiveVideoTrainer({
           <div className="flex justify-end pt-1">
             <button
               onClick={handleRepeatScene}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#dfb871] to-[#9a7836] hover:brightness-110 text-slate-950 font-bold text-[11px] sm:text-xs tracking-wide transition-all cursor-pointer flex items-center gap-1.5 shadow-lg active:scale-95"
+              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#dfb871] to-[#9a7836] hover:brightness-110 text-slate-950 font-bold text-[11px] sm:text-xs tracking-wide transition-all cursor-pointer flex items-center gap-1.5 shadow-lg active:scale-95"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Szene wiederholen</span>
@@ -401,43 +412,67 @@ export default function InteractiveVideoTrainer({
       );
     }
 
-    // 2. Reguläres Fragen & Antwort-Overlay
+    // 2. Reguläres Fragen & Antwort-Overlay (Mobil-kompakt)
     if (showOverlay) {
       return (
-        <div className="backdrop-blur-md bg-slate-950/85 border border-[#dfb871]/30 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 space-y-2 sm:space-y-3 shadow-2xl animate-fade-in">
+        <div className="backdrop-blur-md bg-slate-950/90 border border-[#dfb871]/35 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 space-y-2 shadow-2xl animate-fade-in max-h-[85%] overflow-y-auto">
           {/* Header & Frage */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] sm:text-xs font-mono font-bold text-[#dfb871] uppercase tracking-wider flex items-center gap-1">
+              <span className="text-[10px] font-mono font-bold text-[#dfb871] uppercase tracking-wider flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#dfb871] animate-ping inline-block mr-1" />
-                Entscheidungspunkt • Szene {currentScene.id}/{totalScenesCount}
+                ENTSCHEIDUNGSPUNKT • SZENE {currentScene.id}/{totalScenesCount}
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm font-semibold text-white font-display leading-tight">
+            <p className="text-xs sm:text-sm font-semibold text-white font-display leading-snug">
               {currentScene.question}
             </p>
+
+            {translationLang !== 'deaktiviert' && (
+              <TranslationView
+                text={currentScene.question}
+                questionId={`video_${activeScenario.id}_scene_${currentScene.id}`}
+                targetLanguage={translationLang}
+                type="frage"
+                variant="compact"
+              />
+            )}
           </div>
 
-          {/* Antwort-Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+          {/* Antwort-Buttons (A / B) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
             {shuffledAnswers.map((answer, idx) => {
               const optionLetter = String.fromCharCode(65 + idx); // 'A', 'B', etc.
               const cleanText = cleanOptionText(answer.text);
+              const optId = answer.is_correct
+                ? `video_${activeScenario.id}_scene_${currentScene.id}_opt_correct`
+                : `video_${activeScenario.id}_scene_${currentScene.id}_opt_wrong`;
 
               return (
                 <button
                   key={answer.id || idx}
                   onClick={() => handleSelectAnswer(answer)}
                   disabled={isProcessing}
-                  className="w-full text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-900/80 hover:bg-[#dfb871]/15 border border-white/10 hover:border-[#dfb871]/50 text-slate-200 hover:text-white transition-all cursor-pointer select-none active:scale-[0.98] group flex items-start gap-3 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full text-left py-1.5 px-2.5 sm:py-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-slate-900/90 hover:bg-[#dfb871]/15 border border-white/10 hover:border-[#dfb871]/50 text-slate-200 hover:text-white transition-all cursor-pointer select-none active:scale-[0.98] group flex items-start gap-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <div className="w-6 h-6 rounded-lg bg-[#dfb871]/10 text-[#dfb871] border border-[#dfb871]/30 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#dfb871] group-hover:text-slate-950 font-bold text-xs font-mono transition-colors shadow-sm">
+                  <div className="w-5 h-5 rounded-md bg-[#dfb871]/15 text-[#dfb871] border border-[#dfb871]/30 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#dfb871] group-hover:text-slate-950 font-bold text-[11px] font-mono transition-colors shadow-sm">
                     {optionLetter}
                   </div>
-                  <span className="text-xs sm:text-sm font-medium text-slate-100 group-hover:text-white leading-relaxed break-words whitespace-normal min-w-0 flex-1">
-                    {cleanText}
-                  </span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs sm:text-sm font-medium text-slate-100 group-hover:text-white leading-snug break-words whitespace-normal block">
+                      {cleanText}
+                    </span>
+                    {translationLang !== 'deaktiviert' && (
+                      <TranslationView
+                        text={cleanText}
+                        questionId={optId}
+                        targetLanguage={translationLang}
+                        type="antwort"
+                        variant="compact"
+                      />
+                    )}
+                  </div>
                 </button>
               );
             })}
@@ -616,7 +651,7 @@ export default function InteractiveVideoTrainer({
         )}
 
         {/* Bottom Interaction HUD: Fest am unteren Rand */}
-        <div className="absolute bottom-2 inset-x-2 sm:bottom-4 sm:inset-x-6 z-20 pointer-events-auto">
+        <div className="absolute bottom-1.5 inset-x-1.5 sm:bottom-3 sm:inset-x-4 max-h-[92%] flex flex-col justify-end z-20 pointer-events-auto">
           {renderInteractionOverlay()}
         </div>
       </div>

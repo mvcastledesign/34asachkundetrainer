@@ -1019,8 +1019,17 @@ export default function SchriftlicherTestmodus({
                         </div>
 
                         {/* Option Label Text */}
-                        <div className="text-sm md:text-base font-normal font-sans leading-snug">
-                          {optText}
+                        <div className="text-sm md:text-base font-normal font-sans leading-snug min-w-0 flex-1">
+                          <div>{optText}</div>
+                          {translationLang !== 'deaktiviert' && (
+                            <TranslationView
+                              variant="compact"
+                              text={optText}
+                              questionId={`${activeQuestion.id}-opt-${optIdx}`}
+                              targetLanguage={translationLang}
+                              type="antwort"
+                            />
+                          )}
                         </div>
                       </button>
                     );

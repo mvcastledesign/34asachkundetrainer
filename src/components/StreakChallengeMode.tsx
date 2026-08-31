@@ -631,9 +631,20 @@ export default function StreakChallengeMode({
                             {letter}
                           </span>
 
-                          <span className="font-semibold text-xs sm:text-sm font-sans leading-snug">
-                            {option}
-                          </span>
+                          <div className="min-w-0 flex-1">
+                            <span className="font-semibold text-xs sm:text-sm font-sans leading-snug block">
+                              {option}
+                            </span>
+                            {translationLang !== 'deaktiviert' && (
+                              <TranslationView
+                                variant="compact"
+                                text={option}
+                                questionId={`${currentQuestion.id}-opt-${idx}`}
+                                targetLanguage={translationLang}
+                                type="antwort"
+                              />
+                            )}
+                          </div>
                         </div>
 
                         {gameState === 'answered' && isSelected && isCorrect && (
