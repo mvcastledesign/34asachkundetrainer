@@ -11,6 +11,7 @@ import {
   EyeOff, 
   ShieldAlert, 
   Sparkles, 
+  Info,
   UserPlus, 
   CheckCircle2, 
   Building2,
@@ -440,6 +441,17 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           </p>
         </div>
 
+        {/* Test Environment Info Box */}
+        <div id="test-environment-notice" className="bg-[#dfb871]/5 border border-[#dfb871]/25 rounded-2xl p-3 flex items-start gap-2.5 text-left">
+          <Info className="w-4 h-4 text-[#dfb871] shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-[#dfb871]">Test- & Demonstrationsumgebung</h4>
+            <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+              Bitte nutzen Sie für Test-Accounts ausschließlich Pseudonyme (z. B. 'Max Test') und keine privaten Passwörter. Eingegebene Daten dienen ausschließlich der Funktionsprüfung.
+            </p>
+          </div>
+        </div>
+
         {/* Navigation Tabs between Login & Register */}
         {mode !== 'forgot_password' && (
           <div className="flex bg-slate-950/80 p-1 rounded-2xl border border-white/5 gap-1">
@@ -522,23 +534,9 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
             {/* Password Field */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Passwort
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('forgot_password');
-                    setResetStep(1);
-                    setError('');
-                    setSuccessMsg('');
-                  }}
-                  className="text-[11px] text-[#dfb871] hover:underline font-semibold cursor-pointer"
-                >
-                  Passwort vergessen?
-                </button>
-              </div>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                Passwort
+              </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
                   <Lock className="w-4 h-4" />

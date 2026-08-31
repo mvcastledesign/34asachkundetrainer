@@ -91,8 +91,8 @@ Ensure the translation matches the exact terminology, professional tone, and str
 Text to translate:
 ${text}`;
 
-        // Attempt primary and fallback models in case of temporary 503 high demand spikes
-        const candidateModels = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-3.7-flash"];
+        // Attempt primary and fallback models
+        const candidateModels = ["gemini-3.7-flash", "gemini-flash-latest", "gemini-3.1-flash-lite", "gemini-2.5-flash"];
         let translatedText = "";
 
         for (const modelName of candidateModels) {
@@ -110,7 +110,6 @@ ${text}`;
               break;
             }
           } catch (modelErr: any) {
-            // If model is busy (503) or rate limited, try next model in candidateModels
             console.info(`Model ${modelName} unavailable (${modelErr?.status || modelErr?.code || 'error'}), attempting fallback.`);
           }
         }
@@ -126,18 +125,18 @@ ${text}`;
     // Keyless / Fallback mode using public translate endpoint
     try {
       const translation = await translateFree(text, targetLanguage);
-      if (translation && translation.trim()) {
+      if (translation && translation.trim() && translation.trim().toLowerCase() !== text.trim().toLowerCase()) {
         return res.json({ translation: translation.trim() });
       }
     } catch (freeErr) {
       console.warn("Free translation endpoint failed:", freeErr);
     }
 
-    // Ultimate fallback to returning original text cleanly
-    res.json({ translation: text });
+    // Return 502 if translation could not be completed, avoiding caching original text as translation
+    return res.status(502).json({ error: "Translation unavailable at this moment." });
   } catch (error: any) {
     console.error("Translation error:", error);
-    res.json({ translation: req.body?.text || "" });
+    return res.status(500).json({ error: "Internal server error during translation." });
   }
 });
 
