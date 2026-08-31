@@ -20,6 +20,8 @@ import { TRANSLATIONS_PART_7 } from './translationsPart7.ts';
 import { TRANSLATIONS_PART_8 } from './translationsPart8.ts';
 import { TRANSLATIONS_PART_9 } from './translationsPart9.ts';
 import { TRANSLATIONS_PART_10 } from './translationsPart10.ts';
+import { TRANSLATIONS_SPECIAL_A } from './translationsSpecialA.ts';
+import { TRANSLATIONS_SPECIAL_B } from './translationsSpecialB.ts';
 
 export type { TranslationBlockItem };
 
@@ -37,6 +39,8 @@ export const ALL_TRANSLATIONS: Record<string, TranslationBlockItem> = {
   ...TRANSLATIONS_PART_8,
   ...TRANSLATIONS_PART_9,
   ...TRANSLATIONS_PART_10,
+  ...TRANSLATIONS_SPECIAL_A,
+  ...TRANSLATIONS_SPECIAL_B,
 };
 
 export interface TranslationEntry {
