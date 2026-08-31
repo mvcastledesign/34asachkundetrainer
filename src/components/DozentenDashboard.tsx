@@ -3178,7 +3178,7 @@ export default function DozentenDashboard({
           /* TAB 3: KURS-AUFGABEN & AKADEMIE-MITTEILUNGEN (LecturerView) */
           <LecturerView
             currentUser={currentUser}
-            cohorts={courses}
+            cohorts={availableCourses}
             selectedCohortId={selectedCourseId}
             onCourseCreated={(newCourse) => {
               const updated = [...courses.filter(c => c.id.toUpperCase() !== newCourse.id.toUpperCase()), newCourse];

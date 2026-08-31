@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { 
   Megaphone, 
   Trash2, 
@@ -75,34 +75,108 @@ const TARGET_MODES = [
   { id: 'karteikarten', label: 'Karteikarten (3D Flip)', icon: Layers }
 ];
 
+// Fallback Standard-Kurse
+const DEFAULT_FALLBACK_COHORTS: CourseCohort[] = [
+  {
+    id: 'MOREDU34a',
+    name: 'Sachkunde § 34a (Sommer 2026)',
+    period: '01.06.2026 – 31.08.2026',
+    description: 'Hauptkurs Sachkunde § 34a GewO'
+  },
+  {
+    id: 'TEST123',
+    name: 'Sachkunde § 34a (TEST123)',
+    period: 'Fortlaufend / Flexibel',
+    description: 'Test- und Übungskohorte'
+  }
+];
+
 export default function LecturerView({
   currentUser,
   cohorts: propCohorts,
-  selectedCohortId = 'MOREDU34a',
+  selectedCohortId: propSelectedCohortId = 'MOREDU34a',
   onTaskUpdated,
   onCourseCreated
 }: LecturerViewProps) {
   // --------------------------------------------------------------------------
-  // STATE: DYNAMISCHE KURSE AUS SUPABASE
+  // 1. ZENTRALE KURS-LISTE (Synchronisiert mit Dozenten-Dashboard)
   // --------------------------------------------------------------------------
-  const [courses, setCourses] = useState<CourseCohort[]>([]);
-  const [isLoadingCourses, setIsLoadingCourses] = useState<boolean>(true);
-  const [selectedCourseId, setSelectedCourseId] = useState<string>(selectedCohortId || '');
+  const [dbCourses, setDbCourses] = useState<CourseCohort[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState<boolean>(false);
+
+  // Filtert Meta-Einträge wie "ALL" oder "Alle Kurse (Gesamtübersicht)" heraus
+  const validCourses = useMemo<CourseCohort[]>(() => {
+    const rawList: CourseCohort[] = [];
+
+    // 1. Priorität: Aus Props übergebene zentrale Kohortenliste
+    if (propCohorts && propCohorts.length > 0) {
+      rawList.push(...propCohorts);
+    }
+
+    // 2. Ergänzung: In Supabase neu angelegte Kurse
+    dbCourses.forEach(dc => {
+      if (!rawList.some(c => c.id.toUpperCase() === dc.id.toUpperCase())) {
+        rawList.push(dc);
+      }
+    });
+
+    // 3. Fallback: Wenn Liste noch leer ist
+    if (rawList.length === 0) {
+      rawList.push(...DEFAULT_FALLBACK_COHORTS);
+    }
+
+    // Streng filtern: Keine Meta-Einträge wie "ALL" oder "Alle Kurse (Gesamtübersicht)"
+    return rawList.filter(c => {
+      if (!c || !c.id) return false;
+      const idUpper = c.id.toUpperCase().trim();
+      const nameLower = (c.name || '').toLowerCase().trim();
+      if (idUpper === 'ALL' || idUpper === 'ALLE') return false;
+      if (nameLower.includes('gesamtübersicht') || nameLower.includes('alle kurse')) return false;
+      return true;
+    });
+  }, [propCohorts, dbCourses]);
+
+  // Initialen Standard-Kurs ermitteln (kein '-', kein leerer String, kein 'ALL')
+  const initialValidCourseId = useMemo(() => {
+    if (propSelectedCohortId && propSelectedCohortId.toUpperCase() !== 'ALL') {
+      const match = validCourses.find(c => c.id.toUpperCase() === propSelectedCohortId.toUpperCase());
+      if (match) return match.id;
+    }
+    return validCourses[0]?.id || 'MOREDU34a';
+  }, [propSelectedCohortId, validCourses]);
+
+  // Aktiver Kurs-Filter & Formular-Zielkurs (synchronisiert)
+  const [selectedCourseId, setSelectedCourseId] = useState<string>(initialValidCourseId);
+  const [formCourseId, setFormCourseId] = useState<string>(initialValidCourseId);
+
+  // Synchronisation bei Wechsel von außen
+  useEffect(() => {
+    if (propSelectedCohortId && propSelectedCohortId.toUpperCase() !== 'ALL') {
+      const exists = validCourses.find(c => c.id.toUpperCase() === propSelectedCohortId.toUpperCase());
+      if (exists) {
+        setSelectedCourseId(exists.id);
+        setFormCourseId(exists.id);
+      }
+    } else if (validCourses.length > 0 && (!selectedCourseId || !validCourses.some(c => c.id === selectedCourseId))) {
+      const firstId = validCourses[0].id;
+      setSelectedCourseId(firstId);
+      setFormCourseId(firstId);
+    }
+  }, [propSelectedCohortId, validCourses, selectedCourseId]);
 
   // --------------------------------------------------------------------------
-  // STATE: AKTIVE AUFGABE (AUS SUPABASE & LOKALEM SYNC)
+  // 2. STATE: AKTIVE AUFGABE (AUS SUPABASE & LOKALEM SYNC)
   // --------------------------------------------------------------------------
   const [activeTask, setActiveTask] = useState<CourseTask | null>(null);
   const [isLoadingTask, setIsLoadingTask] = useState<boolean>(false);
 
   // --------------------------------------------------------------------------
-  // STATE: FORMULAR-FELDER (6 BEREINIGTE FELDER)
+  // 3. STATE: FORMULAR-FELDER
   // --------------------------------------------------------------------------
   const lecturerNameDefault = useMemo(() => {
     return currentUser?.name || 'Herr Beloev (Kursleitung)';
   }, [currentUser]);
 
-  const [formCourseId, setFormCourseId] = useState<string>('');
   const [formLecturerName, setFormLecturerName] = useState<string>(lecturerNameDefault);
   const [formCategoryId, setFormCategoryId] = useState<string>('all');
   const [formTargetMode, setFormTargetMode] = useState<string>('schriftlich');
@@ -110,9 +184,9 @@ export default function LecturerView({
   const [formDescription, setFormDescription] = useState<string>('');
 
   // --------------------------------------------------------------------------
-  // STATE: CUSTOM DROPDOWN OPEN/CLOSE STEUERUNG
+  // 4. DROPDOWN OPEN/CLOSE STEUERUNG
   // --------------------------------------------------------------------------
-  const [openDropdown, setOpenDropdown] = useState<'course' | 'category' | 'mode' | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<'header-course' | 'form-course' | 'category' | 'mode' | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Modal: Neuen Kurs anlegen
@@ -146,9 +220,9 @@ export default function LecturerView({
   }, []);
 
   // --------------------------------------------------------------------------
-  // 1. KURSE AUS SUPABASE LADEN
+  // SUPABASE: ZUSÄTZLICHE KURSE LADEN
   // --------------------------------------------------------------------------
-  const fetchCoursesFromSupabase = async () => {
+  const fetchDbCourses = useCallback(async () => {
     setIsLoadingCourses(true);
     try {
       const { data, error } = await supabase
@@ -157,16 +231,7 @@ export default function LecturerView({
         .eq('is_active', true)
         .order('id', { ascending: true });
 
-      if (error) {
-        console.warn('Supabase Kurse laden Fehler:', error);
-        if (propCohorts && propCohorts.length > 0) {
-          setCourses(propCohorts);
-          if (!selectedCourseId) {
-            setSelectedCourseId(propCohorts[0].id);
-            setFormCourseId(propCohorts[0].id);
-          }
-        }
-      } else if (data && data.length > 0) {
+      if (!error && data && data.length > 0) {
         const mapped: CourseCohort[] = data.map((c: any) => ({
           id: c.id,
           name: c.name || c.id,
@@ -176,39 +241,23 @@ export default function LecturerView({
           end_date: c.end_date,
           is_active: c.is_active
         }));
-        setCourses(mapped);
-
-        // Standard-Auswahl setzen falls noch keine existiert
-        if (!selectedCourseId || !mapped.some(c => c.id === selectedCourseId)) {
-          const defaultId = mapped[0].id;
-          setSelectedCourseId(defaultId);
-          setFormCourseId(defaultId);
-        } else {
-          setFormCourseId(selectedCourseId);
-        }
-      } else {
-        setCourses([]);
-        setSelectedCourseId('');
-        setFormCourseId('');
+        setDbCourses(mapped);
       }
     } catch (err) {
-      console.error('Unerwarteter Fehler beim Laden der Kurse:', err);
-      if (propCohorts && propCohorts.length > 0) {
-        setCourses(propCohorts);
-      }
+      console.warn('Hinweis beim Laden zusätzlicher Kurse:', err);
     } finally {
       setIsLoadingCourses(false);
     }
-  };
-
-  useEffect(() => {
-    fetchCoursesFromSupabase();
   }, []);
 
+  useEffect(() => {
+    fetchDbCourses();
+  }, [fetchDbCourses]);
+
   // --------------------------------------------------------------------------
-  // 2. AKTIVE AUFGABE FÜR AUSGEWÄHLTEN KURS AUS SUPABASE LADEN
+  // AKTIVE AUFGABE FÜR AUSGEWÄHLTEN KURS AUS SUPABASE LADEN
   // --------------------------------------------------------------------------
-  const loadActiveTaskForCourse = async (courseId: string) => {
+  const loadActiveTaskForCourse = useCallback(async (courseId: string) => {
     if (!courseId) {
       setActiveTask(null);
       return;
@@ -229,27 +278,37 @@ export default function LecturerView({
         const mappedTask: CourseTask = {
           id: data.id ? String(data.id) : `task_${courseId}`,
           courseId: data.course_id,
+          course_id: data.course_id,
           title: data.title || '',
           description: data.description || '',
           targetCategoryId: data.target_category_id || undefined,
+          target_category_id: data.target_category_id || undefined,
           targetCategoryName: data.target_category_id && data.target_category_id !== 'all'
             ? data.target_category_id
             : 'Gesamter Prüfungsstoff',
           targetMode: data.target_mode || 'schriftlich',
+          target_mode: data.target_mode || 'schriftlich',
           targetCount: data.target_count || 1,
+          target_count: data.target_count || 1,
           completedCount: 0,
           lecturerName: data.lecturer_name || lecturerNameDefault,
-          isCompleted: false
+          lecturer_name: data.lecturer_name || lecturerNameDefault,
+          isCompleted: false,
+          is_active: true
         };
         setActiveTask(mappedTask);
       } else {
         // Lokaler Fallback
         const directKey = `course_task_${courseId}`;
-        const stored = localStorage.getItem(directKey) || localStorage.getItem('sachkunde_34a_active_course_task');
+        const stored = 
+          localStorage.getItem(directKey) || 
+          localStorage.getItem(`sachkunde_34a_course_task_${courseId}`) || 
+          localStorage.getItem('sachkunde_34a_active_course_task');
+
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
-            if (parsed && (parsed.courseId === courseId || courseId === 'all') && !parsed.isCompleted) {
+            if (parsed && (parsed.courseId === courseId || parsed.course_id === courseId) && !parsed.isCompleted) {
               setActiveTask(parsed);
             } else {
               setActiveTask(null);
@@ -267,15 +326,15 @@ export default function LecturerView({
     } finally {
       setIsLoadingTask(false);
     }
-  };
+  }, [lecturerNameDefault]);
 
   useEffect(() => {
     if (selectedCourseId) {
       loadActiveTaskForCourse(selectedCourseId);
     }
-  }, [selectedCourseId]);
+  }, [selectedCourseId, loadActiveTaskForCourse]);
 
-  // Wenn Kurs gewechselt wird, Formular anpassen
+  // Synchroner Wechsel des Kurses im Dropdown
   const handleSelectCourse = (courseId: string) => {
     setSelectedCourseId(courseId);
     setFormCourseId(courseId);
@@ -286,12 +345,14 @@ export default function LecturerView({
   const startEditing = (taskToEdit?: CourseTask | null) => {
     const t = taskToEdit || activeTask;
     if (t) {
-      setFormCourseId(t.courseId || selectedCourseId);
-      setFormLecturerName(t.lecturerName || lecturerNameDefault);
+      const targetCId = t.courseId || t.course_id || selectedCourseId;
+      setSelectedCourseId(targetCId);
+      setFormCourseId(targetCId);
+      setFormLecturerName(t.lecturerName || t.lecturer_name || lecturerNameDefault);
       setFormTitle(t.title || '');
       setFormDescription(t.description || '');
-      setFormCategoryId(t.targetCategoryId || 'all');
-      setFormTargetMode(t.targetMode || 'schriftlich');
+      setFormCategoryId(t.targetCategoryId || t.target_category_id || 'all');
+      setFormTargetMode(t.targetMode || t.target_mode || 'schriftlich');
     }
     setFormErrors({});
     const formElem = document.getElementById('dozenten-form-section');
@@ -301,7 +362,7 @@ export default function LecturerView({
   };
 
   // --------------------------------------------------------------------------
-  // 3. SUPABASE: AUFGABE VERÖFFENTLICHEN (UPSERT)
+  // SUPABASE: AUFGABE VERÖFFENTLICHEN (UPSERT)
   // --------------------------------------------------------------------------
   const handlePublishTask = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -337,7 +398,7 @@ export default function LecturerView({
     const categoryName = targetCategory ? targetCategory.name : 'Gesamter Prüfungsstoff';
 
     try {
-      // 1. Direkt in Supabase Tabelle 'course_tasks' speichern
+      // 1. In Supabase Tabelle 'course_tasks' speichern
       const { error: sbError } = await supabase.from('course_tasks').upsert({
         course_id: formCourseId,
         lecturer_name: cleanLecturer,
@@ -356,15 +417,21 @@ export default function LecturerView({
       const newTask: CourseTask = {
         id: `task_${formCourseId}_${Date.now()}`,
         courseId: formCourseId,
+        course_id: formCourseId,
         title: cleanTitle,
         description: cleanDesc,
         targetCategoryId: formCategoryId !== 'all' ? formCategoryId : undefined,
+        target_category_id: formCategoryId !== 'all' ? formCategoryId : undefined,
         targetCategoryName: categoryName,
         targetMode: formTargetMode,
+        target_mode: formTargetMode,
         targetCount: formTargetMode === 'schriftlich' ? 1 : 25,
+        target_count: formTargetMode === 'schriftlich' ? 1 : 25,
         completedCount: 0,
         lecturerName: cleanLecturer,
-        isCompleted: false
+        lecturer_name: cleanLecturer,
+        isCompleted: false,
+        is_active: true
       };
 
       setActiveTask(newTask);
@@ -397,7 +464,7 @@ export default function LecturerView({
   };
 
   // --------------------------------------------------------------------------
-  // 4. SUPABASE: AKTIVE AUFGABE ZURÜCKZIEHEN (is_active: false)
+  // SUPABASE: AKTIVE AUFGABE ZURÜCKZIEHEN (is_active: false)
   // --------------------------------------------------------------------------
   const handleDeactivateTask = async () => {
     if (!selectedCourseId) return;
@@ -440,7 +507,7 @@ export default function LecturerView({
   };
 
   // --------------------------------------------------------------------------
-  // 5. MODAL: NEUEN KURS IN SUPABASE ANLEGEN
+  // MODAL: NEUEN KURS IN SUPABASE ANLEGEN
   // --------------------------------------------------------------------------
   const handleCreateNewCourseDirect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -493,8 +560,7 @@ export default function LecturerView({
         is_active: true
       };
 
-      const updated = [...courses.filter(c => c.id !== cleanCode), createdCohort];
-      setCourses(updated);
+      setDbCourses(prev => [...prev.filter(c => c.id !== cleanCode), createdCohort]);
       setSelectedCourseId(cleanCode);
       setFormCourseId(cleanCode);
 
@@ -517,12 +583,12 @@ export default function LecturerView({
     }
   };
 
-  // Ermittle aktuelle Labels für die Dropdowns
-  const selectedCourseObj = courses.find(c => c.id === formCourseId) || courses.find(c => c.id === selectedCourseId);
+  // Aktive Auswahlobjekte ermitteln
+  const selectedCourseObj = validCourses.find(c => c.id === formCourseId) || validCourses.find(c => c.id === selectedCourseId) || validCourses[0];
   const selectedCategoryObj = SACHGEBIETE_LIST.find(s => s.id === formCategoryId) || SACHGEBIETE_LIST[0];
   const selectedModeObj = TARGET_MODES.find(m => m.id === formTargetMode) || TARGET_MODES[0];
 
-  const hasCourses = courses.length > 0;
+  const hasCourses = validCourses.length > 0;
 
   return (
     <div className="space-y-8 font-sans" ref={dropdownRef}>
@@ -578,48 +644,31 @@ export default function LecturerView({
             {/* Custom Dropdown für Kurs-Filter */}
             <div className="relative">
               <div
-                onClick={() => setOpenDropdown(openDropdown === 'course' ? null : 'course')}
+                onClick={() => setOpenDropdown(openDropdown === 'header-course' ? null : 'header-course')}
                 className="bg-slate-950/60 border border-slate-800 hover:border-amber-500/50 rounded-xl px-4 py-2.5 text-xs text-slate-100 flex items-center justify-between cursor-pointer transition-all"
               >
                 <span className="font-semibold truncate">
-                  {isLoadingCourses ? (
-                    'Lade Kurse aus Supabase...'
-                  ) : hasCourses ? (
-                    selectedCourseObj?.name || selectedCourseId
-                  ) : (
-                    'Keine aktiven Kurse vorhanden'
-                  )}
+                  {selectedCourseObj?.name || selectedCourseId || 'Bitte Kurs wählen'}
                 </span>
-                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${openDropdown === 'course' ? 'rotate-180 text-amber-400' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${openDropdown === 'header-course' ? 'rotate-180 text-amber-400' : ''}`} />
               </div>
 
-              {openDropdown === 'course' && (
+              {openDropdown === 'header-course' && (
                 <div className="absolute z-50 mt-2 w-full bg-slate-900/95 border border-slate-800 rounded-xl shadow-2xl backdrop-blur-xl p-1.5 max-h-60 overflow-y-auto">
-                  {isLoadingCourses ? (
-                    <div className="p-3 text-xs text-slate-400 text-center flex items-center justify-center gap-2">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
-                      <span>Lade...</span>
+                  {validCourses.map((c) => (
+                    <div
+                      key={c.id}
+                      onClick={() => handleSelectCourse(c.id)}
+                      className={`px-3 py-2 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
+                        selectedCourseId === c.id
+                          ? 'bg-amber-500/15 text-amber-300 font-bold'
+                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <span className="truncate">{c.name}</span>
+                      {selectedCourseId === c.id && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
                     </div>
-                  ) : hasCourses ? (
-                    courses.map((c) => (
-                      <div
-                        key={c.id}
-                        onClick={() => handleSelectCourse(c.id)}
-                        className={`px-3 py-2 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
-                          selectedCourseId === c.id
-                            ? 'bg-amber-500/15 text-amber-300 font-bold'
-                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                        }`}
-                      >
-                        <span className="truncate">{c.name}</span>
-                        {selectedCourseId === c.id && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-3 text-xs text-slate-400 text-center">
-                      Keine aktiven Kurse vorhanden
-                    </div>
-                  )}
+                  ))}
                 </div>
               )}
             </div>
@@ -634,7 +683,7 @@ export default function LecturerView({
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold font-display text-white flex items-center gap-2">
             <Target className="w-5 h-5 text-amber-400" />
-            Aktiver Aufgabenstatus für Kurs ({selectedCourseId || '–'})
+            Aktiver Aufgabenstatus für Kurs ({selectedCourseObj?.name || selectedCourseId})
           </h3>
           {activeTask ? (
             <span className="px-3 py-1 rounded-full text-xs font-mono font-bold border bg-emerald-500/15 border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
@@ -661,10 +710,10 @@ export default function LecturerView({
               <div className="space-y-3 max-w-2xl">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="px-3 py-0.5 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300">
-                    Kurs: {activeTask.courseId}
+                    Kurs: {activeTask.courseId || activeTask.course_id}
                   </span>
                   <span className="text-xs text-slate-400 font-sans">
-                    Dozent: <strong className="text-white">{activeTask.lecturerName}</strong>
+                    Dozent: <strong className="text-white">{activeTask.lecturerName || activeTask.lecturer_name}</strong>
                   </span>
                 </div>
 
@@ -681,11 +730,11 @@ export default function LecturerView({
                 <div className="flex flex-wrap gap-2 pt-1 text-xs">
                   <div className="px-3 py-1 rounded-lg bg-slate-950/60 border border-white/10 text-slate-300 flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5 text-[#dfb871]" />
-                    <span>Sachgebiet: <strong className="text-white">{activeTask.targetCategoryName || 'Gesamter Prüfungsstoff'}</strong></span>
+                    <span>Sachgebiet: <strong className="text-white">{activeTask.targetCategoryName || activeTask.targetCategoryId || 'Gesamter Prüfungsstoff'}</strong></span>
                   </div>
                   <div className="px-3 py-1 rounded-lg bg-slate-950/60 border border-white/10 text-slate-300 flex items-center gap-1.5">
                     <Target className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Format: <strong className="text-white">{activeTask.targetMode}</strong></span>
+                    <span>Format: <strong className="text-white">{activeTask.targetMode || activeTask.target_mode}</strong></span>
                   </div>
                 </div>
               </div>
@@ -715,7 +764,7 @@ export default function LecturerView({
         ) : (
           <div className="p-8 rounded-2xl bg-slate-900/50 border border-white/5 text-center space-y-3">
             <h4 className="text-base font-bold text-white font-display">
-              Keine aktive Hausaufgabe für Kurs {selectedCourseId || '–'}
+              Keine aktive Hausaufgabe für Kurs {selectedCourseObj?.name || selectedCourseId}
             </h4>
             <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
               Erstellen Sie über das nachfolgende Formular eine verbindliche Dozenten-Aufgabe für diesen Lehrgang.
@@ -753,7 +802,7 @@ export default function LecturerView({
                   <div
                     onClick={() => {
                       if (hasCourses) {
-                        setOpenDropdown(openDropdown === 'course' ? null : 'course');
+                        setOpenDropdown(openDropdown === 'form-course' ? null : 'form-course');
                       }
                     }}
                     className={`bg-slate-950/60 border rounded-xl px-4 py-3 text-sm text-slate-100 flex items-center justify-between cursor-pointer transition-all ${
@@ -762,21 +811,15 @@ export default function LecturerView({
                         : 'border-slate-800 hover:border-amber-500/50'
                     } ${!hasCourses ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    <span className="truncate">
-                      {isLoadingCourses ? (
-                        'Lade Kurse...'
-                      ) : hasCourses ? (
-                        selectedCourseObj?.name || 'Bitte Kurs wählen'
-                      ) : (
-                        'Keine aktiven Kurse vorhanden'
-                      )}
+                    <span className="truncate font-medium">
+                      {selectedCourseObj?.name || formCourseId || 'Bitte Kurs wählen'}
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${openDropdown === 'course' ? 'rotate-180 text-amber-400' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${openDropdown === 'form-course' ? 'rotate-180 text-amber-400' : ''}`} />
                   </div>
 
-                  {openDropdown === 'course' && hasCourses && (
+                  {openDropdown === 'form-course' && hasCourses && (
                     <div className="absolute z-50 mt-2 w-full bg-slate-900/95 border border-slate-800 rounded-xl shadow-2xl backdrop-blur-xl p-1.5 max-h-60 overflow-y-auto">
-                      {courses.map((c) => (
+                      {validCourses.map((c) => (
                         <div
                           key={c.id}
                           onClick={() => {
