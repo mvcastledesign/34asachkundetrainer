@@ -684,35 +684,73 @@ export function getTranslation(
 
   const cleanId = idOrText.trim();
 
-  // 1. Direkt über ID im ALL_TRANSLATIONS Master-Objekt
-  const blockItem = ALL_TRANSLATIONS[cleanId];
-  if (blockItem) {
-    if (type === 'frage' && blockItem.frage?.[shortLang]) {
-      return blockItem.frage[shortLang];
-    }
-    if (type === 'loesung' && blockItem.loesung?.[shortLang]) {
-      return blockItem.loesung[shortLang];
-    }
-    if (type === 'option' && optionKey && blockItem.optionen?.[optionKey]?.[shortLang]) {
-      return blockItem.optionen[optionKey][shortLang];
+  // Handle compound IDs like 'streak_1-opt-0', '1-opt-2', 'fall_01-opt-1', 'wq-oeff-1-opt-3'
+  let parsedBaseId = cleanId;
+  let parsedOptionKey = optionKey;
+
+  const optMatch = cleanId.match(/^(.+?)[-_]opt[-_]?(\d+|[A-Da-d])$/);
+  if (optMatch) {
+    parsedBaseId = optMatch[1];
+    parsedOptionKey = parsedOptionKey || optMatch[2];
+  }
+
+  // Normalize numeric riddle IDs (e.g. '1' -> 'riddle-1')
+  const candidateIds = [
+    parsedBaseId,
+    `riddle-${parsedBaseId}`,
+    `riddle_${parsedBaseId}`,
+    parsedBaseId.replace(/^riddle-/, ''),
+    parsedBaseId.replace(/^riddle_/, '')
+  ];
+
+  // 1. Direct lookup in ALL_TRANSLATIONS
+  for (const cId of candidateIds) {
+    const blockItem = ALL_TRANSLATIONS[cId];
+    if (blockItem) {
+      if ((type === 'frage') && blockItem.frage?.[shortLang]) {
+        return blockItem.frage[shortLang];
+      }
+      if (type === 'loesung' && blockItem.loesung?.[shortLang]) {
+        return blockItem.loesung[shortLang];
+      }
+      if (parsedOptionKey !== undefined && blockItem.optionen) {
+        // Try direct key, numeric, or letter conversion
+        const optKeyStr = String(parsedOptionKey).toLowerCase();
+        let numericKey = optKeyStr;
+        if (optKeyStr === 'a') numericKey = '0';
+        else if (optKeyStr === 'b') numericKey = '1';
+        else if (optKeyStr === 'c') numericKey = '2';
+        else if (optKeyStr === 'd') numericKey = '3';
+
+        const directOption = blockItem.optionen[parsedOptionKey] || 
+                             blockItem.optionen[numericKey] ||
+                             blockItem.optionen[optKeyStr.toUpperCase()];
+        if (directOption?.[shortLang]) {
+          return directOption[shortLang];
+        }
+      }
+      // If type is 'loesung' or 'option' but no option found, fallback to loesung
+      if ((type === 'loesung' || type === 'option') && blockItem.loesung?.[shortLang]) {
+        return blockItem.loesung[shortLang];
+      }
     }
   }
 
-  // 2. Direkt über ID in TRANSLATIONS_BY_ID
-  const idEntry = TRANSLATIONS_BY_ID[cleanId];
-  if (idEntry && idEntry[fullLangKey]) {
-    return idEntry[fullLangKey];
-  }
-
-  // 3. Fallback: Option/Suffix Match in TRANSLATIONS_BY_ID
-  if (optionKey) {
-    const optKeyCandidate = `${cleanId}_${optionKey}`;
-    if (TRANSLATIONS_BY_ID[optKeyCandidate]?.[fullLangKey]) {
-      return TRANSLATIONS_BY_ID[optKeyCandidate][fullLangKey];
+  // 2. Lookup in TRANSLATIONS_BY_ID
+  for (const cId of candidateIds) {
+    const idEntry = TRANSLATIONS_BY_ID[cId];
+    if (idEntry && idEntry[fullLangKey]) {
+      return idEntry[fullLangKey];
+    }
+    if (parsedOptionKey !== undefined) {
+      const optKeyCandidate = `${cId}_${parsedOptionKey}`;
+      if (TRANSLATIONS_BY_ID[optKeyCandidate]?.[fullLangKey]) {
+        return TRANSLATIONS_BY_ID[optKeyCandidate][fullLangKey];
+      }
     }
   }
 
-  // 4. Fallback auf exakten Fragetext-Abgleich
+  // 3. Normalized text matching across LEGAL_TERMS_DICTIONARY
   const normalized = normalizeText(cleanId);
   for (const [term, entry] of Object.entries(LEGAL_TERMS_DICTIONARY)) {
     if (normalizeText(term) === normalized) {

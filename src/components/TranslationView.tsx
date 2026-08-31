@@ -43,12 +43,18 @@ export default function TranslationView({
       return undefined;
     }
 
-    const queryType = type === 'antwort' ? 'loesung' : type;
+    const queryType = type === 'antwort' ? (optionKey || (questionId && (questionId.includes('-opt-') || questionId.includes('_opt_'))) ? 'option' : 'loesung') : type;
 
     // 1. First attempt: Direct ID lookup
     if (questionId) {
       const hit = getTranslation(questionId, queryType, optionKey, targetLanguage);
       if (hit) return hit;
+
+      // Fallback with type option or loesung
+      if (queryType === 'option') {
+        const altHit = getTranslation(questionId, 'loesung', optionKey, targetLanguage);
+        if (altHit) return altHit;
+      }
     }
 
     // 2. Second attempt: Text query
