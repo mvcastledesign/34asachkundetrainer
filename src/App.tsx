@@ -13,7 +13,6 @@ import {
   Menu, 
   X, 
   Search, 
-  PlusCircle, 
   TrendingUp, 
   Sparkles,
   RefreshCw,
@@ -44,7 +43,6 @@ import Karteikartenmodus from './components/Karteikartenmodus.tsx';
 import Pruefungsmodus from './components/Pruefungsmodus.tsx';
 import Wiederholungsmodus from './components/Wiederholungsmodus.tsx';
 import QuestionSearch from './components/QuestionSearch.tsx';
-import DataManagement from './components/DataManagement.tsx';
 import StatsView from './components/StatsView.tsx';
 import Login from './components/Login.tsx';
 import DozentenDashboard from './components/DozentenDashboard.tsx';
@@ -473,24 +471,32 @@ export default function App() {
   };
 
 
-  const handleRecordHistoryItem = (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => {
+  const handleRecordHistoryItem = (item: { 
+    typ?: string; 
+    mode?: string; 
+    anzahl: number; 
+    richtig: number; 
+    falsch: number;
+    quote?: number;
+  }) => {
+    const rawTs = Date.now();
+    const modeName = item.mode || item.typ || 'lernen';
+    const accuracy = item.anzahl > 0 ? Math.round((item.richtig / item.anzahl) * 100) : (item.quote ?? 100);
+
     const freshLog: LernhistorieItem = {
-      id: `hist-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      timestamp: new Date().toLocaleString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      typ: item.typ,
+      id: `hist-${rawTs}-${Math.random().toString(36).substr(2, 4)}`,
+      timestamp: rawTs,
+      rawTimestamp: rawTs,
+      typ: item.typ || modeName,
+      mode: modeName,
       anzahl: item.anzahl,
       richtig: item.richtig,
-      falsch: item.falsch
+      falsch: item.falsch,
+      quote: accuracy
     };
 
     setHistory(prev => {
-      const updated = [...prev, freshLog];
+      const updated = [freshLog, ...prev].slice(0, 50);
       if (currentUser?.id) {
         localStorage.setItem(`sachkunde_34a_history_${currentUser.id}`, JSON.stringify(updated));
       }
@@ -501,11 +507,13 @@ export default function App() {
         const newExamItem = {
           id: `ex-${Date.now()}`,
           date: new Date().toLocaleDateString('de-DE'),
-          examType: item.typ === 'Prüfung' ? 'Schriftlicher Test (34a)' : (item.typ === 'Karteikarte' ? 'Karteikarten' : 'Lernmodus'),
-          scorePercent: Math.round((item.richtig / item.anzahl) * 100),
+          examType: modeName === 'ihk_pruefung' || item.typ === 'Prüfung' 
+            ? 'Schriftlicher Test (34a)' 
+            : (modeName === 'karteikarten' ? 'Karteikarten' : modeName === 'video' ? 'Video-Trainer' : modeName === 'streak' ? 'Streak-Challenge' : 'Lernmodus'),
+          scorePercent: accuracy,
           pointsObtained: item.richtig,
           totalPoints: item.anzahl,
-          passed: (item.richtig / item.anzahl) >= 0.5
+          passed: accuracy >= 50
         };
 
         const existingExamHistory = (currentUser as any).examHistory || [];
@@ -516,28 +524,6 @@ export default function App() {
 
       return updated;
     });
-  };
-
-  const handleAddQuestion = (q: Question) => {
-    const updated = [q, ...questions];
-    saveQuestionsToLocal(updated);
-  };
-
-  const handleDeleteQuestion = (id: string) => {
-    const updated = questions.filter(q => q.id !== id);
-    saveQuestionsToLocal(updated);
-  };
-
-  const handleImportQuestions = (imported: Question[], option: 'merge' | 'replace') => {
-    let final: Question[];
-    if (option === 'replace') {
-      final = imported;
-    } else {
-      const existingFragenTexts = new Set(questions.map(q => q.frage.trim().toLowerCase()));
-      const filteredImported = imported.filter(q => !existingFragenTexts.has(q.frage.trim().toLowerCase()));
-      final = [...questions, ...filteredImported];
-    }
-    saveQuestionsToLocal(final);
   };
 
   const handleResetToDefaults = () => {
@@ -688,8 +674,7 @@ export default function App() {
     { id: 'streak-challenge', label: 'Endlos-Streak-Challenge', icon: Flame },
     { id: 'was-bin-ich', label: '„Was bin ich?“ Rätsel', icon: HelpCircle },
     { id: 'analyse', label: 'Fortschritt & Statistiken', icon: TrendingUp },
-    { id: 'suche', label: 'Inhalten Suchen & Filtern', icon: Search },
-    { id: 'daten', label: 'Fragen-Editor (Schriftlich)', icon: PlusCircle }
+    { id: 'suche', label: 'Inhalten Suchen & Filtern', icon: Search }
   ];
 
   return (
@@ -731,10 +716,6 @@ export default function App() {
           <DozentenDashboard
             currentUser={currentUser}
             questions={questions}
-            onAddQuestion={handleAddQuestion}
-            onDeleteQuestion={handleDeleteQuestion}
-            onImportQuestions={handleImportQuestions}
-            onResetToDefaults={handleResetToDefaults}
           />
 
           {/* Footer Disclaimer */}
@@ -926,9 +907,11 @@ export default function App() {
                   <Dashboard 
                     questions={questions}
                     progress={progress}
+                    history={history}
                     studyDuration={studyDuration}
                     dailyGoal={dailyGoal}
                     setDailyGoal={handleSetDailyGoal}
+                    currentUser={currentUser}
                     onNavigate={handleTabChange}
                   />
                 )}
@@ -992,6 +975,7 @@ export default function App() {
                   <Karteikartenmodus 
                     questions={questions}
                     translationLang={translationLang}
+                    onRecordHistory={handleRecordHistoryItem}
                   />
                 )}
 
@@ -1028,16 +1012,7 @@ export default function App() {
                     progress={progress}
                     history={history}
                     studyDuration={studyDuration}
-                  />
-                )}
-
-                {activeTab === 'daten' && (
-                  <DataManagement 
-                    questions={questions}
-                    onAddQuestion={handleAddQuestion}
-                    onDeleteQuestion={handleDeleteQuestion}
-                    onImportQuestions={handleImportQuestions}
-                    onResetToDefaults={handleResetToDefaults}
+                    onNavigate={handleTabChange}
                   />
                 )}
               </section>

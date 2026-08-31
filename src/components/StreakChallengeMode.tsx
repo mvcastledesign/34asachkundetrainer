@@ -26,7 +26,7 @@ interface StreakChallengeModeProps {
   currentUser?: UserProfile | null;
   translationLang?: string;
   onNavigate?: (view: string) => void;
-  onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 interface RawStreakQuestion {

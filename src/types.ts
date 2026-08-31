@@ -38,13 +38,27 @@ export interface UserProgressMap {
   [questionId: string]: UserProgressValue;
 }
 
+export type ActivityModeType = 
+  | 'karteikarten' 
+  | 'video' 
+  | 'ihk_pruefung' 
+  | 'streak' 
+  | 'fallbeispiel' 
+  | 'raetsel'
+  | 'lernen'
+  | 'pruefung'
+  | 'karteikarte';
+
 export interface LernhistorieItem {
   id: string;
-  timestamp: string;
-  typ: 'Lernen' | 'Prüfung' | 'Karteikarte';
+  timestamp: string | number;
+  rawTimestamp?: number;
+  typ: string;
+  mode?: ActivityModeType | string;
   anzahl: number;
   richtig: number;
   falsch: number;
+  quote?: number;
 }
 
 export interface AppState {

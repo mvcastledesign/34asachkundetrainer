@@ -27,7 +27,7 @@ import { logQuestionAttempt, logExamSession, InteractionTracker, generateSession
 
 interface FallbeispieleModusProps {
   translationLang?: string;
-  onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 export default function FallbeispieleModus({

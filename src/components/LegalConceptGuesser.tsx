@@ -184,7 +184,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 interface LegalConceptGuesserProps {
   translationLang?: string;
-  onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 export default function LegalConceptGuesser({

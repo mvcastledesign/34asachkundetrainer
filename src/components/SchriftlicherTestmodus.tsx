@@ -47,7 +47,7 @@ import { fetchWrittenQuestionsFromSupabase } from '../lib/supabase.ts';
 
 interface SchriftlicherTestmodusProps {
   translationLang?: string;
-  onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 /**

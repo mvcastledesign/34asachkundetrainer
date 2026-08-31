@@ -14,7 +14,7 @@ interface PruefungsmodusProps {
   questions: Question[];
   progress: UserProgressMap;
   onAnswerBulk: (results: { id: string; status: 'gewusst' | 'nicht_gewusst' }[]) => void;
-  onRecordHistory: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
   translationLang?: string;
 }
 

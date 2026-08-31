@@ -16,7 +16,7 @@ import { logQuestionAttempt, logExamSession, InteractionTracker, generateSession
 
 interface InteractiveVideoTrainerProps {
   translationLang?: string;
-  onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 // Fisher-Yates Random Shuffle Helper
@@ -248,9 +248,20 @@ export default function InteractiveVideoTrainer({
         } else {
           // Alle Szenen erfolgreich gemeistert!
           setIsCompleted(true);
+          const finalCorrect = firstTryCorrectCount + (selectedAnswer?.is_correct ? 1 : 0);
+          if (onRecordHistory) {
+            onRecordHistory({
+              typ: 'Lernen',
+              mode: 'video',
+              anzahl: scenes.length,
+              richtig: finalCorrect,
+              falsch: Math.max(0, scenes.length - finalCorrect),
+              quote: Math.round((finalCorrect / scenes.length) * 100)
+            });
+          }
           logExamSession({
             mode: 'video',
-            scoreAchieved: firstTryCorrectCount + 1,
+            scoreAchieved: finalCorrect,
             scoreMax: scenes.length,
             passed: true
           });
@@ -302,15 +313,9 @@ export default function InteractiveVideoTrainer({
       if (!hasFailedCurrentScene) {
         setFirstTryCorrectCount(prev => prev + 1);
       }
-      if (onRecordHistory) {
-        onRecordHistory({ typ: 'Lernen', anzahl: 1, richtig: 1, falsch: 0 });
-      }
     } else {
       setTotalMistakes(prev => prev + 1);
       setHasFailedCurrentScene(true);
-      if (onRecordHistory) {
-        onRecordHistory({ typ: 'Lernen', anzahl: 1, richtig: 0, falsch: 1 });
-      }
     }
 
     // Reaktions-Video abspielen (einmalig, mit Ton)

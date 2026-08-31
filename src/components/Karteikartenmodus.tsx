@@ -14,6 +14,7 @@ import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../li
 interface KarteikartenmodusProps {
   questions: Question[];
   translationLang?: string;
+  onRecordHistory?: (item: { typ: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 // Helper utilities to format clean question and solution text for flashcards
@@ -32,7 +33,7 @@ function formatSolutionText(q?: Question | null): string {
   return text.trim();
 }
 
-export default function Karteikartenmodus({ questions, translationLang = 'deaktiviert' }: KarteikartenmodusProps) {
+export default function Karteikartenmodus({ questions, translationLang = 'deaktiviert', onRecordHistory }: KarteikartenmodusProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
@@ -41,8 +42,26 @@ export default function Karteikartenmodus({ questions, translationLang = 'deakti
   // Diagnostic Tracking
   const sessionIdRef = useRef<string>(generateSessionId('karteikarten'));
   const trackerRef = useRef<InteractionTracker>(new InteractionTracker());
+  const reviewedCardsRef = useRef<Set<string>>(new Set());
 
   const { isSpeaking, isPaused, speak, pause, resume, stop, spokenText } = useSpeech();
+
+  // Log session on exit/unmount if cards were reviewed
+  useEffect(() => {
+    return () => {
+      if (reviewedCardsRef.current.size > 0 && onRecordHistory) {
+        const count = reviewedCardsRef.current.size;
+        onRecordHistory({
+          typ: 'Karteikarte',
+          mode: 'karteikarten',
+          anzahl: count,
+          richtig: count,
+          falsch: 0,
+          quote: 100
+        });
+      }
+    };
+  }, [onRecordHistory]);
 
   // Reset tracker on question index change
   useEffect(() => {
@@ -71,6 +90,7 @@ export default function Karteikartenmodus({ questions, translationLang = 'deakti
   const handleToggleFlip = () => {
     trackerRef.current.recordInteraction(isFlipped ? 0 : 1);
     if (!isFlipped && currentQuestion) {
+      reviewedCardsRef.current.add(String(currentQuestion.id));
       const metrics = trackerRef.current.getMetrics();
       logQuestionAttempt({
         session_id: sessionIdRef.current,

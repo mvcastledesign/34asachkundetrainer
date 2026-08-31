@@ -47,13 +47,14 @@ import {
   Plus,
   RotateCcw,
   Scale,
-  AlertCircle
+  AlertCircle,
+  Megaphone
 } from 'lucide-react';
+import LecturerView from './LecturerView.tsx';
 import { UserProfile, StudentDetail } from '../types/auth.ts';
 import { Question, KATEGORIEN } from '../types.ts';
 import { INITIAL_QUESTIONS } from '../initialQuestions.ts';
 import { IHK_120_EXAM_QUESTIONS } from '../data/ihk120ExamQuestions.ts';
-import DataManagement from './DataManagement.tsx';
 import ErrorBoundary from './ErrorBoundary.tsx';
 import { 
   supabase, 
@@ -548,11 +549,7 @@ const ObsidianCalendarPopover: React.FC<{
 
 interface DozentenDashboardProps {
   currentUser: UserProfile;
-  questions: Question[];
-  onAddQuestion: (q: Question) => void;
-  onDeleteQuestion: (id: string) => void;
-  onImportQuestions: (imported: Question[], option: 'merge' | 'replace') => void;
-  onResetToDefaults: () => void;
+  questions?: Question[];
 }
 
 interface QuestionAttemptRecord {
@@ -620,14 +617,10 @@ function formatStandardGermanDate(val?: any): string {
 
 export default function DozentenDashboard({
   currentUser,
-  questions,
-  onAddQuestion,
-  onDeleteQuestion,
-  onImportQuestions,
-  onResetToDefaults
+  questions
 }: DozentenDashboardProps) {
   // Navigation active tab
-  const [activeTab, setActiveTab] = useState<'students' | 'analytics' | 'manage_questions'>('students');
+  const [activeTab, setActiveTab] = useState<'students' | 'analytics' | 'tasks'>('students');
 
   // Custom created courses with LocalStorage persistence
   const [permanentlyDeletedCourseIds, setPermanentlyDeletedCourseIds] = useState<string[]>(() => {
@@ -938,7 +931,7 @@ export default function DozentenDashboard({
   };
 
   // Handler: Create and persist a new course / cohort
-  const handleCreateNewCourse = (e: React.FormEvent) => {
+  const handleCreateNewCourse = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanCode = newCourseCode.trim().toUpperCase().replace(/\s+/g, '');
     const cleanName = newCourseName.trim();
@@ -959,6 +952,26 @@ export default function DozentenDashboard({
     if (isDuplicate) {
       showToast(`Der Kurs-Code "${cleanCode}" existiert bereits.`);
       return;
+    }
+
+    // 1. Direkt in Supabase Tabelle 'courses' speichern
+    try {
+      const { error: sbError } = await supabase
+        .from('courses')
+        .insert({
+          id: cleanCode,
+          name: cleanName,
+          start_date: newCourseStartDate || null,
+          end_date: newCourseEndDate || null,
+          description: cleanDesc || null,
+          is_active: true
+        });
+
+      if (sbError) {
+        console.warn('Supabase courses insert notice:', sbError);
+      }
+    } catch (sbErr) {
+      console.warn('Supabase insert failed, fallback to local state:', sbErr);
     }
 
     const periodFormatted = newCourseStartDate && newCourseEndDate
@@ -2435,20 +2448,20 @@ export default function DozentenDashboard({
             </button>
 
             <button
-              onClick={() => setActiveTab('manage_questions')}
+              onClick={() => setActiveTab('tasks')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer font-sans whitespace-nowrap ${
-                activeTab === 'manage_questions'
-                  ? 'bg-gradient-to-r from-[#dfb871] to-[#c8a97e] text-slate-950 shadow-lg'
+                activeTab === 'tasks'
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg'
                   : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5'
               }`}
             >
-              <BookOpen className="w-4 h-4" />
-              <span>Fragen-Editor (Schriftlicher Test)</span>
+              <Megaphone className="w-4 h-4 text-amber-400" />
+              <span>Kurs-Aufgaben & Akademie-Mitteilungen</span>
             </button>
           </div>
         </section>
 
-        {/* TAB 1: SCHÜLERVERWALTUNG */}
+        {/* TAB CONTENT */}
         {activeTab === 'students' ? (
           <>
             {/* 2. DREI KLARE KENNZAHLEN (Schüler im Kurs, Ø Lernfortschritt, Gesamt absolvierte Aufgaben) */}
@@ -3162,13 +3175,16 @@ export default function DozentenDashboard({
             </div>
           </ErrorBoundary>
         ) : (
-          /* TAB 3: FRAGENKATALOG VERWALTEN */
-          <DataManagement
-            questions={questions}
-            onAddQuestion={onAddQuestion}
-            onDeleteQuestion={onDeleteQuestion}
-            onImportQuestions={onImportQuestions}
-            onResetToDefaults={onResetToDefaults}
+          /* TAB 3: KURS-AUFGABEN & AKADEMIE-MITTEILUNGEN (LecturerView) */
+          <LecturerView
+            currentUser={currentUser}
+            cohorts={courses}
+            selectedCohortId={selectedCourseId}
+            onCourseCreated={(newCourse) => {
+              const updated = [...courses.filter(c => c.id.toUpperCase() !== newCourse.id.toUpperCase()), newCourse];
+              setCourses(updated);
+              setSelectedCourseId(newCourse.id);
+            }}
           />
         )}
 

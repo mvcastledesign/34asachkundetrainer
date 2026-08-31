@@ -35,7 +35,7 @@ import { logQuestionAttempt, InteractionTracker, generateSessionId } from '../li
 
 interface FachbegriffeTrainerProps {
   translationLang?: string;
-  onRecordHistory?: (item: { typ: 'Lernen' | 'Prüfung' | 'Karteikarte'; anzahl: number; richtig: number; falsch: number }) => void;
+  onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
 const SUPPORTED_LANGUAGES: { key: keyof GlossaryTerm['translations']; label: string; flag: string }[] = [

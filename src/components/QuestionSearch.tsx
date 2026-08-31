@@ -4,8 +4,8 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { Search, Eye, Filter, CheckCircle, XCircle, ChevronDown, ChevronUp, Layers } from 'lucide-react';
-import { Question, UserProgressMap, KATEGORIEN, Schwierigkeit } from '../types.ts';
+import { Search, Layers, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Question, UserProgressMap, KATEGORIEN } from '../types.ts';
 import TranslationView from './TranslationView.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 
@@ -15,10 +15,34 @@ interface QuestionSearchProps {
   translationLang?: string;
 }
 
+function HighlightText({ text, query }: { text: string; query: string }) {
+  if (!query || !query.trim() || !text) return <>{text}</>;
+  
+  const terms = query.trim().split(/\s+/).filter(t => t.length > 0);
+  if (terms.length === 0) return <>{text}</>;
+  
+  const pattern = terms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  const regex = new RegExp(`(${pattern})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <>
+      {parts.map((part, index) => 
+        regex.test(part) ? (
+          <mark key={index} className="bg-amber-400/25 text-amber-300 font-semibold px-1 py-0.5 rounded">
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+}
+
 export default function QuestionSearch({ questions, progress, translationLang = 'deaktiviert' }: QuestionSearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Alle');
-  const [selectedSchwierigkeit, setSelectedSchwierigkeit] = useState<string>('Alle');
   const [selectedStatus, setSelectedStatus] = useState<string>('Alle');
   
   // Expanded item state maps
@@ -42,7 +66,6 @@ export default function QuestionSearch({ questions, progress, translationLang = 
         q.kategorie.toLowerCase().includes(query);
 
       const matchCategory = selectedCategory === 'Alle' || q.kategorie === selectedCategory;
-      const matchSchwierigkeit = selectedSchwierigkeit === 'Alle' || q.schwierigkeit === selectedSchwierigkeit;
       
       const pState = progress[q.id]?.status || 'neu';
       const matchStatus = selectedStatus === 'Alle' || 
@@ -50,9 +73,9 @@ export default function QuestionSearch({ questions, progress, translationLang = 
         (selectedStatus === 'nicht_gewusst' && pState === 'nicht_gewusst') || 
         (selectedStatus === 'neu' && pState === 'neu');
 
-      return matchQuery && matchCategory && matchSchwierigkeit && matchStatus;
+      return matchQuery && matchCategory && matchStatus;
     });
-  }, [questions, progress, searchQuery, selectedCategory, selectedSchwierigkeit, selectedStatus]);
+  }, [questions, progress, searchQuery, selectedCategory, selectedStatus]);
 
   return (
     <div className="space-y-6">
@@ -69,8 +92,8 @@ export default function QuestionSearch({ questions, progress, translationLang = 
           />
         </div>
 
-        {/* Filters grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Filters grid: 2 columns for Kategorie & Lernstatus */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Category Filter */}
           <div className="space-y-1">
             <label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Kategorie</label>
@@ -84,23 +107,6 @@ export default function QuestionSearch({ questions, progress, translationLang = 
               ]}
               value={selectedCategory}
               onChange={setSelectedCategory}
-              className="w-full"
-              maxWidth="w-full sm:w-[320px]"
-            />
-          </div>
-
-          {/* Difficulty filter */}
-          <div className="space-y-1">
-            <label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Schwierigkeit</label>
-            <CustomDropdown
-              options={[
-                { value: "Alle", label: "Alle Schwierigkeiten" },
-                { value: "Leicht", label: "Leicht" },
-                { value: "Mittel", label: "Mittel" },
-                { value: "Schwer", label: "Schwer" }
-              ]}
-              value={selectedSchwierigkeit}
-              onChange={setSelectedSchwierigkeit}
               className="w-full"
               maxWidth="w-full"
             />
@@ -128,12 +134,11 @@ export default function QuestionSearch({ questions, progress, translationLang = 
       {/* Results Header Counter */}
       <div className="flex justify-between items-center px-2 text-xs text-slate-400">
         <span>Gefunden: <strong className="text-slate-200">{filteredList.length}</strong> von {questions.length} Fragen</span>
-        {searchQuery.trim() !== '' && (
+        {(searchQuery.trim() !== '' || selectedCategory !== 'Alle' || selectedStatus !== 'Alle') && (
           <button 
             onClick={() => {
               setSearchQuery('');
               setSelectedCategory('Alle');
-              setSelectedSchwierigkeit('Alle');
               setSelectedStatus('Alle');
             }}
             className="text-emerald-400 hover:underline cursor-pointer"
@@ -147,8 +152,8 @@ export default function QuestionSearch({ questions, progress, translationLang = 
       {filteredList.length === 0 ? (
         <div className="bg-slate-900/40 p-12 text-center rounded-2xl border border-slate-800/60 font-sans">
           <Layers className="w-12 h-12 text-slate-700 mx-auto mb-3" />
-          <p className="text-slate-350 font-bold">Keine Treffer gefunden</p>
-          <p className="text-xs text-slate-550 mt-1">Überprüfe das Suchwort oder setze die Filter zurück.</p>
+          <p className="text-slate-300 font-bold">Keine Treffer gefunden</p>
+          <p className="text-xs text-slate-500 mt-1">Überprüfe das Suchwort oder setze die Filter zurück.</p>
         </div>
       ) : (
         <div className="space-y-3.5">
@@ -171,15 +176,6 @@ export default function QuestionSearch({ questions, progress, translationLang = 
                       <span className="text-[10px] font-semibold text-emerald-400 font-mono tracking-tight bg-emerald-950/20 px-2 py-0.5 rounded border border-emerald-950">
                         {q.kategorie}
                       </span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                        q.schwierigkeit === 'Leicht' 
-                          ? 'text-emerald-300 bg-emerald-950/40' 
-                          : q.schwierigkeit === 'Schwer' 
-                          ? 'text-rose-300 bg-rose-950/40' 
-                          : 'text-amber-300 bg-amber-950/40'
-                      }`}>
-                        {q.schwierigkeit}
-                      </span>
                       
                       {/* Learning status pill */}
                       {qProgress === 'gewusst' ? (
@@ -193,7 +189,7 @@ export default function QuestionSearch({ questions, progress, translationLang = 
                       ) : null}
                     </div>
                     <p className="text-sm font-semibold text-slate-200 leading-snug">
-                      {q.frage}
+                      <HighlightText text={q.frage} query={searchQuery} />
                     </p>
                   </div>
 
@@ -220,7 +216,9 @@ export default function QuestionSearch({ questions, progress, translationLang = 
                       <span className="text-emerald-400 text-[10px] font-black uppercase tracking-wider block mb-1">
                         {translationLang !== 'deaktiviert' ? "Musterlösung (Deutsch):" : "Musterlösung:"}
                       </span>
-                      <div className="whitespace-pre-wrap">{q.antwort}</div>
+                      <div className="whitespace-pre-wrap">
+                        <HighlightText text={q.antwort} query={searchQuery} />
+                      </div>
                       {translationLang !== 'deaktiviert' && (
                         <TranslationView 
                           text={q.antwort} 
@@ -240,3 +238,4 @@ export default function QuestionSearch({ questions, progress, translationLang = 
     </div>
   );
 }
+
