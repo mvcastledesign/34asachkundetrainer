@@ -2638,8 +2638,8 @@ export default function DozentenDashboard({
                 </div>
               </div>
 
-              {/* Clean Table: 1. Schüler, 2. Lernfortschritt, 3. Zuletzt Aktiv, 4. Aktionen */}
-              <div className="overflow-x-auto border border-white/5 rounded-2xl bg-slate-950/40">
+              {/* Clean Table on Desktop (ab md:) & Cards on Mobile (unter md:) */}
+              <div className="hidden md:block overflow-x-auto border border-white/5 rounded-2xl bg-slate-950/40">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-slate-950/90 text-slate-400 font-mono text-[10px] uppercase tracking-wider border-b border-white/5">
                     <tr>
@@ -2684,7 +2684,7 @@ export default function DozentenDashboard({
                               <div>
                                 <p className="font-bold text-white text-xs">{student.name}</p>
                                 <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                                  Kurs-Code: <span className="text-[#dfb871] font-bold">{student.courseId || student.invitationCode || '–'}</span>
+                                  Kurs-Code: <span className="text-[#dfb871] font-bold">{(student.courseId || student.invitationCode || '–').toUpperCase()}</span>
                                 </p>
                               </div>
                             </div>
@@ -2752,6 +2752,101 @@ export default function DozentenDashboard({
                     )}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile Card Design (unter md:) */}
+              <div className="block md:hidden space-y-3">
+                {loadingStudents ? (
+                  <div className="p-8 text-center text-slate-400 flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-[#dfb871] border-t-transparent rounded-full animate-spin" />
+                    <span>Lade Schülerdaten aus Supabase...</span>
+                  </div>
+                ) : filteredStudents.length === 0 ? (
+                  <div className="p-8 text-center text-slate-500 space-y-2 border border-white/5 rounded-2xl bg-slate-950/40">
+                    <Users className="w-8 h-8 text-slate-600 mx-auto" />
+                    <p className="text-xs font-semibold text-slate-300">Keine Schüler für die aktuelle Auswahl gefunden.</p>
+                  </div>
+                ) : (
+                  filteredStudents.map((student) => {
+                    const courseCodeFormatted = (student.courseId || student.invitationCode || 'MOREDU34A').toUpperCase();
+                    const progressVal = student.progressPercent || 0;
+
+                    return (
+                      <div 
+                        key={student.id} 
+                        className="p-4 rounded-2xl bg-slate-950/70 border border-white/10 space-y-3 shadow-lg hover:border-[#dfb871]/40 transition-all"
+                      >
+                        {/* Oben: Avatar, Name (bold), Kurs-Code (uppercase) */}
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-full bg-slate-800 border border-[#dfb871]/30 text-[#dfb871] font-bold flex items-center justify-center font-display text-xs shrink-0 shadow-sm">
+                              {student.avatarInitials || (student.name ? student.name.slice(0, 2).toUpperCase() : 'S')}
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="font-bold text-white text-sm truncate leading-snug">{student.name}</h4>
+                              <p className="text-[10px] text-slate-400 font-mono flex items-center gap-1 mt-0.5">
+                                <span>Kurs:</span>
+                                <span className="text-[#dfb871] font-bold font-mono tracking-wider">{courseCodeFormatted}</span>
+                              </p>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => setSelectedStudent(student)}
+                            className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                            title="Details ansehen"
+                          >
+                            <span>Details</span>
+                            <ChevronRight className="w-3.5 h-3.5 text-[#dfb871]" />
+                          </button>
+                        </div>
+
+                        {/* Mitte: Prozentanzeige "X % Gelernt" und horizontaler Fortschrittsbalken */}
+                        <div className="space-y-1.5 pt-1">
+                          <div className="flex items-center justify-between text-xs font-mono">
+                            <span className="text-slate-400 font-medium">Lernfortschritt:</span>
+                            <span className="font-bold text-[#dfb871]">{progressVal} % Gelernt</span>
+                          </div>
+                          <div className="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-white/5">
+                            <div 
+                              className="bg-gradient-to-r from-[#dfb871] via-amber-400 to-[#f3d493] h-full rounded-full transition-all duration-300"
+                              style={{ width: `${Math.min(100, Math.max(0, progressVal))}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Unten: "Zuletzt aktiv" mit Zeitstempel oder Datumsanzeige */}
+                        <div className="flex items-center justify-between pt-2 border-t border-white/5 text-[11px]">
+                          <div className="flex items-center gap-1.5 text-slate-400 font-mono truncate min-w-0 pr-2">
+                            <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                            <span className="truncate">Zuletzt aktiv: <strong className="text-slate-300 font-semibold">{formatGermanDate(student.lastActive)}</strong></span>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              onClick={() => {
+                                setResetStudentModal(student);
+                                setAdminNewPassword('NeuesPasswort123');
+                              }}
+                              className="p-1.5 rounded-lg bg-[#dfb871]/10 hover:bg-[#dfb871]/20 border border-[#dfb871]/25 text-[#dfb871] transition-all cursor-pointer"
+                              title="Passwort zurücksetzen"
+                            >
+                              <KeyRound className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => setStudentToDelete(student)}
+                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 transition-all cursor-pointer"
+                              title="Schüler löschen"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </section>
           </>
