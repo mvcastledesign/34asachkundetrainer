@@ -171,7 +171,19 @@ export default function LecturerView({
       }
     });
 
-    // 3. Fallback: Wenn Liste noch leer ist
+    // 3. Zentrale Standard-Kurse (COURSES)
+    COURSES.forEach(c => {
+      if (!rawList.some(r => r.id.toUpperCase() === c.id.toUpperCase())) {
+        rawList.push({
+          id: c.id,
+          name: c.name,
+          period: 'Fortlaufend / Flexibel',
+          description: c.name
+        });
+      }
+    });
+
+    // 4. Fallback: Wenn Liste noch leer ist
     if (rawList.length === 0) {
       rawList.push(...DEFAULT_FALLBACK_COHORTS);
     }
@@ -186,6 +198,8 @@ export default function LecturerView({
       return true;
     });
   }, [propCohorts, dbCourses]);
+
+  const courses = validCourses;
 
   // Initialen Standard-Kurs ermitteln (kein '-', kein leerer String, kein 'ALL')
   const initialValidCourseId = useMemo(() => {
@@ -851,21 +865,28 @@ export default function LecturerView({
               </div>
 
               {openDropdown === 'header-course' && (
-                <div className="absolute z-50 right-0 mt-2 w-72 bg-slate-900/95 border border-slate-800 rounded-xl shadow-2xl backdrop-blur-xl p-1.5 max-h-60 overflow-y-auto">
-                  {validCourses.map((c) => (
-                    <div
-                      key={c.id}
-                      onClick={() => handleSelectCourse(c.id)}
-                      className={`px-3 py-2 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
-                        selectedCourseId === c.id
-                          ? 'bg-amber-500/15 text-amber-300 font-bold'
-                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                      }`}
-                    >
-                      <span className="truncate">{c.name}</span>
-                      {selectedCourseId === c.id && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
-                    </div>
-                  ))}
+                <div className="absolute z-50 right-0 mt-2 w-72 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+                  {courses.map((c) => {
+                    const isSelected = selectedCourseId.toLowerCase() === c.id.toLowerCase();
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleSelectCourse(c.id);
+                        }}
+                        className={`w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs transition-colors cursor-pointer ${
+                          isSelected
+                            ? 'bg-amber-500/10 text-amber-400 font-semibold border-l-2 border-amber-400'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                        }`}
+                      >
+                        <span className="truncate">{c.name}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1403,55 +1424,57 @@ export default function LecturerView({
                 {/* LINKE SPALTE: KURS, DOZENT, SACHGEBIET */}
                 <div className="space-y-5">
                   
-                  {/* FELD 1: ZIELKURS (ANFORDERUNG 2: FORMULAR-DROPDOWN FIX MIT COURSES) */}
+                  {/* FELD 1: ZIELKURS (ROBUSTER DROPDOWN-STATE & CLICK-HANDLER) */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-mono text-slate-300 uppercase tracking-wider font-semibold">
                       1. Zielkurs / Kohorte *
                     </label>
-                    <div className="relative">
-                      <div
+                    <div className="relative w-full">
+                      <button
+                        type="button"
                         onClick={() => {
                           if (hasCourses) {
                             setIsCourseDropdownOpen(!isCourseDropdownOpen);
                           }
                         }}
-                        className={`bg-slate-950/60 border rounded-xl px-4 py-3 text-sm text-slate-100 flex items-center justify-between cursor-pointer transition-all ${
+                        className={`w-full bg-slate-950/60 border rounded-xl px-4 py-3 text-sm text-slate-100 flex items-center justify-between cursor-pointer transition-all ${
                           formErrors.course
                             ? 'border-rose-500'
                             : 'border-slate-800 hover:border-amber-500/50'
                         } ${!hasCourses ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <span className="truncate font-medium">
-                          {COURSES.find(c => c.id.toLowerCase() === formCourseId.toLowerCase())?.name ||
-                           validCourses.find(c => c.id.toLowerCase() === formCourseId.toLowerCase())?.name ||
+                          {courses.find(c => c.id.toLowerCase() === formCourseId.toLowerCase() || ((c as any).code && (c as any).code.toLowerCase() === formCourseId.toLowerCase()))?.name ||
                            selectedCourseObj?.name ||
                            formCourseId ||
                            'Bitte Kurs wählen'}
                         </span>
                         <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${isCourseDropdownOpen ? 'rotate-180 text-amber-400' : ''}`} />
-                      </div>
+                      </button>
 
                       {isCourseDropdownOpen && hasCourses && (
-                        <div className="absolute z-50 mt-2 w-full bg-slate-900/95 border border-slate-800 rounded-xl shadow-2xl backdrop-blur-xl p-1.5 max-h-60 overflow-y-auto">
-                          {validCourses.map((c) => {
-                            const isSelected = formCourseId.toLowerCase() === c.id.toLowerCase();
+                        <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+                          {courses.map((course) => {
+                            const isSelected = formCourseId === course.id || formCourseId === (course as any).code || formCourseId.toLowerCase() === course.id.toLowerCase();
                             return (
-                              <div
-                                key={c.id}
-                                onClick={() => {
-                                  setFormCourseId(c.id);
-                                  setSelectedCourseId(c.id);
+                              <button
+                                key={course.id || (course as any).code}
+                                type="button"
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setFormCourseId(course.id || (course as any).code);
+                                  setSelectedCourseId(course.id || (course as any).code);
                                   setIsCourseDropdownOpen(false);
                                 }}
-                                className={`px-3 py-2.5 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
-                                  isSelected
-                                    ? 'bg-amber-500/15 text-amber-300 font-bold'
-                                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                className={`w-full text-left px-4 py-3 flex items-center justify-between text-sm transition-colors cursor-pointer ${
+                                  isSelected 
+                                    ? 'bg-amber-500/10 text-amber-400 font-semibold border-l-2 border-amber-400' 
+                                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                                 }`}
                               >
-                                <span className="truncate">{c.name}</span>
-                                {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
-                              </div>
+                                <span>{course.name || (course as any).title || course.id}</span>
+                                {isSelected && <span className="text-amber-400 font-bold ml-2">✓</span>}
+                              </button>
                             );
                           })}
                         </div>
