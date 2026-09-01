@@ -40,10 +40,8 @@ import {
 } from 'lucide-react';
 import { WrittenQuestion } from '../types.ts';
 import { IHK_120_EXAM_QUESTIONS, IHK_CATEGORIES_CONFIG, IhkCategoryConfig } from '../data/ihk120ExamQuestions.ts';
-import TranslationView from './TranslationView.tsx';
 import CustomDropdown from './CustomDropdown.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
-import { fetchWrittenQuestionsFromSupabase } from '../lib/supabase.ts';
 
 interface SchriftlicherTestmodusProps {
   translationLang?: string;
@@ -84,45 +82,16 @@ export function matchesCategory(qCat: string | undefined, targetCatName: string 
 }
 
 /**
- * Führt Standardfragen mit dynamisch aus Supabase geladenen Fragen zusammen.
- * Verhindert Duplikate anhand von ID und normalisiertem Fragetext.
- * Cloud-Fragen aus Supabase überschreiben bei Übereinstimmung veraltete Standardfragen.
+ * Sprach-Erkennung und Normalisierung für lokales Rendering
  */
-export function mergeWrittenQuestionPool(
-  standardQuestions: WrittenQuestion[],
-  cloudQuestions: WrittenQuestion[]
-): WrittenQuestion[] {
-  const questionMap = new Map<string, WrittenQuestion>();
-  const textToKeyMap = new Map<string, string>();
-
-  // 1. Standardkatalog als Basis hinterlegen
-  standardQuestions.forEach(q => {
-    if (!q || !q.frage) return;
-    const idKey = String(q.id || '').trim().toLowerCase();
-    const textKey = q.frage.trim().toLowerCase().replace(/\s+/g, ' ');
-    questionMap.set(idKey, q);
-    textToKeyMap.set(textKey, idKey);
-  });
-
-  // 2. Cloud-Fragen aus Supabase einfügen / aktualisieren
-  cloudQuestions.forEach(q => {
-    if (!q || !q.frage) return;
-    const idKey = String(q.id || '').trim().toLowerCase();
-    const textKey = q.frage.trim().toLowerCase().replace(/\s+/g, ' ');
-
-    // Falls dieselbe Frage unter einer anderen ID existierte, alte entfernen
-    const existingKeyByText = textToKeyMap.get(textKey);
-    if (existingKeyByText && existingKeyByText !== idKey) {
-      questionMap.delete(existingKeyByText);
-    }
-
-    const finalKey = idKey || existingKeyByText || `cloud-${textKey.slice(0, 24)}`;
-    questionMap.set(finalKey, q);
-    textToKeyMap.set(textKey, finalKey);
-  });
-
-  return Array.from(questionMap.values());
-}
+export const getLanguageKey = (lang: string): 'ru' | 'en' | 'ar' | 'fa' | null => {
+  const l = (lang || '').toLowerCase();
+  if (l.includes('fa') || l.includes('farsi') || l.includes('فارسی')) return 'fa';
+  if (l.includes('ar') || l.includes('arab') || l.includes('العربية')) return 'ar';
+  if (l.includes('ru') || l.includes('russ') || l.includes('рус')) return 'ru';
+  if (l.includes('en') || l.includes('engl')) return 'en';
+  return null;
+};
 
 /**
  * Bewertungsschlüssel (120-Punkte-System):
@@ -254,38 +223,14 @@ export default function SchriftlicherTestmodus({
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [configError, setConfigError] = useState<string | null>(null);
   
-  // Supabase Questions Pool & Combined Active Catalog
-  const [supabaseQuestions, setSupabaseQuestions] = useState<WrittenQuestion[]>([]);
-  const [mergedQuestionsPool, setMergedQuestionsPool] = useState<WrittenQuestion[]>(IHK_120_EXAM_QUESTIONS);
-  const [isLoadingPool, setIsLoadingPool] = useState<boolean>(true);
+  // Language resolution
+  const activeLangKey = getLanguageKey(translationLang);
+  const isRtl = activeLangKey === 'ar' || activeLangKey === 'fa';
 
-  // Load questions directly from Supabase (written_questions) and merge with static catalog
-  const loadWrittenQuestions = async () => {
-    setIsLoadingPool(true);
-    try {
-      const cloudData = await fetchWrittenQuestionsFromSupabase();
-      if (cloudData && cloudData.length > 0) {
-        setSupabaseQuestions(cloudData);
-        const combined = mergeWrittenQuestionPool(IHK_120_EXAM_QUESTIONS, cloudData);
-        setMergedQuestionsPool(combined);
-      } else {
-        setSupabaseQuestions([]);
-        setMergedQuestionsPool(IHK_120_EXAM_QUESTIONS);
-      }
-    } catch (err) {
-      console.warn('Could not load written questions from Supabase, using standard catalogue:', err);
-      setMergedQuestionsPool(IHK_120_EXAM_QUESTIONS);
-    } finally {
-      setIsLoadingPool(false);
-    }
-  };
-
-  useEffect(() => {
-    loadWrittenQuestions();
-  }, []);
-
-  // Active exam questions and answers state
-  const [questions, setQuestions] = useState<WrittenQuestion[]>([]);
+  // Active exam questions and answers state (0 ms local initialization)
+  const [questions, setQuestions] = useState<WrittenQuestion[]>(() => {
+    return [...IHK_120_EXAM_QUESTIONS].slice(0, 82);
+  });
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, number[]>>({}); // questionId -> array of selected option indices
   const [flaggedQuestions, setFlaggedQuestions] = useState<Record<string, boolean>>({}); // questionId -> isFlagged
@@ -340,10 +285,9 @@ export default function SchriftlicherTestmodus({
     label: `${c.shortName} (${c.maxPoints} Pkt.)`
   }));
 
-  // Start Exam
+  // Start Exam (0 ms synchronous setup)
   const handleStartExam = () => {
     let examSet: WrittenQuestion[] = [];
-    const poolToUse = mergedQuestionsPool.length > 0 ? mergedQuestionsPool : IHK_120_EXAM_QUESTIONS;
     
     if (subMode === 'category' && !selectedCategory) {
       setConfigError('Bitte wählen Sie ein Sachgebiet aus.');
@@ -356,44 +300,27 @@ export default function SchriftlicherTestmodus({
     let durationSeconds = 120 * 60;
     if (subMode === 'ihk') {
       modePrefix = 'written_exam_82';
-      // Originalgetreue IHK 82-Fragen Simulation
-      // Für jedes Sachgebiet Fragen aus dem zusammengeführten Pool zusammenstellen
+      // Originalgetreue IHK 82-Fragen Simulation nach Sachgebieten
       const assembled: WrittenQuestion[] = [];
 
       IHK_CATEGORIES_CONFIG.forEach(cat => {
-        const catQuestions = poolToUse.filter(q => matchesCategory(q.kategorie, cat.name));
-        
-        if (catQuestions.length <= cat.questionCount) {
-          assembled.push(...catQuestions);
-        } else {
-          // Cloud-Fragen aus Supabase in dieser Kategorie identifizieren
-          const cloudInCat = catQuestions.filter(q =>
-            supabaseQuestions.some(sq => String(sq.id).toLowerCase() === String(q.id).toLowerCase())
-          );
-          const othersInCat = catQuestions.filter(q =>
-            !supabaseQuestions.some(sq => String(sq.id).toLowerCase() === String(q.id).toLowerCase())
-          );
-          
-          // Neu angelegte / veränderte Cloud-Fragen bevorzugt in die Simulation übernehmen
-          const combined = [...cloudInCat, ...othersInCat];
-          assembled.push(...combined.slice(0, Math.max(cat.questionCount, cloudInCat.length)));
-        }
+        const catQuestions = IHK_120_EXAM_QUESTIONS.filter(q => matchesCategory(q.kategorie, cat.name));
+        assembled.push(...catQuestions.slice(0, cat.questionCount));
       });
 
-      examSet = assembled.length > 0 ? assembled : [...poolToUse];
-      durationSeconds = Math.max(60, Math.round(examSet.length * 1.46)) * 60; // 120 Minuten für 82 Fragen
+      examSet = assembled.length > 0 ? assembled : [...IHK_120_EXAM_QUESTIONS].slice(0, 82);
+      durationSeconds = 120 * 60; // 120 Minuten für 82 Fragen
     } else if (subMode === 'quick') {
       modePrefix = 'written_exam_quick';
-      // 20 Fragen Schnelldurchlauf aus dem zusammengeführten Pool
-      const shuffled = [...poolToUse].sort(() => Math.random() - 0.5);
+      // 20 Fragen Schnelldurchlauf
+      const shuffled = [...IHK_120_EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
       examSet = shuffled.slice(0, Math.min(20, shuffled.length));
       durationSeconds = 30 * 60; // 30 Minuten
     } else {
-      // Einzelnes Fachgebiet - alle zugehörigen Fragen (Standard + neue Supabase-Fragen)
-      examSet = poolToUse.filter(q => matchesCategory(q.kategorie, selectedCategory));
+      // Einzelnes Fachgebiet
+      examSet = IHK_120_EXAM_QUESTIONS.filter(q => matchesCategory(q.kategorie, selectedCategory));
       if (examSet.length === 0) {
-        // Fallback falls exakter Kategoriename abweicht
-        examSet = IHK_120_EXAM_QUESTIONS.filter(q => matchesCategory(q.kategorie, selectedCategory));
+        examSet = IHK_120_EXAM_QUESTIONS.slice(0, 10);
       }
       durationSeconds = Math.max(10, Math.round(examSet.length * 1.5)) * 60;
     }
@@ -666,23 +593,14 @@ export default function SchriftlicherTestmodus({
               </div>
             </div>
 
-            {/* Cloud Pool Status & Refresh Button */}
+            {/* Local Status Indicator */}
             <div className="flex items-center gap-2">
               <div className="text-[11px] px-3 py-1.5 rounded-lg bg-slate-900/80 border border-white/10 text-slate-300 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                 <span>
-                  {mergedQuestionsPool.length} Fragen aktiv {supabaseQuestions.length > 0 && `(${supabaseQuestions.length} aus Cloud)`}
+                  {IHK_120_EXAM_QUESTIONS.length} Prüfungsfragen bereit (0 ms Ladezeit)
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={loadWrittenQuestions}
-                disabled={isLoadingPool}
-                title="Fragenpool aus Supabase aktualisieren"
-                className="p-2 rounded-lg bg-slate-900/80 border border-white/10 hover:border-[#dfb871]/40 text-slate-400 hover:text-[#dfb871] transition-all"
-              >
-                <RefreshCw className={`w-4 h-4 ${isLoadingPool ? 'animate-spin text-[#dfb871]' : ''}`} />
-              </button>
             </div>
           </div>
 
@@ -955,24 +873,22 @@ export default function SchriftlicherTestmodus({
                 </div>
 
                 {/* Question Text */}
-                <h3 className="text-lg md:text-xl font-bold text-white font-display leading-relaxed mb-6">
+                <h3 className="text-lg md:text-xl font-bold text-white font-display leading-relaxed">
                   {activeQuestion.frage}
                 </h3>
 
-                {/* Multilingual Translation helper if active */}
-                {translationLang !== 'deaktiviert' && (
-                  <div className="mb-6">
-                    <TranslationView 
-                      text={`${activeQuestion.frage}\n\n${activeQuestion.optionen.join('\n')}`} 
-                      questionId={activeQuestion.id}
-                      targetLanguage={translationLang}
-                      type="frage"
-                    />
+                {/* Multilingual Question Translation if active */}
+                {activeLangKey && activeQuestion.translations?.[activeLangKey]?.question && (
+                  <div 
+                    dir={isRtl ? 'rtl' : 'ltr'} 
+                    className="mt-3 mb-6 text-sm md:text-base text-[#dfb871]/95 font-sans leading-relaxed p-3.5 rounded-xl bg-[#dfb871]/10 border border-[#dfb871]/20"
+                  >
+                    {activeQuestion.translations[activeLangKey]?.question}
                   </div>
                 )}
 
                 {/* Selection Instruction Banner */}
-                <div className="mb-4 text-xs text-slate-400 font-sans flex items-center gap-2">
+                <div className="mt-4 mb-4 text-xs text-slate-400 font-sans flex items-center gap-2">
                   <Info className="w-4 h-4 text-[#dfb871] shrink-0" />
                   {isSingleChoice ? (
                     <span>Wählen Sie <strong>genau eine</strong> Antwortmöglichkeit (Radio-Button).</span>
@@ -985,6 +901,9 @@ export default function SchriftlicherTestmodus({
                 <div className="space-y-3">
                   {activeQuestion.optionen.map((optText, optIdx) => {
                     const isSelected = currentSelection.includes(optIdx);
+                    const optTranslated = activeLangKey 
+                      ? (activeQuestion.options?.[optIdx]?.translations?.[activeLangKey] || null)
+                      : null;
 
                     return (
                       <button
@@ -1020,15 +939,14 @@ export default function SchriftlicherTestmodus({
 
                         {/* Option Label Text */}
                         <div className="text-sm md:text-base font-normal font-sans leading-snug min-w-0 flex-1">
-                          <div>{optText}</div>
-                          {translationLang !== 'deaktiviert' && (
-                            <TranslationView
-                              variant="compact"
-                              text={optText}
-                              questionId={`${activeQuestion.id}-opt-${optIdx}`}
-                              targetLanguage={translationLang}
-                              type="antwort"
-                            />
+                          <div className="text-white">{optText}</div>
+                          {activeLangKey && optTranslated && (
+                            <div
+                              dir={isRtl ? 'rtl' : 'ltr'}
+                              className="mt-1.5 text-xs md:text-sm text-[#dfb871]/90 leading-relaxed font-sans"
+                            >
+                              {optTranslated}
+                            </div>
                           )}
                         </div>
                       </button>
@@ -1605,11 +1523,24 @@ export default function SchriftlicherTestmodus({
                     {activeReviewQ.frage}
                   </h4>
 
+                  {/* Multilingual Question Translation if active */}
+                  {activeLangKey && activeReviewQ.translations?.[activeLangKey]?.question && (
+                    <div 
+                      dir={isRtl ? 'rtl' : 'ltr'} 
+                      className="text-sm text-[#dfb871]/95 font-sans leading-relaxed p-3 rounded-xl bg-[#dfb871]/10 border border-[#dfb871]/20"
+                    >
+                      {activeReviewQ.translations[activeLangKey]?.question}
+                    </div>
+                  )}
+
                   {/* Options with Visual Correctness Coding */}
                   <div className="space-y-2.5">
                     {activeReviewQ.optionen.map((optText, optIdx) => {
                       const isCorrectOption = (activeReviewQ.korrekteAntworten || []).includes(optIdx);
                       const isUserSelected = activeReviewSelection.includes(optIdx);
+                      const optTranslated = activeLangKey 
+                        ? (activeReviewQ.options?.[optIdx]?.translations?.[activeLangKey] || null)
+                        : null;
 
                       let optionCardStyle = 'bg-slate-950/60 border-white/5 text-slate-400';
                       let badge = null;
@@ -1645,7 +1576,17 @@ export default function SchriftlicherTestmodus({
                           key={optIdx}
                           className={`p-3.5 rounded-xl border text-sm flex items-start justify-between gap-3 ${optionCardStyle}`}
                         >
-                          <div className="font-sans leading-relaxed">{optText}</div>
+                          <div className="font-sans leading-relaxed flex-1 min-w-0">
+                            <div>{optText}</div>
+                            {activeLangKey && optTranslated && (
+                              <div
+                                dir={isRtl ? 'rtl' : 'ltr'}
+                                className="mt-1 text-xs text-[#dfb871]/90 leading-relaxed font-sans"
+                              >
+                                {optTranslated}
+                              </div>
+                            )}
+                          </div>
                           {badge}
                         </div>
                       );
@@ -1662,6 +1603,14 @@ export default function SchriftlicherTestmodus({
                       <p className="text-xs text-slate-200 font-sans leading-relaxed">
                         {activeReviewQ.erklaerung}
                       </p>
+                      {activeLangKey && activeReviewQ.translations?.[activeLangKey]?.explanation && (
+                        <p 
+                          dir={isRtl ? 'rtl' : 'ltr'} 
+                          className="text-xs text-[#dfb871]/90 font-sans leading-relaxed pt-2 border-t border-[#dfb871]/20"
+                        >
+                          {activeReviewQ.translations[activeLangKey]?.explanation}
+                        </p>
+                      )}
                     </div>
                   )}
 
