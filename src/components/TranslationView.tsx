@@ -9,6 +9,7 @@ interface TranslationViewProps {
   type?: 'frage' | 'antwort' | 'loesung' | 'option';
   optionKey?: string;
   variant?: 'default' | 'compact';
+  directTranslation?: string;
 }
 
 // Display labels for language badges
@@ -29,7 +30,8 @@ export default function TranslationView({
   targetLanguage, 
   type = 'frage', 
   optionKey,
-  variant = 'default' 
+  variant = 'default',
+  directTranslation
 }: TranslationViewProps) {
   const isRtl = 
     targetLanguage === 'farsi' || 
@@ -39,7 +41,15 @@ export default function TranslationView({
 
   // Instant static translation in 0 ms without any network calls
   const translatedText = useMemo(() => {
-    if (!targetLanguage || targetLanguage === 'deaktiviert' || (!text && !questionId)) {
+    if (!targetLanguage || targetLanguage === 'deaktiviert') {
+      return undefined;
+    }
+
+    if (directTranslation) {
+      return directTranslation;
+    }
+
+    if (!text && !questionId) {
       return undefined;
     }
 

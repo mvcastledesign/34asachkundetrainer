@@ -13,14 +13,41 @@ export interface Question {
   schwierigkeit: Schwierigkeit;
 }
 
+export interface WrittenQuestionOptionTranslations {
+  ru: string;
+  en: string;
+  ar: string;
+  fa: string;
+}
+
+export interface WrittenQuestionOption {
+  id: string; // 'a' | 'b' | 'c' | 'd'
+  text: string;
+  translations: WrittenQuestionOptionTranslations;
+}
+
+export interface WrittenQuestionLangTranslation {
+  question: string;
+  explanation: string;
+}
+
+export interface WrittenQuestionTranslations {
+  ru: WrittenQuestionLangTranslation;
+  en: WrittenQuestionLangTranslation;
+  ar: WrittenQuestionLangTranslation;
+  fa: WrittenQuestionLangTranslation;
+}
+
 export interface WrittenQuestion {
   id: string;
   kategorie: string;
   frage: string;
-  optionen: string[]; // 4 options
+  optionen: string[]; // 4 options (text strings)
+  options?: WrittenQuestionOption[]; // 4 options (rich objects with ru, en, ar, fa translations)
   korrekteAntworten: number[]; // indices of correct option(s) (0 to 3)
   punkte: number; // point value (1 or 2)
   erklaerung: string; // solution explanation
+  translations?: WrittenQuestionTranslations; // translations for question and explanation
   target_mode?: string; // 'written_test'
 }
 
