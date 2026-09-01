@@ -77,67 +77,51 @@ export default function DashboardView({
   const totalCatalogQuestions = questions.length > 0 ? questions.length : 180;
 
   // --------------------------------------------------------------------------
-  // 1. SUPABASE-ABFRAGE BEIM LADEN: AKTIVE DOZENTEN-AUFGABE
+  // 1. SUPABASE-ABFRAGE BEIM LADEN: AKTIVE DOZENTEN-AUFGABE (INITIAL NULL)
   // --------------------------------------------------------------------------
-  const [supabaseTask, setSupabaseTask] = useState<CourseTask | null>(null);
-  const [isLoadingTask, setIsLoadingTask] = useState<boolean>(true);
-
-  const fetchActiveTask = useCallback(async () => {
-    try {
-      const { data: activeTask, error } = await supabase
-        .from('course_tasks')
-        .select('*')
-        .eq('course_id', userCourseId)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (!error && activeTask) {
-        setSupabaseTask(activeTask);
-      } else {
-        // Lokaler Fallback
-        const localStored = 
-          localStorage.getItem(`sachkunde_34a_course_task_${userCourseId}`) ||
-          localStorage.getItem(`course_task_${userCourseId}`) ||
-          localStorage.getItem('sachkunde_34a_active_course_task') ||
-          localStorage.getItem('sachkunde_34a_active_task');
-
-        if (localStored) {
-          try {
-            const parsed = JSON.parse(localStored);
-            if (parsed && !parsed.isCompleted) {
-              setSupabaseTask({
-                ...parsed,
-                course_id: parsed.courseId || userCourseId,
-                lecturer_name: parsed.lecturerName,
-                target_category_id: parsed.targetCategoryId,
-                target_mode: parsed.targetMode
-              });
-            } else {
-              setSupabaseTask(null);
-            }
-          } catch {
-            setSupabaseTask(null);
-          }
-        } else {
-          setSupabaseTask(null);
-        }
-      }
-    } catch (err) {
-      console.warn('Fehler beim Abrufen der aktiven Dozentenaufgabe:', err);
-      setSupabaseTask(null);
-    } finally {
-      setIsLoadingTask(false);
-    }
-  }, [userCourseId]);
+  const [activeTask, setActiveTask] = useState<any | null>(null);
 
   useEffect(() => {
-    fetchActiveTask();
+    async function loadStudentTask() {
+      const studentCourseId = (
+        (userProfile as any)?.course_id || 
+        userProfile?.courseId || 
+        (userProfile as any)?.courseCode || 
+        (currentUser as any)?.course_id ||
+        currentUser?.courseId ||
+        ''
+      ).trim();
+      
+      if (!studentCourseId) {
+        setActiveTask(null);
+        return;
+      }
 
-    // Event Listener für synchronisierte Updates aus der Dozenten-Ansicht
+      try {
+        const { data, error } = await supabase
+          .from('course_tasks')
+          .select('*')
+          .ilike('course_id', studentCourseId)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (error || !data) {
+          setActiveTask(null);
+        } else {
+          setActiveTask(data);
+        }
+      } catch (err) {
+        console.warn('Fehler beim Abrufen der Schüler-Aufgabe:', err);
+        setActiveTask(null);
+      }
+    }
+
+    loadStudentTask();
+
     const handleTaskUpdated = () => {
-      fetchActiveTask();
+      loadStudentTask();
     };
 
     window.addEventListener('storage', handleTaskUpdated);
@@ -147,14 +131,7 @@ export default function DashboardView({
       window.removeEventListener('storage', handleTaskUpdated);
       window.removeEventListener('sachkunde_course_task_updated', handleTaskUpdated);
     };
-  }, [fetchActiveTask]);
-
-  // Effektive aktive Aufgabe bestimmen
-  const activeTask = useMemo<CourseTask | null>(() => {
-    if (supabaseTask) return supabaseTask;
-    if (propActiveCourseTask && !propActiveCourseTask.isCompleted) return propActiveCourseTask;
-    return null;
-  }, [supabaseTask, propActiveCourseTask]);
+  }, [userProfile?.courseId, (userProfile as any)?.course_id, currentUser?.courseId, (currentUser as any)?.course_id]);
 
   // --------------------------------------------------------------------------
   // 2. DYNAMISCHE METRIKEN & BERECHNUNGEN (100% aus realem State)

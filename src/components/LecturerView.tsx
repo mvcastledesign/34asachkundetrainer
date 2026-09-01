@@ -96,6 +96,14 @@ const TARGET_MODES = [
   { id: 'karteikarten', label: 'Karteikarten (3D Flip)', icon: Layers }
 ];
 
+// --------------------------------------------------------------------------
+// 1. ZENTRALE KURS-DEFINITION
+// --------------------------------------------------------------------------
+const COURSES = [
+  { id: 'MOREDU34a', name: 'Sachkunde § 34a (Sommer 2026)', code: 'MOREDU34A' },
+  { id: 'test123', name: 'Sachkunde § 34a (TEST123)', code: 'TEST123' }
+];
+
 // Fallback Standard-Kurse
 const DEFAULT_FALLBACK_COHORTS: CourseCohort[] = [
   {
@@ -105,7 +113,7 @@ const DEFAULT_FALLBACK_COHORTS: CourseCohort[] = [
     description: 'Hauptkurs Sachkunde § 34a GewO'
   },
   {
-    id: 'TEST123',
+    id: 'test123',
     name: 'Sachkunde § 34a (TEST123)',
     period: 'Fortlaufend / Flexibel',
     description: 'Test- und Übungskohorte'
@@ -251,7 +259,8 @@ export default function LecturerView({
   // --------------------------------------------------------------------------
   // 5. DROPDOWN OPEN/CLOSE STEUERUNG
   // --------------------------------------------------------------------------
-  const [openDropdown, setOpenDropdown] = useState<'header-course' | 'form-course' | 'category' | 'mode' | null>(null);
+  const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = useState<'header-course' | 'category' | 'mode' | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Modal: Neuen Kurs anlegen
@@ -278,6 +287,7 @@ export default function LecturerView({
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpenDropdown(null);
+        setIsCourseDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -523,7 +533,7 @@ export default function LecturerView({
   };
 
   // --------------------------------------------------------------------------
-  // SUPABASE: AKTIVE AUFGABE BEENDEN / DEAKTIVIEREN (is_active: false)
+  // SUPABASE: AKTIVE AUFGABEN BEENDEN / BULK-DEAKTIVIEREN (is_active: false)
   // --------------------------------------------------------------------------
   const handleDeactivateTask = async () => {
     if (!selectedCourseId) return;
@@ -534,17 +544,21 @@ export default function LecturerView({
 
     try {
       setIsDeactivatingTask(true);
-      // 1. In Supabase auf is_active: false setzen
+      
+      // 1. In Supabase ALLE aktiven Aufgaben für diesen Kurs auf is_active: false setzen
       const { error } = await supabase
         .from('course_tasks')
         .update({ is_active: false })
-        .ilike('course_id', cleanId);
+        .or(`course_id.eq.${selectedCourseId},course_id.ilike.${selectedCourseId}`)
+        .eq('is_active', true);
 
-      if (error) {
+      if (!error) {
+        setActiveTask(null);
+      } else {
         console.warn('Supabase Deaktivierung Hinweis:', error);
       }
 
-      // 2. State & LocalStorage leeren
+      // 2. Lokalen State sofort leeren
       setActiveTask(null);
       localStorage.removeItem('sachkunde_34a_active_course_task');
       localStorage.removeItem('sachkunde_34a_active_task');
@@ -560,7 +574,7 @@ export default function LecturerView({
       }
 
       setShowDeleteModal(false);
-      setToastMessage(`Aufgabe für Kurs ${cleanId} erfolgreich deaktiviert.`);
+      setToastMessage(`Alle aktiven Aufgaben für Kurs ${cleanId} erfolgreich beendet.`);
       setTimeout(() => setToastMessage(null), 4000);
     } catch (err) {
       console.error('Fehler beim Deaktivieren der Aufgabe:', err);
@@ -1389,7 +1403,7 @@ export default function LecturerView({
                 {/* LINKE SPALTE: KURS, DOZENT, SACHGEBIET */}
                 <div className="space-y-5">
                   
-                  {/* FELD 1: ZIELKURS (ANFORDERUNG 2: SYNCHRONISIERT MIT ZENTRALER KURS-LISTE) */}
+                  {/* FELD 1: ZIELKURS (ANFORDERUNG 2: FORMULAR-DROPDOWN FIX MIT COURSES) */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-mono text-slate-300 uppercase tracking-wider font-semibold">
                       1. Zielkurs / Kohorte *
@@ -1398,7 +1412,7 @@ export default function LecturerView({
                       <div
                         onClick={() => {
                           if (hasCourses) {
-                            setOpenDropdown(openDropdown === 'form-course' ? null : 'form-course');
+                            setIsCourseDropdownOpen(!isCourseDropdownOpen);
                           }
                         }}
                         className={`bg-slate-950/60 border rounded-xl px-4 py-3 text-sm text-slate-100 flex items-center justify-between cursor-pointer transition-all ${
@@ -1408,31 +1422,38 @@ export default function LecturerView({
                         } ${!hasCourses ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <span className="truncate font-medium">
-                          {selectedCourseObj?.name || formCourseId || 'Bitte Kurs wählen'}
+                          {COURSES.find(c => c.id.toLowerCase() === formCourseId.toLowerCase())?.name ||
+                           validCourses.find(c => c.id.toLowerCase() === formCourseId.toLowerCase())?.name ||
+                           selectedCourseObj?.name ||
+                           formCourseId ||
+                           'Bitte Kurs wählen'}
                         </span>
-                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${openDropdown === 'form-course' ? 'rotate-180 text-amber-400' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${isCourseDropdownOpen ? 'rotate-180 text-amber-400' : ''}`} />
                       </div>
 
-                      {openDropdown === 'form-course' && hasCourses && (
+                      {isCourseDropdownOpen && hasCourses && (
                         <div className="absolute z-50 mt-2 w-full bg-slate-900/95 border border-slate-800 rounded-xl shadow-2xl backdrop-blur-xl p-1.5 max-h-60 overflow-y-auto">
-                          {validCourses.map((c) => (
-                            <div
-                              key={c.id}
-                              onClick={() => {
-                                setFormCourseId(c.id);
-                                setSelectedCourseId(c.id);
-                                setOpenDropdown(null);
-                              }}
-                              className={`px-3 py-2.5 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
-                                formCourseId === c.id
-                                  ? 'bg-amber-500/15 text-amber-300 font-bold'
-                                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                              }`}
-                            >
-                              <span className="truncate">{c.name}</span>
-                              {formCourseId === c.id && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
-                            </div>
-                          ))}
+                          {validCourses.map((c) => {
+                            const isSelected = formCourseId.toLowerCase() === c.id.toLowerCase();
+                            return (
+                              <div
+                                key={c.id}
+                                onClick={() => {
+                                  setFormCourseId(c.id);
+                                  setSelectedCourseId(c.id);
+                                  setIsCourseDropdownOpen(false);
+                                }}
+                                className={`px-3 py-2.5 rounded-lg text-xs cursor-pointer flex items-center justify-between transition-colors ${
+                                  isSelected
+                                    ? 'bg-amber-500/15 text-amber-300 font-bold'
+                                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                }`}
+                              >
+                                <span className="truncate">{c.name}</span>
+                                {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 ml-2" />}
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
