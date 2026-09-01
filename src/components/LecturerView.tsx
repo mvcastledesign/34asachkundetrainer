@@ -226,11 +226,14 @@ export default function LecturerView({
   const [isDeletingStudent, setIsDeletingStudent] = useState<boolean>(false);
   const [copiedPassword, setCopiedPassword] = useState<boolean>(false);
 
+  // Modal: Aufgabe zurückziehen / beenden
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [isDeactivatingTask, setIsDeactivatingTask] = useState<boolean>(false);
+
   // --------------------------------------------------------------------------
   // 3. STATE: AKTIVE AUFGABE (DYNAMISCHE SYNCHRONISATION MIT SUPABASE)
   // --------------------------------------------------------------------------
   const [activeTask, setActiveTask] = useState<CourseTask | null>(null);
-  const [isLoadingTask, setIsLoadingTask] = useState<boolean>(false);
 
   // --------------------------------------------------------------------------
   // 4. STATE: FORMULAR-FELDER FÜR AUFGABEN-ERSTELLUNG
@@ -336,89 +339,58 @@ export default function LecturerView({
   }, [loadStudents]);
 
   // --------------------------------------------------------------------------
-  // ANFORDERUNG 1: DYNAMISCHE AUFGABEN-SYNCHRONISATION LIVE AUS SUPABASE
+  // 1. DYNAMISCHES LADEN DER AKTIVEN AUFGABE AUS SUPABASE
   // --------------------------------------------------------------------------
-  const loadActiveTaskForCourse = useCallback(async (courseId: string) => {
-    if (!courseId) {
-      setActiveTask(null);
-      return;
-    }
-
-    const cleanCourseId = courseId.trim();
-    setIsLoadingTask(true);
-
-    try {
-      const { data, error } = await supabase
-        .from('course_tasks')
-        .select('*')
-        .eq('course_id', cleanCourseId)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (!error && data) {
-        const mappedTask: CourseTask = {
-          id: data.id ? String(data.id) : `task_${cleanCourseId}`,
-          courseId: data.course_id,
-          course_id: data.course_id,
-          title: data.title || '',
-          description: data.description || '',
-          targetCategoryId: data.target_category_id || undefined,
-          target_category_id: data.target_category_id || undefined,
-          targetCategoryName: data.target_category_id && data.target_category_id !== 'all'
-            ? data.target_category_id
-            : 'Gesamter Prüfungsstoff',
-          targetMode: data.target_mode || 'schriftlich',
-          target_mode: data.target_mode || 'schriftlich',
-          targetCount: data.target_count || 1,
-          target_count: data.target_count || 1,
-          completedCount: 0,
-          lecturerName: data.lecturer_name || lecturerNameDefault,
-          lecturer_name: data.lecturer_name || lecturerNameDefault,
-          isCompleted: false,
-          is_active: true
-        };
-        setActiveTask(mappedTask);
-      } else {
-        // Lokaler Fallback
-        const directKey = `course_task_${cleanCourseId}`;
-        const stored = 
-          localStorage.getItem(directKey) || 
-          localStorage.getItem(`sachkunde_34a_course_task_${cleanCourseId}`) || 
-          localStorage.getItem('sachkunde_34a_active_course_task');
-
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            if (parsed && (parsed.courseId === cleanCourseId || parsed.course_id === cleanCourseId) && !parsed.isCompleted && parsed.is_active !== false) {
-              setActiveTask(parsed);
-            } else {
-              setActiveTask(null);
-            }
-          } catch {
-            setActiveTask(null);
-          }
-        } else {
-          setActiveTask(null);
-        }
-      }
-    } catch (err) {
-      console.warn('Laden der aktiven Aufgabe fehlgeschlagen:', err);
-      setActiveTask(null);
-    } finally {
-      setIsLoadingTask(false);
-    }
-  }, [lecturerNameDefault]);
-
-  // Effekt triggert bei Änderung von selectedCourseId
   useEffect(() => {
-    if (selectedCourseId) {
-      loadActiveTaskForCourse(selectedCourseId);
-    }
-  }, [selectedCourseId, loadActiveTaskForCourse]);
+    let isMounted = true;
 
-  // ANFORDERUNG 2: Synchroner Wechsel des Kurses im Dropdown
+    async function fetchTask() {
+      // Falls keine konkrete Kurs-ID gewählt ist (oder "ALL" aktiv ist), leeren
+      if (!selectedCourseId || selectedCourseId === 'ALL') {
+        setActiveTask(null);
+        return;
+      }
+
+      // Kurs-Code bereinigen (z. B. falls String "Sachkunde § 34a (MOREDU34a)" gewählt ist)
+      const cleanId = selectedCourseId.includes('(')
+        ? selectedCourseId.match(/\(([^)]+)\)/)?.[1]?.trim() || selectedCourseId.trim()
+        : selectedCourseId.trim();
+
+      try {
+        const { data, error } = await supabase
+          .from('course_tasks')
+          .select('*')
+          .ilike('course_id', cleanId)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Fehler beim Abrufen der Aufgabe:', error);
+          if (isMounted) setActiveTask(null);
+          return;
+        }
+
+        if (isMounted) {
+          setActiveTask(data || null);
+        }
+      } catch (err) {
+        console.error('Unerwarteter Fehler:', err);
+        if (isMounted) setActiveTask(null);
+      }
+    }
+
+    fetchTask();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedCourseId]);
+
+  // --------------------------------------------------------------------------
+  // 3. KURS-DROPDOWN-SYNCHRONISATION
+  // --------------------------------------------------------------------------
   const handleSelectCourse = (courseId: string) => {
     setSelectedCourseId(courseId);
     setFormCourseId(courseId);
@@ -551,21 +523,22 @@ export default function LecturerView({
   };
 
   // --------------------------------------------------------------------------
-  // SUPABASE: AKTIVE AUFGABE ZURÜCKZIEHEN (is_active: false)
+  // SUPABASE: AKTIVE AUFGABE BEENDEN / DEAKTIVIEREN (is_active: false)
   // --------------------------------------------------------------------------
   const handleDeactivateTask = async () => {
     if (!selectedCourseId) return;
 
-    if (!window.confirm(`Möchten Sie die aktive Akademie-Aufgabe für Kurs ${selectedCourseId} wirklich zurückziehen?`)) {
-      return;
-    }
+    const cleanId = selectedCourseId.includes('(')
+      ? selectedCourseId.match(/\(([^)]+)\)/)?.[1]?.trim() || selectedCourseId.trim()
+      : selectedCourseId.trim();
 
     try {
+      setIsDeactivatingTask(true);
       // 1. In Supabase auf is_active: false setzen
       const { error } = await supabase
         .from('course_tasks')
         .update({ is_active: false })
-        .eq('course_id', selectedCourseId);
+        .ilike('course_id', cleanId);
 
       if (error) {
         console.warn('Supabase Deaktivierung Hinweis:', error);
@@ -576,8 +549,8 @@ export default function LecturerView({
       localStorage.removeItem('sachkunde_34a_active_course_task');
       localStorage.removeItem('sachkunde_34a_active_task');
       localStorage.removeItem('activeCourseTask');
-      localStorage.removeItem(`sachkunde_34a_course_task_${selectedCourseId}`);
-      localStorage.removeItem(`course_task_${selectedCourseId}`);
+      localStorage.removeItem(`sachkunde_34a_course_task_${cleanId}`);
+      localStorage.removeItem(`course_task_${cleanId}`);
 
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('sachkunde_course_task_updated', { detail: null }));
@@ -586,10 +559,13 @@ export default function LecturerView({
         onTaskUpdated(null);
       }
 
-      setToastMessage(`Aufgabe für Kurs ${selectedCourseId} erfolgreich zurückgezogen.`);
+      setShowDeleteModal(false);
+      setToastMessage(`Aufgabe für Kurs ${cleanId} erfolgreich deaktiviert.`);
       setTimeout(() => setToastMessage(null), 4000);
     } catch (err) {
-      console.error('Fehler beim Zurückziehen der Aufgabe:', err);
+      console.error('Fehler beim Deaktivieren der Aufgabe:', err);
+    } finally {
+      setIsDeactivatingTask(false);
     }
   };
 
@@ -1301,7 +1277,7 @@ export default function LecturerView({
       {activeTab === 'tasks' && (
         <div className="space-y-6">
           
-          {/* ANFORDERUNG 1: AKTIVER AUFGABENSTATUS (LIVE AUS SUPABASE) */}
+          {/* ANFORDERUNG 1 & 2: AKTIVER AUFGABENSTATUS (LIVE AUS SUPABASE) */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold font-display text-white flex items-center gap-2">
@@ -1322,12 +1298,7 @@ export default function LecturerView({
               )}
             </div>
 
-            {isLoadingTask ? (
-              <div className="p-8 rounded-2xl bg-slate-900/50 border border-white/5 text-center flex items-center justify-center gap-2 text-slate-400 text-xs">
-                <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
-                <span>Lade aktiven Aufgabenstatus aus Supabase...</span>
-              </div>
-            ) : activeTask ? (
+            {activeTask ? (
               <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-950/20 via-slate-900 to-slate-950 border border-amber-500/40 relative overflow-hidden shadow-xl backdrop-blur-md">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                   
@@ -1338,7 +1309,7 @@ export default function LecturerView({
                         Kurs: {activeTask.courseId || activeTask.course_id}
                       </span>
                       <span className="text-xs text-slate-400 font-sans">
-                        Dozent: <strong className="text-white">{activeTask.lecturerName || activeTask.lecturer_name}</strong>
+                        Dozent: <strong className="text-white">{activeTask.lecturerName || activeTask.lecturer_name || 'Kursleitung'}</strong>
                       </span>
                     </div>
 
@@ -1355,16 +1326,16 @@ export default function LecturerView({
                     <div className="flex flex-wrap gap-2 pt-1 text-xs">
                       <div className="px-3 py-1 rounded-lg bg-slate-950/60 border border-white/10 text-slate-300 flex items-center gap-1.5">
                         <BookOpen className="w-3.5 h-3.5 text-[#dfb871]" />
-                        <span>Sachgebiet: <strong className="text-white">{activeTask.targetCategoryName || activeTask.targetCategoryId || 'Gesamter Prüfungsstoff'}</strong></span>
+                        <span>Sachgebiet: <strong className="text-white">{activeTask.targetCategoryName || activeTask.target_category_id || activeTask.targetCategoryId || 'Gesamter Prüfungsstoff'}</strong></span>
                       </div>
                       <div className="px-3 py-1 rounded-lg bg-slate-950/60 border border-white/10 text-slate-300 flex items-center gap-1.5">
                         <Target className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Format: <strong className="text-white">{activeTask.targetMode || activeTask.target_mode}</strong></span>
+                        <span>Format: <strong className="text-white">{activeTask.targetMode || activeTask.target_mode || 'Standard'}</strong></span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Action Buttons: Bearbeiten & Zurückziehen */}
+                  {/* Action Buttons: Bearbeiten & Beenden/Deaktivieren */}
                   <div className="shrink-0 flex flex-row lg:flex-col gap-2.5">
                     <button
                       type="button"
@@ -1375,14 +1346,14 @@ export default function LecturerView({
                       <span>Bearbeiten</span>
                     </button>
 
-                    {/* ANFORDERUNG 1: ROTER BUTTON ZUM BEENDEN */}
+                    {/* ANFORDERUNG 2: ROTER BUTTON ZUM BEENDEN / DEAKTIVIEREN */}
                     <button
                       type="button"
-                      onClick={handleDeactivateTask}
+                      onClick={() => setShowDeleteModal(true)}
                       className="px-4 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-bold text-xs border border-rose-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95"
                     >
                       <Trash2 className="w-4 h-4 text-rose-400" />
-                      <span>Aufgabe zurückziehen / beenden</span>
+                      <span>Aufgabe beenden / deaktivieren</span>
                     </button>
                   </div>
 
@@ -1391,7 +1362,7 @@ export default function LecturerView({
             ) : (
               <div className="p-8 rounded-2xl bg-slate-900/50 border border-white/5 text-center space-y-3">
                 <h4 className="text-base font-bold text-white font-display">
-                  Keine aktive Hausaufgabe für Kurs {selectedCourseObj?.name || selectedCourseId}
+                  Keine aktive Hausaufgabe für diesen Kurs
                 </h4>
                 <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
                   Erstellen Sie über das nachfolgende Formular eine verbindliche Dozenten-Aufgabe für diesen Lehrgang.
@@ -1787,6 +1758,56 @@ export default function LecturerView({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------------------------------------------------------------
+          MODAL: AUFGABE ZURÜCKZIEHEN / BEENDEN
+          --------------------------------------------------------------------- */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl text-slate-100 space-y-5 animate-fade-in">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold font-display text-white">Aufgabe zurückziehen?</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Möchten Sie die aktive Aufgabe für diesen Kurs wirklich beenden? Die Teilnehmer sehen diese Aufgabe danach nicht mehr.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeactivatingTask}
+                className="px-4 py-2 rounded-xl bg-transparent hover:bg-white/5 text-slate-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Abbrechen
+              </button>
+              <button
+                type="button"
+                onClick={handleDeactivateTask}
+                disabled={isDeactivatingTask}
+                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-lg flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                {isDeactivatingTask ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Wird beendet...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>Ja, Aufgabe beenden</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
