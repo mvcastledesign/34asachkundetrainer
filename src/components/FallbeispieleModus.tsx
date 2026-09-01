@@ -295,6 +295,19 @@ export default function FallbeispieleModus({
             questionId={currentCase.id} 
             targetLanguage={translationLang} 
             type="frage" 
+            directTranslation={
+              currentCase.translations
+                ? (translationLang === 'en' || translationLang === 'englisch'
+                    ? currentCase.translations.en?.question
+                    : translationLang === 'ru' || translationLang === 'russisch'
+                    ? currentCase.translations.ru?.question
+                    : translationLang === 'ar' || translationLang === 'arabisch'
+                    ? currentCase.translations.ar?.question
+                    : translationLang === 'fa' || translationLang === 'farsi'
+                    ? currentCase.translations.fa?.question
+                    : undefined)
+                : undefined
+            }
           />
         </div>
 
@@ -308,6 +321,7 @@ export default function FallbeispieleModus({
             {currentCase.options.map((optionText, optIdx) => {
               const isSelected = selectedAnswer === optIdx;
               const isCorrectOption = optIdx === currentCase.correct;
+              const detailedOpt = currentCase.detailedOptions?.[optIdx];
 
               let styleClasses = "bg-white/[0.02] hover:bg-white/[0.06] text-slate-200 border-white/5 hover:border-white/10 hover:border-[#dfb871]/30";
               
@@ -355,6 +369,19 @@ export default function FallbeispieleModus({
                         questionId={`${currentCase.id}-opt-${optIdx}`} 
                         targetLanguage={translationLang} 
                         type="antwort" 
+                        directTranslation={
+                          detailedOpt?.translations
+                            ? (translationLang === 'en' || translationLang === 'englisch'
+                                ? detailedOpt.translations.en
+                                : translationLang === 'ru' || translationLang === 'russisch'
+                                ? detailedOpt.translations.ru
+                                : translationLang === 'ar' || translationLang === 'arabisch'
+                                ? detailedOpt.translations.ar
+                                : translationLang === 'fa' || translationLang === 'farsi'
+                                ? detailedOpt.translations.fa
+                                : undefined)
+                            : undefined
+                        }
                       />
                     </div>
                   </div>
@@ -411,6 +438,19 @@ export default function FallbeispieleModus({
               questionId={`${currentCase.id}-exp`} 
               targetLanguage={translationLang} 
               type="antwort" 
+              directTranslation={
+                currentCase.translations
+                  ? (translationLang === 'en' || translationLang === 'englisch'
+                      ? currentCase.translations.en?.explanation
+                      : translationLang === 'ru' || translationLang === 'russisch'
+                      ? currentCase.translations.ru?.explanation
+                      : translationLang === 'ar' || translationLang === 'arabisch'
+                      ? currentCase.translations.ar?.explanation
+                      : translationLang === 'fa' || translationLang === 'farsi'
+                      ? currentCase.translations.fa?.explanation
+                      : undefined)
+                  : undefined
+              }
             />
           </div>
         )}

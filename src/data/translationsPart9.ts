@@ -16,23 +16,23 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 41: ihk-stgb-15
   "ihk-stgb-15": {
     frage: {
-      fa: "جرم نیازمند شکایت شاکی (Antragsdelikt) در حقوق جزا چیست؟",
-      ar: "ما هي الجريمة المعلقة على شكوى المتضرر (Antragsdelikt) في القانون الجنائي؟",
-      ru: "Что такое преступление, преследуемое по жалобе потерпевшего (Antragsdelikt), в уголовном праве?",
-      en: "What is a complaint offense (Antragsdelikt) in criminal law?"
+      fa: "جرم نیازمند شکایت شاکی در حقوق جزا چیست؟",
+      ar: "ما هي الجريمة المعلقة على شكوى المتضرر في القانون الجنائي؟",
+      ru: "Что такое преступление, преследуемое по жалобе потерпевшего, в уголовном праве?",
+      en: "What is a complaint offense in criminal law?"
     },
     loesung: {
-      fa: "در جرایم نیازمند شکایت (§ 77b StGB)، ثبت شکایت رسمی و به‌موقع توسط متضرر شرط دادرسی است (مهلت: ۳ ماه از زمان اطلاع).",
-      ar: "في الجرائم المعلقة على شكوى (§ 77b StGB)، يُشترط تقديم شكوى رسمية في الموعد المحدد من قبل المجني عليه لبدء الملاحقة (المهلة: 3 أشهر من تاريخ العلم).",
-      ru: "При делах частного обвинения (§ 77b StGB) своевременное и надлежащее заявление потерпевшего является обязательным условием процесса (срок: 3 месяца с момента осведомленности).",
-      en: "For complaint offenses (§ 77b StGB), a formal and timely criminal complaint by the victim is a procedural requirement (deadline: 3 months from learning of the offense)."
+      fa: "در جرایم نیازمند شکایت، ثبت شکایت رسمی و به‌موقع توسط متضرر شرط دادرسی است (مهلت: ۳ ماه از زمان اطلاع).",
+      ar: "في الجرائم المعلقة على شكوى، يُشترط تقديم شكوى رسمية في الموعد المحدد من قبل المجني عليه لبدء الملاحقة (المهلة: 3 أشهر من تاريخ العلم).",
+      ru: "При делах частного обвинения своевременное и надлежащее заявление потерпевшего является обязательным условием процесса (срок: 3 месяца с момента осведомленности).",
+      en: "For complaint offenses, a formal and timely criminal complaint by the victim is a procedural requirement."
     },
     optionen: {
       "0": {
         fa: "الف) جرمی که اصولاً تنها زمانی تحت پیگرد قرار می‌گیرد که متضرر ظرف مهلت قانونی (ظرف ۳ ماه) شکایت کیفری ارائه دهد (مانند ورود غیرقانونی به ملک، توهین).",
         ar: "أ) جريمة لا يُلاحق عليها كأصل عام إلا إذا تقدم المتضرر بشكوى جنائية ضمن المهلة القانونية (خلال 3 أشهر) (مثل انتهاك حرمة المكان، الإهانة).",
         ru: "A) Преступление, которое преследуется только в том случае, если потерпевший своевременно (в течение 3 месяцев) подает заявление (напр. нарушение неприкосновенности жилища, оскорбление).",
-        en: "A) A criminal offense that is generally only prosecuted if the victim files a timely criminal complaint (within 3 months) (e.g. trespass, insult)."
+        en: "A) A criminal offense that is generally only prosecuted if the victim files a timely criminal complaint."
       },
       "1": {
         fa: "ب) جرمی که همیشه و الزاماً باید توسط دادستانی به صورت خودکار پیگیری شود.",
@@ -58,27 +58,27 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 42: ihk-stgb-16
   "ihk-stgb-16": {
     frage: {
-      fa: "کدام جرایم، جرایم عمومی (Offizialdelikte) محسوب می‌شوند؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي الجرائم التي تعتبر جرائم حق عام تُلاحق تلقائياً (Offizialdelikte)؟ (اختر إجابتين صحيحتين)",
-      ru: "Какие преступления являются типичными преступлениями публичного обвинения (Offizialdelikte)? (Выберите два правильных ответа)",
-      en: "Which offenses are typical ex officio offenses (Offizialdelikte)? (Choose two correct answers)"
+      fa: "کدام جرایم، جرایم عمومی محسوب می‌شوند؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي الجرائم التي تعتبر جرائم حق عام تُلاحق تلقائياً؟ (اختر إجابتين صحيحتين)",
+      ru: "Какие преступления являются типичными преступлениями публичного обвинения? (Выберите два правильных ответа)",
+      en: "Which offenses are typical ex officio offenses?"
     },
     loesung: {
       fa: "جرایم عمومی (مانند سرقت مقرون به آزار، قتل، ایجاد حریق عمدی، سرقت) بدون نیاز به شکایت شاکی خصوصی توسط دادستانی پیگیری می‌شوند.",
       ar: "جرائم الحق العام (مثل السطو والقتل والحرق العمد والسرقة) تُلاحق من قبل الادعاء العام تلقائياً دون الحاجة لشكوى جنائية من المتضرر.",
       ru: "Преступления публичного обвинения (разбой, убийство, поджог, кража) расследуются прокуратурой по долгу службы без необходимости заявления потерпевшего.",
-      en: "Ex officio offenses (such as robbery, homicide, arson, theft) are prosecuted by the public prosecutor's office on its own initiative without requiring a complaint."
+      en: "Ex officio offenses are prosecuted by the public prosecutor's office on its own initiative without requiring a complaint."
     },
     optionen: {
       "0": {
-        fa: "الف) سرقت مقرون به خشونت (Raub) طبق ماده ۲۴۹ قانون مجازات.",
-        ar: "أ) السطو بالإكراه (Raub) بموجب المادة § 249 StGB.",
+        fa: "الف) سرقت مقرون به خشونت طبق ماده ۲۴۹ قانون مجازات.",
+        ar: "أ) السطو بالإكراه بموجب المادة § 249 StGB.",
         ru: "A) Разбой/грабеж по § 249 StGB.",
         en: "A) Robbery under § 249 StGB."
       },
       "1": {
-        fa: "ب) ایجاد حریق عمدی (Brandstiftung) طبق ماده ۳۰۶ قانون مجازات.",
-        ar: "ب) الحرق العمدي (Brandstiftung) بموجب المادة § 306 StGB.",
+        fa: "ب) ایجاد حریق عمدی طبق ماده ۳۰۶ قانون مجازات.",
+        ar: "ب) الحرق العمدي بموجب المادة § 306 StGB.",
         ru: "B) Поджог по § 306 StGB.",
         en: "B) Arson under § 306 StGB."
       },
@@ -89,8 +89,8 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
         en: "C) Simple insult under § 185 StGB."
       },
       "3": {
-        fa: "د) ورود غیرقانونی به ملک (Hausfriedensbruch) طبق ماده ۱۲۳ قانون مجازات.",
-        ar: "د) انتهاك حرمة المكان (Hausfriedensbruch) بموجب المادة § 123 StGB.",
+        fa: "د) ورود غیرقانونی به ملک طبق ماده ۱۲۳ قانون مجازات.",
+        ar: "د) انتهاك حرمة المكان بموجب المادة § 123 StGB.",
         ru: "D) Нарушение неприкосновенности жилища по § 123 StGB.",
         en: "D) Trespass under § 123 StGB."
       }
@@ -103,11 +103,11 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
       fa: "ماده ۳۲۳c قانون مجازات (خودداری از کمک‌رسانی / Unterlassene Hilfeleistung) چه چیزی را تعیین می‌کند؟",
       ar: "ما الذي تنص عليه المادة § 323c StGB (الامتناع عن تقديم المساعدة / Unterlassene Hilfeleistung)؟",
       ru: "Что регулирует § 323c StGB (Неоказание помощи)?",
-      en: "What is governed by § 323c StGB (Failure to render assistance / Unterlassene Hilfeleistung)?"
+      en: "What is governed by § 323c StGB?"
     },
     loesung: {
       fa: "ماده ۳۲۳c قانون مجازات همگان را موظف به کمک‌رسانی معقول در حوادث می‌کند. پرسنل حفاظتی به دلیل موقعیت ضامن خود وظایف سنگین‌تری نیز دارند.",
-      ar: "المادة § 323c StGB تلزم الجميع بتقديم المساعدة المعقولة في الحوادث. وموظفو الأمن لديهم واجبات مضاعفة بسبب موقع الضامن (Garantenstellung).",
+      ar: "المادة § 323c StGB تلزم الجميع بتقديم المساعدة المعقولة في الحوادث. وموظفو الأمن لديهم واجبات مضاعفة بسبب موقع الضامن.",
       ru: "§ 323c StGB обязывает каждого оказывать посильную помощь при несчастных случаях. У сотрудников охраны из-за их статуса гаранта обязанности еще выше.",
       en: "§ 323c StGB obligates everyone to render reasonable assistance in emergencies. Security personnel often have enhanced duties due to their guarantor status."
     },
@@ -142,16 +142,16 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 44: ihk-stgb-18
   "ihk-stgb-18": {
     frage: {
-      fa: "عناصر تشکیل‌دهنده جرم اجبار / اکراه (Nötigung) طبق ماده ۲۴۰ قانون مجازات چیست؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما الذي يميز جريمة الإكراه / الإجبار (Nötigung) بموجب المادة § 240 StGB؟ (اختر إجابتين صحيحتين)",
-      ru: "Что характеризует состав принуждения (Nötigung) по § 240 StGB? (Выберите два правильных ответа)",
-      en: "What characterizes the offense of coercion (Nötigung) under § 240 StGB? (Choose two correct answers)"
+      fa: "عناصر تشکیل‌دهنده جرم اجبار / اکراه طبق ماده ۲۴۰ قانون مجازات چیست؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما الذي يميز جريمة الإكراه / الإجبار بموجب المادة § 240 StGB؟ (اختر إجابتين صحيحتين)",
+      ru: "Что характеризует состав принуждения по § 240 StGB? (Выберите два правильных ответа)",
+      en: "What characterizes the offense of coercion under § 240 StGB?"
     },
     loesung: {
-      fa: "اجبار و اکراه (§ 240 StGB) مجازات تحمیل غیرقانونی اراده بر فرد دیگر با استفاده از خشونت یا تهدید به آسیبی محسوس و جدی است.",
-      ar: "جريمة الإكراه (§ 240 StGB) تعاقب على إخضاع إرادة شخص آخر بشكل غير قانوني باستخدام القوة أو التهديد بضرر جسيم.",
-      ru: "Принуждение (§ 240 StGB) наказывает за противоправное навязывание воли другому человеку с применением силы или угрозы существенным злом.",
-      en: "Coercion (§ 240 StGB) penalizes unlawfully forcing another person's will through violence or threat of significant harm."
+      fa: "اجبار و اکراه مجازات تحمیل غیرقانونی اراده بر فرد دیگر با استفاده از خشونت یا تهدید به آسیبی محسوس و جدی است.",
+      ar: "جريمة الإكراه تعاقب على إخضاع إرادة شخص آخر بشكل غير قانوني باستخدام القوة أو التهديد بضرر جسيم.",
+      ru: "Принуждение наказывает за противоправное навязывание воли другому человеку с применением силы или угрозы существенным злом.",
+      en: "Coercion penalizes unlawfully forcing another person's will through violence or threat of significant harm."
     },
     optionen: {
       "0": {
@@ -161,8 +161,8 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
         en: "A) Whoever unlawfully compels a person by force or threat of substantial harm to commit, tolerate, or omit an act."
       },
       "1": {
-        fa: "ب) استفاده از خشونت یا تهدید باید از نظر اخلاقی و قانونی مذموم و نکوهیده (verwerflich) تلقی شود.",
-        ar: "ب) يجب اعتبار استخدام القوة أو التهديد تصرفاً مذموماً وغير مقبول قانونياً وأخلاقياً (verwerflich).",
+        fa: "ب) استفاده از خشونت یا تهدید باید از نظر اخلاقی و قانونی مذموم و نکوهیده تلقی شود.",
+        ar: "ب) يجب اعتبار استخدام القوة أو التهديد تصرفاً مذموماً وغير مقبول قانونياً وأخلاقياً.",
         ru: "B) Применение силы или угрозы должно признаваться предосудительным и противоправным.",
         en: "B) The use of force or threat must be considered reprehensible/unlawful in relation to the intended goal."
       },
@@ -173,8 +173,8 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
         en: "C) Lawful detention of an offender under § 127 StPO."
       },
       "3": {
-        fa: "د) اعمال حق مالکیت مکان از طریق صدور دستور ممنوعیت ورود (Hausverbot).",
-        ar: "د) ممارسة حق صاحب المكان عبر إصدار قرار منع الدخول (Hausverbot).",
+        fa: "د) اعمال حق مالکیت مکان از طریق صدور دستور ممنوعیت ورود.",
+        ar: "د) ممارسة حق صاحب المكان عبر إصدار قرار منع الدخول.",
         ru: "D) Осуществление прав владельца помещения через выдачу запрета на посещение.",
         en: "D) Exercising domiciliary rights by issuing a ban from premises."
       }
@@ -184,16 +184,16 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 45: ihk-stgb-19
   "ihk-stgb-19": {
     frage: {
-      fa: "چه زمانی در حقوق جزا از «کمک در دفاع مشروع» (Notwehrhilfe) سخن گفته می‌شود؟",
-      ar: "متى يُطلق على التصرف في القانون الجنائي مصطلح 'مساعدة الدفاع الشرعي' (Notwehrhilfe)؟",
-      ru: "Когда в уголовном праве говорят о 'помощи при необходимой обороне' (Notwehrhilfe)?",
-      en: "When is an action considered 'defense of another' (Notwehrhilfe) in criminal law?"
+      fa: "چه زمانی در حقوق جزا از «کمک در دفاع مشروع» سخن گفته می‌شود؟",
+      ar: "متى يُطلق على التصرف في القانون الجنائي مصطلح 'مساعدة الدفاع الشرعي'؟",
+      ru: "Когда в уголовном праве говорят о 'помощи при необходимой обороне'?",
+      en: "When is an action considered 'defense of another' in criminal law?"
     },
     loesung: {
-      fa: "دفاع مشروع به نفع شخص ثالث (§ 32 Abs. 2 Alt. 2 StGB) عبارت است از دفع حمله فعلی و غیرقانونی به منافع و حقوق قانونی فردی دیگر.",
-      ar: "مساعدة الدفاع الشرعي (§ 32 Abs. 2 Alt. 2 StGB) هي دفع اعتداء حال وغير مشروع يقع على حقوق ومصالح شخص آخر.",
+      fa: "دفاع مشروع به نفع شخص ثالث عبارت است از دفع حمله فعلی و غیرقانونی به منافع و حقوق قانونی فردی دیگر.",
+      ar: "مساعدة الدفاع الشرعي هي دفع اعتداء حال وغير مشروع يقع على حقوق ومصالح شخص آخر.",
       ru: "Помощь при необходимой обороне (§ 32 ч. 2 StGB) — это отражение наличного противоправного нападения на охраняемые законом права третьего лица.",
-      en: "Defense of another (§ 32 (2) Alt. 2 StGB) is the defense against a current unlawful attack on the legal rights of a third party."
+      en: "Defense of another (§ 32 Alt. 2 StGB) is the defense against a current unlawful attack on the legal rights of a third party."
     },
     optionen: {
       "0": {
@@ -239,8 +239,8 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
     },
     optionen: {
       "0": {
-        fa: "الف) شناسایی زودهنگام تعارضات و حل بدون خشونت آن‌ها از طریق رفتارهای تنش‌زدا (Deeskalation).",
-        ar: "أ) التعرف المبكر على النزاعات وحلها سلمياً وبلا عنف من خلال سلوكيات خفض التصعيد (Deeskalation).",
+        fa: "الف) شناسایی زودهنگام تعارضات و حل بدون خشونت آن‌ها از طریق رفتارهای تنش‌زدا.",
+        ar: "أ) التعرف المبكر على النزاعات وحلها سلمياً وبلا عنف من خلال سلوكيات خفض التصعيد.",
         ru: "A) Раннее распознавание конфликтов и их ненасильственное разрешение путем деэскалационного поведения.",
         en: "A) Recognizing conflicts early and resolving them non-violently through de-escalating behavior."
       },
@@ -268,16 +268,16 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 47: ihk-menschen-2
   "ihk-menschen-2": {
     frage: {
-      fa: "چه عواملی باعث ایجاد ناکامی، سرخوردگی (Frustration) و پرخاشگری در مراجعین می‌شود؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي العوامل التي تعزز نشوء الإحباط (Frustration) والعدوانية لدى العملاء؟ (اختر إجابتين صحيحتين)",
+      fa: "چه عواملی باعث ایجاد ناکامی، سرخوردگی و پرخاشگری در مراجعین می‌شود؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي العوامل التي تعزز نشوء الإحباط والعدوانية لدى العملاء؟ (اختر إجابتين صحيحتين)",
       ru: "Какие факторы способствуют возникновению фрустрации и агрессии у посетителей? (Выберите два правильных ответа)",
-      en: "Which factors promote the emergence of frustration and aggression among customers? (Choose two correct answers)"
+      en: "Which factors promote the emergence of frustration and aggression among customers?"
     },
     loesung: {
       fa: "فرضیه ناکامی-پرخاشگری: موانع رسیدن به هدف (انتظار، رد شدن، مصرف الکل) سطح ناکامی و پتانسیل پرخاشگری را افزایش می‌دهند.",
       ar: "فرضية الإحباط والعدوان: العوائق في تحقيق الأهداف (الانتظار الطويل، الرفض، الكحول) تزيد من الإحباط واحتمالية السلوك العدواني.",
       ru: "Гипотеза фрустрации-агрессии: препятствия на пути к цели (ожидание, отказ, алкоголь) повышают разочарование и риск агрессии.",
-      en: "Frustration-aggression hypothesis: Obstacles to achieving goals (waiting, rejection, alcohol) increase frustration and aggression potential."
+      en: "Frustration-aggression hypothesis: Obstacles to achieving goals increase frustration and aggression potential."
     },
     optionen: {
       "0": {
@@ -310,10 +310,10 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 48: ihk-menschen-3
   "ihk-menschen-3": {
     frage: {
-      fa: "منظور از «گوش دادن فعال» (Aktives Zuhören) در تنش‌زدایی و حل اختلاف چیست؟",
-      ar: "ما المقصود بـ 'الاستماع الفعّال' (Aktives Zuhören) في مهارات خفض التصعيد؟",
-      ru: "Что понимается под 'активным слушанием' (Aktives Zuhören) при деэскалации?",
-      en: "What is meant by 'Active Listening' (Aktives Zuhören) in de-escalation?"
+      fa: "منظور از «گوش دادن فعال» در تنش‌زدایی و حل اختلاف چیست؟",
+      ar: "ما المقصود بـ 'الاستماع الفعّال' في مهارات خفض التصعيد؟",
+      ru: "Что понимается под 'активным слушанием' при деэскалации?",
+      en: "What is meant by 'Active Listening' in de-escalation?"
     },
     loesung: {
       fa: "گوش دادن فعال هیجانات منفی را تخلیه می‌کند، حس احترام منتقل می‌نماید و سوءتفاهم‌ها را پیش از تشدید تنش برطرف می‌سازد.",
@@ -324,9 +324,9 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
     optionen: {
       "0": {
         fa: "الف) با دقت به سخنان طرف مقابل گوش دادن، حفظ تماس چشمی، قطع نکردن کلام و بازگو کردن خلاصه فهم خود با کلمات خود (بازگویی مفهومی / Paraphrasieren).",
-        ar: "أ) الاستماع بانتباه للطرف الآخر، الحفاظ على التواصل البصري، تركه يكمل حديثه وإعادة صياغة ما فهمته بأسلوبك للتأكيد (Paraphrasieren).",
+        ar: "أ) الاستماع بانتباه للطرف الآخر، الحفاظ على التواصل البصري، تركه يكمل حديثه وإعادة صياغة ما فهمته بأسلوبك للتأكيد.",
         ru: "A) Внимательное выслушивание собеседника, зрительный контакт, непрерывание речи и пересказ сути своими словами (парафразирование).",
-        en: "A) Listening attentively to the conversation partner, maintaining eye contact, letting them finish, and mirroring back what was understood in one's own words (paraphrasing)."
+        en: "A) Listening attentively to the conversation partner, maintaining eye contact, letting them finish, and mirroring back what was understood in one's own words."
       },
       "1": {
         fa: "ب) مرتب کلام طرف مقابل را قطع کردن برای نقل قوانین و دستورالعمل‌های اداری.",
@@ -352,29 +352,29 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 49: ihk-menschen-4
   "ihk-menschen-4": {
     frage: {
-      fa: "طبق نظریه ادوارد تی. هال (Edward T. Hall)، زبان بدن چه حریم‌ها و محدوده‌های فاصله‌ای (Distanzzonen) را تفکیک می‌کند؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي مناطق المسافة الشخصية (Distanzzonen) التي حددها إدوارد تي. هول في لغة الجسد؟ (اختر إجابتين صحيحتين)",
+      fa: "طبق نظریه ادوارد تی. هال، زبان بدن چه حریم‌ها و محدوده‌های فاصله‌ای را تفکیک می‌کند؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي مناطق المسافة الشخصية التي حددها إدوارد تي. هول في لغة الجسد؟ (اختر إجابتين صحيحتين)",
       ru: "Какие дистанционные зоны выделяются в языке тела по Эдварду Т. Холлу? (Выберите два правильных ответа)",
-      en: "Which distance zones are distinguished in body language according to Edward T. Hall? (Choose two correct answers)"
+      en: "Which distance zones are distinguished in body language according to Edward T. Hall?"
     },
     loesung: {
       fa: "رعایت حریم شخصی (بیش از ۱ متر) برای تنش‌زدایی و حفظ ایمنی فردی (زمان واکنش در برابر حملات احتمالی) بسیار حیاتی است.",
       ar: "الحفاظ على مسافة الأمان الشخصية (أكثر من 1 متر) أمر حاسم لخفض التصعيد والحماية الذاتية (زمن رد الفعل عند الهجوم).",
       ru: "Соблюдение личной дистанционной зоны (> 1 м) имеет ключевое значение для деэскалации и личной безопасности (время реакции).",
-      en: "Maintaining the personal distance zone (> 1 m) is crucial for de-escalation and self-protection (reaction time in case of attack)."
+      en: "Maintaining the personal distance zone (> 1 m) is crucial for de-escalation and self-protection."
     },
     optionen: {
       "0": {
         fa: "الف) حریم صمیمی و خصوصی (کمتر از حدود ۵۰ سانتی‌متر)، که در محیط خدمت باید محافظت شود و نباید بدون اجازه وارد آن شد.",
         ar: "أ) المنطقة الحميمية (أقل من 50 سم تقريباً)، والتي يجب حمايتها أثناء الخدمة وعدم اختراقها دون مبرر.",
         ru: "A) Интимная зона (менее 50 см), которую на службе необходимо защищать и не нарушать без оснований.",
-        en: "A) The intimate zone (less than approx. 50 cm), which should be protected on duty and not entered unauthorized."
+        en: "A) The intimate zone, which should be protected on duty and not entered unauthorized."
       },
       "1": {
         fa: "ب) حریم شخصی و اجتماعی (حدود ۱.۲۰ تا ۳.۵۰ متر) برای ارتباط حرفه‌ای و حفظ ایمنی فردی.",
         ar: "ب) المنطقة الشخصية والاجتماعية (من 1.20 م إلى 3.50 م تقريباً) للتواصل المهني والحماية الذاتية.",
         ru: "B) Личная и социальная зоны (примерно от 1,20 до 3,50 м) для профессионального общения и самозащиты.",
-        en: "B) The personal and social distance (approx. 1.20 m to 3.50 m) for professional communication and self-protection."
+        en: "B) The personal and social distance for professional communication and self-protection."
       },
       "2": {
         fa: "ج) حریم کیهانی به فاصله حداقل ۵۰ کیلومتر.",
@@ -394,7 +394,7 @@ export const TRANSLATIONS_PART_9: Record<string, TranslationBlockItem> = {
   // Frage 50: ihk-menschen-5
   "ihk-menschen-5": {
     frage: {
-      fa: "چگونه می‌توان در مواجهه با یک فرد بسیار پرخاشگر، رفتاری تنش‌زدا (Deeskalierend) داشت؟",
+      fa: "چگونه می‌توان در مواجهه با یک فرد بسیار پرخاشگر، رفتاری تنش‌زدا داشت؟",
       ar: "كيف تتصرف بأسلوب يهدئ التوتر ويخفض التصعيد أمام شخص شديد العدوانية؟",
       ru: "Как вести себя деэскалационно по отношению к крайне агрессивному человеку?",
       en: "How do you behave in a de-escalating manner towards a highly aggressive person?"

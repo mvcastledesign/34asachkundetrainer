@@ -26,26 +26,26 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       en: "What duties and rights does a security guard have as a witness or accused in criminal proceedings?"
     },
     loesung: {
-      fa: "به عنوان شاهد: الزام به حضور در دادگاه، ادای شهادت و صداقت. حق امتناع از شهادت برای بستگان درجه یک (§ 52) یا پاسخ به سؤالات اتهام‌ساز (§ 55). به عنوان متهم: حق کامل سکوت و داشتن وکیل مدافع.",
-      ar: "كشاهد: واجب الحضور والإدلاء بالشهادة الصادقة. حق الامتناع عن الشهادة للأقارب (§ 52) أو الأسئلة التي تدين النفس (§ 55). كمتهم: حق الصمت الكامل وحق الاستعانة بمحامٍ.",
-      ru: "Как свидетель: обязанность явиться и говорить правду. Право отказаться от дачи показаний против близких (§ 52) или себя (§ 55). Как обвиняемый: право хранить молчание и привлечь адвоката.",
-      en: "As witness: duty to appear and testify truthfully. Right to refuse testimony regarding relatives (§ 52) or self-incrimination (§ 55). As accused: right to remain silent and retain counsel."
+      fa: "به عنوان شاهد: الزام به حضور در دادگاه، ادای شهادت و صداقت. حق امتناع از شهادت برای بستگان درجه یک یا پاسخ به سؤالات اتهام‌ساز. به عنوان متهم: حق کامل سکوت و داشتن وکیل مدافع.",
+      ar: "كشاهد: واجب الحضور والإدلاء بالشهادة الصادقة. حق الامتناع عن الشهادة للأقارب أو الأسئلة التي تدين النفس. كمتهم: حق الصمت الكامل وحق الاستعانة بمحامٍ.",
+      ru: "Как свидетель: обязанность явиться и говорить правду. Право отказаться от дачи показаний против близких или себя. Как обвиняемый: право хранить молчание и привлечь адвоката.",
+      en: "As witness: duty to appear and testify truthfully. Right to refuse testimony regarding relatives or self-incrimination. As accused: right to remain silent and retain counsel."
     }
   },
 
   // Frage 152 (q-neu-32)
   "q-neu-32": {
     frage: {
-      fa: "انواع مجوزهای سلاح چیست و مقررات مربوط به نگهبانان مسلح تجاری چیست (§ 28 WaffG)؟",
-      ar: "ما هي تراخيص الأسلحة وما القواعد الخاصة بالحراسة المسلحة التجارية (§ 28 WaffG)؟",
-      ru: "Какие разрешения на оружие существуют и что действует для вооруженной охраны (§ 28 WaffG)?",
-      en: "What weapon permits exist, and what applies to commercial armed guards (§ 28 WaffG)?"
+      fa: "انواع مجوزهای سلاح چیست و مقررات مربوط به نگهبانان مسلح تجاری چیست؟",
+      ar: "ما هي تراخيص الأسلحة وما القواعد الخاصة بالحراسة المسلحة التجارية؟",
+      ru: "Какие разрешения на оружие существуют и что действует для вооруженной охраны?",
+      en: "What weapon permits exist, and what applies to commercial armed guards?"
     },
     loesung: {
-      fa: "کارت مالکیت سلاح (WBK) برای خرید و مالکیت، مجوز حمل سلاح (Waffenschein) برای حمل در اماکن عمومی. حمل تجاری مستلزم نیاز قانونی تاییدشده، ثبت نام فردی در مجوز شرکت، سن ۱۸ سال، صلاحیت، تخصص و بیمه است.",
-      ar: "بطاقة حيازة السلاح (WBK) للشراء والتملك، ورخصة حمل السلاح (Waffenschein) لحمله خارج المنشأة. يتطلب الحمل التجاري موافقة أمنية، وتسجيل الاسم في رخصة الشركة، وبلوغ 18 عاماً، والموثوقية، والتأمين.",
-      ru: "Карта владения оружием (WBK) для покупки и владения; разрешение на ношение (Waffenschein) вне помещений. Для охраны: доказанная потребность, внесение имени в лицензию фирмы, благонадежность и страховка.",
-      en: "Gun Ownership Card (WBK) for acquisition/possession, Carry Permit (Waffenschein) for carrying in public. Commercial carrying requires certified need, named entry in company permit, age 18, reliability, and insurance."
+      fa: "کارت مالکیت سلاح برای خرید و مالکیت، مجوز حمل سلاح برای حمل در اماکن عمومی. حمل تجاری مستلزم نیاز قانونی تاییدشده، ثبت نام فردی در مجوز شرکت، سن ۱۸ سال، صلاحیت، تخصص و بیمه است.",
+      ar: "بطاقة حيازة السلاح للشراء والتملك، ورخصة حمل السلاح لحمله خارج المنشأة. يتطلب الحمل التجاري موافقة أمنية، وتسجيل الاسم في رخصة الشركة، وبلوغ 18 عاماً، والموثوقية، والتأمين.",
+      ru: "Карта владения оружием для покупки и владения; разрешение на ношение вне помещений. Для охраны: доказанная потребность, внесение имени в лицензию фирмы, благонадежность и страховка.",
+      en: "Gun Ownership Card for acquisition/possession, Carry Permit for carrying in public. Commercial carrying requires certified need, named entry in company permit, age 18, reliability, and insurance."
     }
   },
 
@@ -75,7 +75,7 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
     },
     loesung: {
       fa: "سلاح‌های خودکار، چاقوی پروانه‌ای، پنجه‌بوکس و ستاره‌های پرتابی ممنوع‌اند. حمل هرگونه سلاح در مراسم و رویدادهای عمومی ممنوع است. اسپری فلفل علیه انسان مشمول ضرب و جرح خطرناک است و فقط در دفاع مشروع مجاز است.",
-      ar: "تُحظر الأسلحة الأوتوماتيكية، ومطواة الفراشة، وقبضة الملاكمة، والنجوم القاذفة. يُحظر حمل الأسلحة في الفعاليات العامة. ورذاذ الفلفل ضد البشر يُعد إيذاءً خطيراً (§ 224 StGB) ولا يبرره إلا الدفاع الشرعي.",
+      ar: "تُحظر الأسلحة الأوتوماتيكية، ومطواة الفراشة، وقبضة الملاكمة، والنجوم القاذفة. يُحظر حمل الأسلحة في الفعاليات العامة. ورذاذ الفلفل ضد البشر يُعد إيذاءً خطيراً ولا يبرره إلا الدفاع الشرعي.",
       ru: "Запрещены автоматы, ножи-бабочки, кастеты, метательные звезды. На массовых мероприятиях ношение оружия запрещено. Применение перцового спрея против людей оправдано только необходимой обороной.",
       en: "Prohibited: automatics, butterfly knives, brass knuckles, throwing stars. Weapons are banned at public events. Pepper spray against humans constitutes dangerous bodily harm unless justified by self-defense."
     }
@@ -108,18 +108,18 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
     loesung: {
       fa: "تنظیم دستورالعمل کتبی برای هر سایت الزامی است. در کار انفرادی خطرناک، سیستم هشدار اضطراری (مانند آلارم بی‌حرکتی) الزامی است. توجیه کامل محیطی قبل از شروع خدمت و تأمین رایگان تجهیزات (چراغ‌قوه، بند عینک).",
       ar: "إلزامية إصدار تعليمات خدمة كتابية لكل منشأة. وعند العمل الفردي في مناطق خطرة يجب توفير مراقبة تقنية (زر طوارئ/حساس حركة). وتوفير معدات السلامة مجاناً (كشافات، حزام تأمين النظارة).",
-      ru: "Письменная инструкция для каждого объекта. При одиночной работе в опасных зонах обязательна система контроля (Deadman). Ознакомление с объектом и бесплатная выдача снаряжения (фонари, фиксаторы очков).",
-      en: "Written service instructions for every site. Mandatory safety monitoring (man-down/lone worker systems) for hazardous lone work. Documented site briefing and free provision of equipment."
+      ru: "Письменная инструкция для каждого объекта. При одиночной работе в опасных зонах обязательна система контроля. Ознакомление с объектом и бесплатная выдача снаряжения (фонари, фиксаторы очков).",
+      en: "Written service instructions for every site. Mandatory safety monitoring for hazardous lone work. Documented site briefing and free provision of equipment."
     }
   },
 
   // Frage 157 (q-neu-37)
   "q-neu-37": {
     frage: {
-      fa: "مقررات و ضوابط به‌کارگیری سگ‌های نگهبان در خدمت حراست چیست (§§ 12-17)؟",
-      ar: "ما هي القواعد المطبقة على استخدام كلاب الحراسة والحماية (§§ 12-17)؟",
-      ru: "Какие правила действуют для службы с собаками (§§ 12-17)?",
-      en: "What rules apply to security service with dogs (§§ 12-17)?"
+      fa: "مقررات و ضوابط به‌کارگیری سگ‌های نگهبان در خدمت حراست چیست؟",
+      ar: "ما هي القواعد المطبقة على استخدام كلاب الحراسة والحماية؟",
+      ru: "Какие правила действуют для службы с собаками?",
+      en: "What rules apply to security service with dogs?"
     },
     loesung: {
       fa: "برای حفاظت فعال تنها سگ‌های دارای مدرک آزمون قبولی معتبر مجازند. مربی سگ باید آموزش‌دیده باشد و آزمون مشترک داده باشد. سگ باید با قلاده مهار شود و رهاسازی فقط در محوطه‌های کاملاً فنس‌کشی‌شده مجاز است.",
@@ -132,32 +132,32 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
   // Frage 158 (q-neu-38)
   "q-neu-38": {
     frage: {
-      fa: "الزامات ایمنی DGUV در مورد سلاح گرم و مهمات در حراست چیست (§§ 18-22)؟",
-      ar: "ما هي اشتراطات الوقاية من الحوادث (UVV) الخاصة بالأسلحة والذخيرة (§§ 18-22)؟",
-      ru: "Какие требования UVV действуют для огнестрельного оружия и боеприпасов (§§ 18-22)?",
-      en: "What UVV requirements apply to firearms and ammunition in security (§§ 18-22)?"
+      fa: "الزامات ایمنی DGUV در مورد سلاح گرم و مهمات در حراست چیست؟",
+      ar: "ما هي اشتراطات الوقاية من الحوادث الخاصة بالأسلحة والذخيرة؟",
+      ru: "Какие требования UVV действуют для огнестрельного оружия и боеприпасов?",
+      en: "What UVV requirements apply to firearms and ammunition in security?"
     },
     loesung: {
       fa: "سلاح باید نیمه‌پر حمل شود (بدون فشنگ در لوله) و ضامن فعال باشد. پر و خالی کردن فقط به سمت تله شنی/گلوله‌گیر ایمن انجام گیرد. نگهداری اسلحه و مهمات باید کاملاً تخلیه‌شده و در دو گاوصندوق مجزا باشد.",
       ar: "حمل السلاح في حالة نصف محشوة (بدون رصاصة في حجرة الإطلاق) مع تفعيل الأمان. التعبئة والتفريغ باتجاه ماسك الرصاص الرملي الآمن. حفظ الأسلحة فارغة تماماً وفي خزائن منفصلة عن الذخيرة.",
       ru: "Оружие носится в полузаряженном состоянии (без патрона в патроннике), предохранитель включен. Заряжание/разряжание только в пулеулавливатель. Хранение разряженным отдельно от патронов.",
-      en: "Carried in semi-loaded state (no round in chamber), safety engaged. Loading/unloading aimed at bullet trap only. Storage completely unloaded, weapons and ammo in separate locked safes."
+      en: "Carried in semi-loaded state, safety engaged. Loading/unloading aimed at bullet trap only. Storage completely unloaded, weapons and ammo in separate locked safes."
     }
   },
 
   // Frage 159 (q-neu-39)
   "q-neu-39": {
     frage: {
-      fa: "مقررات ایمنی حمل پول و اشیای قیمتی (GWT) چیست؟",
-      ar: "ما هي الأحكام والاشتراطات الخاصة بنقل الأموال والمقتنيات الثمينة (GWT)؟",
-      ru: "Какие нормы действуют для инкассации и транспортировки ценностей (GWT)?",
-      en: "What regulations apply to money and valuables transport (GWT)?"
+      fa: "مقررات ایمنی حمل پول و اشیای قیمتی چیست؟",
+      ar: "ما هي الأحكام والاشتراطات الخاصة بنقل الأموال والمقتنيات الثمينة؟",
+      ru: "Какие нормы действуют для инкассации и транспортировки ценностей?",
+      en: "What regulations apply to money and valuables transport?"
     },
     loesung: {
       fa: "سن حداقل ۱۸ سال و آموزش تخصصی. الزام به همراهی حداقل دو مأمور (یکی حامل پول، یکی تأمین‌کننده امنیت). عدم اتصال فیزیکی کیف پول به بدن مأمور برای جلوگیری از گروگان‌گیری، و استفاده از خودروهای زرهی.",
       ar: "العمر 18 عاماً وتدريب متخصص. مرافقة شخصين على الأقل (حامل الحقيبة وحارس الحماية). عدم ربط الحقيبة بجسد الحارس لمنع خطر الاحتجاز، واستخدام سيارات مصفحة مخصصة.",
       ru: "Возраст от 18 лет и специальное обучение. Обязательны минимум два инкассатора (один несет, второй прикрывает). Запрещено крепить сумку к телу (риск заложника); бронеавтомобили.",
-      en: "Min. age 18 and specialized GWT training. Multi-person guarding (at least two couriers). Transport containers must not be tethered to the courier's body; armored vehicles used."
+      en: "Min. age 18 and specialized GWT training. Multi-person guarding. Transport containers must not be tethered to the courier's body; armored vehicles used."
     }
   },
 
@@ -170,10 +170,10 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       en: "What fundamental duties does the employer have according to DGUV Regulation 1?"
     },
     loesung: {
-      fa: "ارزیابی خطرات محیط کار (ریسک = احتمال وقوع × شدت خسارت)، آموزش سالانه کارکنان، جلوگیری از ورود افراد متفرقه، تأمین جعبه کمک‌های اولیه (DIN 13157) و حضور ۱۰٪ امدادگر آموزش‌دیده در پرسنل حراست.",
+      fa: "ارزیابی خطرات محیط کار (ریسک = احتمال وقوع × شدت خسارت)، آموزش سالانه کارکنان، جلوگیری از ورود افراد متفرقه، تأمین جعبه کمک‌های اولیه و حضور ۱۰٪ امدادگر آموزش‌دیده در پرسنل حراست.",
       ar: "تقييم المخاطر (الخطر = احتمالية الحدوث × جسامة الضرر)، تدريب الموظفين سنوياً، حظر دخول غير المصرح لهم، توفير حقيبة الإسعافات وتعيين 10% من حراس الأمن كمسعفين أوليين.",
-      ru: "Оценка рисков (Риск = Вероятность × Тяжесть), ежегодный инструктаж, запрет доступа посторонним, аптечки (DIN 13157) и подготовка 10% сотрудников охраны как парамедиков/санитаров.",
-      en: "Risk assessment (Risk = Probability x Severity), annual instructions, access bans for unauthorized areas, First Aid kit (DIN 13157), and 10% trained first-aiders among security personnel."
+      ru: "Оценка рисков (Риск = Вероятность × Тяжесть), ежегодный инструктаж, запрет доступа посторонним, аптечки и подготовка 10% сотрудников охраны как парамедиков/санитаров.",
+      en: "Risk assessment (Risk = Probability x Severity), annual instructions, access bans for unauthorized areas, First Aid kit, and 10% trained first-aiders among security personnel."
     }
   },
 
@@ -186,7 +186,7 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       en: "What physical and mental processes occur during acute stress?"
     },
     loesung: {
-      fa: "دید تونلی (محدود شدن دید و تمرکز فقط روی خطر)، قفل شدن تفکر منطقی، ترشح آدرنالین و کورتیزول، افزایش شدید ضربان قلب و فشار خون و انقباض عضلات برای واکنش جنگ یا گریز (Fight or Flight).",
+      fa: "دید تونلی (محدود شدن دید و تمرکز فقط روی خطر)، قفل شدن تفکر منطقی، ترشح آدرنالین و کورتیزول، افزایش شدید ضربان قلب و فشار خون و انقباض عضلات برای واکنش جنگ یا گریز.",
       ar: "ضيق مجال الرؤية (رؤية النفق)، تعطل التفكير العقلاني، إفراز هرمونات الأدرينالين والكورتيزول، ارتفاع نبض القلب وضغط الدم، وشد العضلات للاستعداد للقتال أو الهروب.",
       ru: "Туннельное зрение, блокировка рационального мышления, выброс адреналина и кортизола, резкий рост пульса и давления, мышечный спазм в реакции «бей или беги».",
       en: "Cognitive tunnel vision, emotional fear/anger, release of adrenaline/cortisol, increased heart rate and blood pressure, muscle tension in fight-or-flight response."
@@ -221,7 +221,7 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       fa: "گوش دادن فعال، زبان بدن آرام. حریم‌ها: خصوصی (زیر ۰٫۵ متر)، شخصی (۰٫۵ تا ۱٫۲ متر - برای افراد خشمگین خطرناک)، اجتماعی و امنیتی (۱٫۲ تا ۳٫۶ متر - فاصله ایده‌آل حراست)، عمومی (بیش از ۳٫۶ متر).",
       ar: "الاستماع الإيجابي الفعال، لغة الجسد الهادئة. مناطق المسافات: الحميمة (أقل من 0.5 م)، الشخصية (0.5 - 1.2 م - خطر للضرب)، الاجتماعية (1.2 - 3.6 م - المسافة التكتيكية المثالية)، والعامة (أكثر من 3.6 م).",
       ru: "Активное слушание, спокойный язык тела. Зоны: интимная (<0,5 м), личная (0,5–1,2 м), социальная (1,2–3,6 м — оптимальная дистанция безопасности), публичная (>3,6 м).",
-      en: "Active listening, open body language. Zones: intimate (<0.5m), personal (0.5-1.2m), social distance (1.2-3.6m - optimal security margin), public distance (>3.6m)."
+      en: "Active listening, open body language. Zones: intimate (<0.5m), personal, social distance, public distance (>3.6m)."
     }
   },
 
@@ -282,10 +282,10 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       en: "What mechanical security devices exist, and how do they function?"
     },
     loesung: {
-      fa: "هدف ایجاد مانع فیزیکی و تأخیر در نفوذ مجرمان (ایجاد فرصت برای مداخله حراست). شامل فنس و دیوار، گیت‌های چرخان و راه‌بند، قفل‌های ضدسرقت، شیشه‌های چندلایه نشکن (VSG) و گاوصندوق‌های استاندارد.",
-      ar: "الهدف: المنع المادي وتأخير الاقتحام لمنح وقت لتدخل الحراس. وتشمل الأسوار والجدران، البوابات الدوارة، الأقفال الميكانيكية، الزجاج المقاوم للكسر (VSG)، والخزائن المصفحة.",
-      ru: "Цель: физическое препятствие и задержка взлома (выигрыш времени на реагирование). Заборы, турникеты, замки, защитное остекление (триплекс VSG) и сертифицированные сейфы (EN 1143-1).",
-      en: "Purpose: physically prevent or delay unauthorized entry to gain intervention time. Includes fences, turnstiles, locks, laminated safety glass (VSG), and certified safes."
+      fa: "هدف ایجاد مانع فیزیکی و تأخیر در نفوذ مجرمان (ایجاد فرصت برای مداخله حراست). شامل فنس و دیوار، گیت‌های چرخان و راه‌بند، قفل‌های ضدسرقت، شیشه‌های چندلایه نشکن و گاوصندوق‌های استاندارد.",
+      ar: "الهدف: المنع المادي وتأخير الاقتحام لمنح وقت لتدخل الحراس. وتشمل الأسوار والجدران، البوابات الدوارة، الأقفال الميكانيكية، الزجاج المقاوم للكسر، والخزائن المصفحة.",
+      ru: "Цель: физическое препятствие и задержка взлома (выигрыш времени на реагирование). Заборы, турникеты, замки, защитное остекление (триплекс VSG) и сертифицированные сейфы.",
+      en: "Purpose: physically prevent or delay unauthorized entry to gain intervention time. Includes fences, turnstiles, locks, laminated safety glass, and certified safes."
     }
   },
 
@@ -298,10 +298,10 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       en: "How do electronic monitoring systems work together, and what is the intervention chain?"
     },
     loesung: {
-      fa: "سیستم‌های کنترل تردد (ZKS)، دزدگیر (EMA)، اعلام سرقت مسلحانه (ÜMA)، اعلام حریق (BMA) و دوربین (VÜA). زنجیره واکنش: تحریک سنسور -> ارسال به مرکز مانیتورینگ (NSL) -> تایید آلارم -> اقدام حراست، پلیس یا آتش‌نشانی.",
-      ar: "أنظمة التحكم بالدخول (ZKS)، إنذار الاقتحام (EMA)، إنذار السطو (ÜMA)، إنذار الحريق (BMA)، والكاميرات (VÜA). سلسلة الاستجابة: إطلاق الحساس -> إرسال لمركز المراقبة (NSL) -> التحقق -> تدخل الحراس أو الشرطة/الإطفاء.",
-      ru: "СКУД (ZKS), охранная сигнализация (EMA), тревожные кнопки (ÜMA), пожарная сигнализация (BMA), видеонаблюдение. Цепочка: сработка датчика -> передача в пульт NSL -> верификация -> выезд группы или спецслужб.",
-      en: "ZKS (access control), EMA (burglar alarm), ÜMA (hold-up alarm), BMA (fire alarm), CCTV. Intervention chain: sensor trigger -> transmission to central station (NSL) -> verification -> dispatching police/guards."
+      fa: "سیستم‌های کنترل تردد، دزدگیر، اعلام سرقت مسلحانه، اعلام حریق و دوربین. زنجیره واکنش: تحریک سنسور -> ارسال به مرکز مانیتورینگ -> تایید آلارم -> اقدام حراست، پلیس یا آتش‌نشانی.",
+      ar: "أنظمة التحكم بالدخول، إنذار الاقتحام، إنذار السطو، إنذار الحريق، والكاميرات. سلسلة الاستجابة: إطلاق الحساس -> إرسال لمركز المراقبة -> التحقق -> تدخل الحراس أو الشرطة/الإطفاء.",
+      ru: "СКУД, охранная сигнализация, тревожные кнопки, пожарная сигнализация, видеонаблюдение. Цепочка: сработка датчика -> передача в пульт NSL -> верификация -> выезд группы или спецслужб.",
+      en: "ZKS, EMA, ÜMA, BMA, CCTV. Intervention chain: sensor trigger -> transmission to central station -> verification -> dispatching police/guards."
     }
   },
 
@@ -314,10 +314,10 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       en: "What are the pros and cons of analog and digital radio systems in security?"
     },
     loesung: {
-      fa: "آنالوگ: ارزان و ساده، اما کیفیت صدا با فاصله افت می‌کند و شنود آن با اسکنر بسیار آسان است. دیجیتال (TETRA/DMR): امنیت بسیار بالا با رمزگذاری AES-256، کیفیت عالی صدا، دکمه اضطراری SOS و GPS، اما هزینه بالا.",
-      ar: "التناظري: رخيص وبسيط، لكنه يفتقر للسرية وسهل التنصت وتقل جودته مع المسافة. الرقمي (TETRA): مشفر تماماً (AES-256)، جودة صوت نقية، مزود بموقع GPS وزر استغاثة طوارئ، لكن تكلفته أعلى.",
-      ru: "Аналоговая: дешевая, но не защищена от прослушивания и шумит на расстоянии. Цифровая (TETRA/DMR): криптозащита AES-256, чистый звук, GPS-трекинг и кнопка SOS, но дороже.",
-      en: "Analog: cheap, simple, but unencrypted (eavesdropping risk) and range noise. Digital (TETRA/DMR): encrypted (AES-256), crystal voice, GPS tracking, and SOS emergency buttons, but higher cost."
+      fa: "آنالوگ: ارزان و ساده، اما کیفیت صدا با فاصله افت می‌کند و شنود آن با اسکنر بسیار آسان است. دیجیتال: امنیت بسیار بالا با رمزگذاری AES-256، کیفیت عالی صدا، دکمه اضطراری SOS و GPS، اما هزینه بالا.",
+      ar: "التناظري: رخيص وبسيط، لكنه يفتقر للسرية وسهل التنصت وتقل جودته مع المسافة. الرقمي: مشفر تماماً، جودة صوت نقية، مزود بموقع GPS وزر استغاثة طوارئ، لكن تكلفته أعلى.",
+      ru: "Аналоговая: дешевая, но не защищена от прослушивания и шумит на расстоянии. Цифровая: криптозащита AES-256, чистый звук, GPS-трекинг и кнопка SOS, но дороже.",
+      en: "Analog: cheap, simple, but unencrypted and range noise. Digital: encrypted, crystal voice, GPS tracking, and SOS emergency buttons, but higher cost."
     }
   },
 
@@ -333,7 +333,7 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
       fa: "مثلث آتش: ماده سوختنی، اکسیژن و حرارت. کلاس A (جامدات)، B (مایعات)، C (گازها)، D (فلزات - بدون آب!)، F (روغن خوراکی - بدون آب!). اولویت: نجات جان انسان‌ها -> اعلام به ۱۱۲ -> مهار حریق‌های کوچک -> راهنمایی آتش‌نشانی.",
       ar: "مثلث الاشتعال: وقود، أكسجين، وحرارة. الفئات: A (مواد صلبة)، B (سوائل)، C (غازات)، D (معادن - ممنوع الماء!)، F (زيوت الطعام - ممنوع الماء!). أولويات الحارس: إنقاذ الأرواح -> إبلاغ 112 -> مكافحة البدايات -> إرشاد الإطفاء.",
       ru: "Треугольник огня: горючее, кислород, температура. Классы: A (твердые), B (жидкие), C (газы), D (металлы — без воды!), F (жиры — без воды!). Действия: спасение людей -> вызов 112 -> тушение очагов -> встреча пожарных.",
-      en: "Fire triangle: fuel, oxygen, heat. Classes: A (solids), B (liquids), C (gases), D (metals - no water!), F (cooking oils - no water!). Procedure: rescue human life -> alarm 112 -> fight initial fire -> brief fire brigade."
+      en: "Fire triangle: fuel, oxygen, heat. Classes: A, B, C, D (metals - no water!), F (cooking oils - no water!). Procedure: rescue human life -> alarm 112 -> fight initial fire -> brief fire brigade."
     }
   },
 
@@ -344,10 +344,10 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
   // Frage 171 (q-waffen-1)
   "q-waffen-1": {
     frage: {
-      fa: "هدف اصلی قانون سلاح (§ 1 WaffG) در تنظیم مقررات سلاح گرم و مهمات چیست؟",
-      ar: "ما هو الهدف الرئيسي لقانون الأسلحة (§ 1 WaffG) في تنظيم الأسلحة النارية والذخيرة؟",
-      ru: "Какова главная цель Закона об оружии (§ 1 WaffG) при регулировании оружия и боеприпасов?",
-      en: "What is the primary purpose of the Weapons Act (§ 1 WaffG) in regulating firearms and ammunition?"
+      fa: "هدف اصلی قانون سلاح در تنظیم مقررات سلاح گرم و مهمات چیست؟",
+      ar: "ما هو الهدف الرئيسي لقانون الأسلحة في تنظيم الأسلحة النارية والذخيرة؟",
+      ru: "Какова главная цель Закона об оружии при регулировании оружия и боеприпасов?",
+      en: "What is the primary purpose of the Weapons Act in regulating firearms and ammunition?"
     },
     loesung: {
       fa: "حفاظت از امنیت و نظم عمومی از طریق محدودسازی شدید دسترسی به سلاح. هرگونه حمل و استفاده از سلاح اصولاً ممنوع است مگر در مواردی که قانون صراحتاً اجازه داده باشد.",
@@ -360,42 +360,42 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
   // Frage 172 (q-waffen-2)
   "q-waffen-2": {
     frage: {
-      fa: "مأمور حراست چه زمانی از نظر قانون سلاح در حال «حمل» (Führen) سلاح گرم است (§ 1 Abs. 4 WaffG)؟",
-      ar: "متى يُعتبر حارس الأمن «حاملاً» لسلاح ناري بالمعنى القانوني (§ 1 Abs. 4 WaffG)؟",
+      fa: "مأمور حراست چه زمانی از نظر قانون سلاح در حال «حمل» سلاح گرم است؟",
+      ar: "متى يُعتبر حارس الأمن «حاملاً» لسلاح ناري بالمعنى القانوني؟",
       ru: "Когда охранник «носит» оружие в смысле Закона об оружии (§ 1 ч. 4 WaffG)?",
-      en: "When does a security guard 'carry' (führen) a firearm within the meaning of the Weapons Act (§ 1 (4) WaffG)?"
+      en: "When does a security guard 'carry' a firearm within the meaning of the Weapons Act (§ 1 WaffG)?"
     },
     loesung: {
       fa: "زمانی که تسلط فیزیکی و عملی بر سلاح را در خارج از منزل شخصی، دفتر کار شخصی یا ملک محصور خود اعمال کند (مثلاً بستن جلد اسلحه به کمربند در حین خدمت).",
       ar: "عند ممارسة السيطرة الفعلية على السلاح خارج مسكنه الخاص أو مقرات عمله أو ملكيته المحصورة (مثل حمل السلاح في الجراب على الحزام أثناء المناوبة).",
       ru: "Когда он осуществляет фактическую власть над оружием вне своего жилья, рабочих помещений или огороженного владения (например, в кобуре на ремне на службе).",
-      en: "A firearm is carried when exercising actual control outside one's own home, business premises, or fenced property (e.g. in a holster on duty)."
+      en: "A firearm is carried when exercising actual control outside one's own home, business premises, or fenced property."
     }
   },
 
   // Frage 173 (q-waffen-3)
   "q-waffen-3": {
     frage: {
-      fa: "در مأموریت‌های مسلحانه، مالک قانونی کارت مالکیت سلاح (WBK) برای سلاح‌های خدمت کیست (§ 19 WaffG)؟",
-      ar: "في مهام الحراسة المسلحة، من هو الحائز القانوني لبطاقة حيازة السلاح (WBK) الخاصة بسلاح الخدمة (§ 19 WaffG)؟",
-      ru: "Кто является юридическим владельцем карты владения оружием (WBK) для служебного оружия (§ 19 WaffG)?",
-      en: "Who is the legal holder of the Firearms Possession Card (WBK) for service weapons (§ 19 WaffG)?"
+      fa: "در مأموریت‌های مسلحانه، مالک قانونی کارت مالکیت سلاح برای سلاح‌های خدمت کیست؟",
+      ar: "في مهام الحراسة المسلحة، من هو الحائز القانوني لبطاقة حيازة السلاح الخاصة بسلاح الخدمة؟",
+      ru: "Кто является юридическим владельцем карты владения оружием для служебного оружия?",
+      en: "Who is the legal holder of the Firearms Possession Card for service weapons?"
     },
     loesung: {
       fa: "دارنده قانونی کارت، شرکت حراست (کارفرما) است. کارکنان فقط در چارچوب مأموریت خدمتی مشخص و تحت دستور مجاز به استفاده از سلاح هستند.",
       ar: "حائز البطاقة القانوني هو شركة الحراسة (صاحب العمل). ويستخدم الموظفون سلاح الخدمة فقط ضمن نطاق أمر الخدمة المحدد.",
       ru: "Владельцем карты WBK является охранное предприятие (работодатель). Сотрудники используют служебное оружие только в рамках служебного задания.",
-      en: "The holder of the WBK is the security company (employer). Employees use the service weapon solely within their specific duty assignments."
+      en: "The holder of the WBK is the security company. Employees use the service weapon solely within their specific duty assignments."
     }
   },
 
   // Frage 174 (q-waffen-4)
   "q-waffen-4": {
     frage: {
-      fa: "چه اشخاصی معمولاً فاقد صلاحیت یا اطمینان‌پذیری لازم برای داشتن سلاح هستند (§§ 5, 6 WaffG)؟",
-      ar: "من هم الأشخاص الذين يفتقرون عادةً إلى الموثوقية أو الأهلية القانونية للسلاح (§§ 5, 6 WaffG)؟",
-      ru: "Какие лица, как правило, НЕ обладают надежностью или пригодностью для оружия (§§ 5, 6 WaffG)?",
-      en: "Which persons generally do NOT possess the required reliability or suitability under weapons law (§§ 5, 6 WaffG)?"
+      fa: "چه اشخاصی معمولاً فاقد صلاحیت یا اطمینان‌پذیری لازم برای داشتن سلاح هستند؟",
+      ar: "من هم الأشخاص الذين يفتقرون عادةً إلى الموثوقية أو الأهلية القانونية للسلاح؟",
+      ru: "Какие лица, как правило, НЕ обладают надежностью или пригодностью для оружия?",
+      en: "Which persons generally do NOT possess the required reliability or suitability under weapons law?"
     },
     loesung: {
       fa: "کسانی که به جرم عمدی به حداقل ۶۰ نرخ جریمه روزانه یا زندان محکوم شده‌اند، و افراد وابسته به الکل یا مواد مخدر. مصرف الکل در حین خدمت نیز موجب ابطال صلاحیت سلاح می‌شود.",
@@ -424,39 +424,39 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
   // Frage 176 (q-waffen-6)
   "q-waffen-6": {
     frage: {
-      fa: "سلاح‌های خدمت و مهمات پس از پایان شیفت چگونه باید در شرکت نگهداری شوند (§ 36 WaffG)؟",
-      ar: "كيف يجب حفظ أسلحة الخدمة والذخيرة في مقر الشركة بعد انتهاء المناوبة (§ 36 WaffG)؟",
-      ru: "Как должны храниться служебное оружие и патроны после службы (§ 36 WaffG)?",
-      en: "How must service weapons and ammunition be stored at the enterprise after duty (§ 36 WaffG)?"
+      fa: "سلاح‌های خدمت و مهمات پس از پایان شیفت چگونه باید در شرکت نگهداری شوند؟",
+      ar: "كيف يجب حفظ أسلحة الخدمة والذخيرة في مقر الشركة بعد انتهاء المناوبة؟",
+      ru: "Как должны храниться служебное оружие и патроны после службы?",
+      en: "How must service weapons and ammunition be stored at the enterprise after duty?"
     },
     loesung: {
       fa: "در گاوصندوق‌های استاندارد دارای گواهی امنیتی (مانند DIN/EN 1143-1)، کاملاً جدا از مهمات و قفل‌شده در برابر دسترسی افراد غیرمجاز.",
       ar: "في خزائن أسلحة معتمدة ومطابقة للمواصفات القانونية (مثل DIN/EN 1143-1)، منفصلة تماماً عن الذخيرة ومحمية من وصول أي طرف ثالث.",
-      ru: "В сертифицированных сейфах по стандартам (DIN/EN 1143-1), отдельно от боеприпасов и под замком от доступа посторонних лиц.",
-      en: "In certified weapon safes complying with statutory standards (e.g. DIN/EN 1143-1), separated from ammunition and secured against third-party access."
+      ru: "В сертифицированных сейфах по стандартам, отдельно от боеприпасов и под замком от доступа посторонних лиц.",
+      en: "In certified weapon safes complying with statutory standards, separated from ammunition and secured against third-party access."
     }
   },
 
   // Frage 177 (q-waffen-7)
   "q-waffen-7": {
     frage: {
-      fa: "چه شرایطی برای استفاده از سلاح گرم در چارچوب دفاع مشروع (§ 32 StGB) حاکم است؟",
-      ar: "ما هي الشروط الواجبة لاستخدام السلاح الناري في إطار الدفاع الشرعي (§ 32 StGB)؟",
-      ru: "Каковы требования к применению огнестрельного оружия в рамках необходимой обороны (§ 32 StGB)?",
-      en: "What requirements apply to using a firearm in self-defense (§ 32 StGB)?"
+      fa: "چه شرایطی برای استفاده از سلاح گرم در چارچوب دفاع مشروع حاکم است؟",
+      ar: "ما هي الشروط الواجبة لاستخدام السلاح الناري في إطار الدفاع الشرعي؟",
+      ru: "Каковы требования к применению огнестрельного оружия в рамках необходимой обороны?",
+      en: "What requirements apply to using a firearm in self-defense?"
     },
     loesung: {
-      fa: "شلیک با سلاح آخرین راهکار مطلق (Ultima Ratio) است و فقط در برابر حمله جانی فعلی، غیرقانونی و مرگبار در صورتی مجاز است که هیچ اقدام ملایم‌تری برای دفع خطر کافی نباشد.",
+      fa: "شلیک با سلاح آخرین راهکار مطلق است و فقط در برابر حمله جانی فعلی، غیرقانونی و مرگبار در صورتی مجاز است که هیچ اقدام ملایم‌تری برای دفع خطر کافی نباشد.",
       ar: "استخدام السلاح هو الملاذ الأخير المطلق، ويُسمح به فقط لدرء اعتداء حال غير مشروع يهدد الحياة بالخطر، عندما لا تتوفر أي وسيلة أخرى أخف ضرراً.",
-      ru: "Применение оружия — крайняя мера (Ultima Ratio). Допустимо только для отражения наличного противоправного смертельного нападения при отсутствии более мягких средств.",
-      en: "Firearm use is the absolute last resort (Ultima Ratio) permitted solely to avert a current, unlawful, and life-threatening attack when no milder measure suffices."
+      ru: "Применение оружия — крайняя мера. Допустимо только для отражения наличного противоправного смертельного нападения при отсутствии более мягких средств.",
+      en: "Firearm use is the absolute last resort permitted solely to avert a current, unlawful, and life-threatening attack when no milder measure suffices."
     }
   },
 
   // Frage 178 (q-waffen-8)
   "q-waffen-8": {
     frage: {
-      fa: "مجوز کوچک سلاح (Kleiner Waffenschein) برای حمل کدام نوع سلاح‌ها در اماکن عمومی لازم است؟",
+      fa: "مجوز کوچک سلاح برای حمل کدام نوع سلاح‌ها در اماکن عمومی لازم است؟",
       ar: "ما هي أنواع الأسلحة التي تتطلب «رخصة السلاح الصغير» لحملها في الأماكن العامة؟",
       ru: "Для каких видов оружия требуется «Малое разрешение на оружие» для ношения в общественных местах?",
       en: "For which weapon types is the 'Small Firearms License' required for carrying in public?"
@@ -488,16 +488,16 @@ export const TRANSLATIONS_PART_6: Record<string, TranslationBlockItem> = {
   // Frage 180 (q-waffen-10)
   "q-waffen-10": {
     frage: {
-      fa: "سلاح گرم چگونه به طور صحیح حمل و نقل (Transport) می‌شود بدون اینکه «حمل» (Führen) تلقی گردد؟",
+      fa: "سلاح گرم چگونه به طور صحیح حمل و نقل می‌شود بدون اینکه «حمل» تلقی گردد؟",
       ar: "كيف يتم نقل السلاح الناري قانونياً دون أن يُعتبر ذلك «حملاً» بالمعنى المحظور؟",
       ru: "Как правильно транспортировать оружие, чтобы это юридически не считалось «ношением»?",
-      en: "How is a firearm properly transported so that it is legally not considered 'carrying' (führen)?"
+      en: "How is a firearm properly transported so that it is legally not considered 'carrying'?"
     },
     loesung: {
       fa: "سلاح باید کاملاً خالی از فشنگ باشد و درون یک کیف یا جعبه قفل‌شده (دارای قفل) حمل شود، به طوری که با چند حرکت دست به راحتی قابل دسترس و شلیک نباشد.",
       ar: "يجب أن يكون السلاح غير معبأ بالذخيرة وموضوعاً داخل حقيبة أو حافظة مغلقة بقفل، بحيث لا يمكن الوصول إليه واستخدامه بحركات يد سريعة.",
       ru: "Оружие должно быть разряжено и находиться в закрытом на замок чехле или кейсе, чтобы исключить возможность быстрого применения в несколько движений.",
-      en: "The firearm must be unloaded and transported in a locked container (e.g. locked case) so that it is not readily accessible within a few quick hand movements."
+      en: "The firearm must be unloaded and transported in a locked container so that it is not readily accessible within a few quick hand movements."
     }
   }
 };

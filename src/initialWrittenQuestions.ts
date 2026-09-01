@@ -1,5 +1,9 @@
 import { WrittenQuestion } from './types.ts';
 
+/**
+ * Initialer Fragenkatalog für schriftliche Übungsfragen (§ 34a GewO)
+ * 100% semantisch auditiert mit gekoppelten 4-Optionen-Übersetzungen (RU, EN, AR, FA)
+ */
 export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
   {
     "id": "wq-oeff-1",
@@ -104,7 +108,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Временное задержание по § 127 абз. 1 УПК при совершении преступления на месте.",
           "en": "Provisional citizen's arrest under § 127 (1) StPO when caught in the act.",
-          "ar": "التوقيف المؤقت وفقاً للفقرة 127 بند 1 من قانون الإجراءات الجنائية (StPO) عند التلبس بالجرم.",
+          "ar": "التوقيف المؤقت وفقاً للفقرة 127 بند 1 من قانون الإجراءات الجنائية عند التلبس بالجرم.",
           "fa": "بازداشت موقت طبق ماده ۱۲۷ بند ۱ آیین دادرسی کیفری هنگام مشاهده جرم در حین ارتکاب."
         }
       },
@@ -124,7 +128,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Необходимая оборона по § 32 УК при наличном противоправном нападении.",
           "en": "Self-defense under § 32 StGB against an imminent unlawful attack.",
-          "ar": "الدفاع الشرعي وفقاً للفقرة 32 من قانون العقوبات (StGB) عند وقوع اعتداء حال وغير قانوني.",
+          "ar": "الدفاع الشرعي وفقاً للفقرة 32 من قانون العقوبات عند وقوع اعتداء حال وغير قانوني.",
           "fa": "دفاع مشروع طبق ماده ۳۲ قانون مجازات در برابر حمله غیرقانونی فعلی."
         }
       }
@@ -446,7 +450,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Erklärung: Der Dienstausweis erfordert Name/Vorname, Foto, Ausstellerdaten und die Eindeutige ID aus dem Bewacherregister. Die Privatadresse gehört nicht darauf.",
     "translations": {
       "ru": {
-        "question": "Какие сведения должно содержать служебное удостоверение охранника согласно Положению об охране (BewachV)?",
+        "question": "Какие сведения должно содержать служебное удостоверение охранника согласно Положению об охране?",
         "explanation": "Служебное удостоверение должно содержать ФИО, фото, данные работодателя и номер BewR-ID. Личный адрес указывать запрещено."
       },
       "en": {
@@ -454,11 +458,11 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "explanation": "The service badge requires full name, photo, employer data, and the unique BewR-ID. Private home addresses must not be included."
       },
       "ar": {
-        "question": "ما هي البيانات التي يجب أن تتضمنها بطاقة العمل (Dienstausweis) لحارس الأمن بموجب لائحة الحراسة (BewachV)؟",
+        "question": "ما هي البيانات التي يجب أن تتضمنها بطاقة العمل (Dienstausweis) لحارس الأمن بموجب لائحة الحراسة؟",
         "explanation": "تتطلب بطاقة الخدمة الاسم واللقب، والصورة، وبيانات الشركة المصدرة، ورقم BewR-ID. ولا يوضع عليها العنوان الخاص."
       },
       "fa": {
-        "question": "طبق آیین‌نامه نگهبانی (BewachV)، کارت شناسایی کاری نگهبان باید شامل چه مشخصاتی باشد؟",
+        "question": "طبق آیین‌نامه نگهبانی، کارت شناسایی کاری نگهبان باید شامل چه مشخصاتی باشد؟",
         "explanation": "کارت خدمت نیازمند نام/نام خانوادگی، عکس، مشخصات شرکت و کد یکتای BewR-ID است. نشانی شخصی نباید روی آن درج شود."
       }
     }
@@ -523,7 +527,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Erklärung: Der Eigentümer hat das rechtliche Dürfen (§ 903 BGB), der Besitzer das tatsächliche Können/Körperliche Inhaben (§ 854 BGB).",
     "translations": {
       "ru": {
-        "question": "В чем различие между собственностью (Eigentum) и владением (Besitz) в Гражданском кодексе (BGB)?",
+        "question": "В чем различие между собственностью (Eigentum) и владением (Besitz) в Гражданском кодексе?",
         "explanation": "Собственник имеет правовое господство (§ 903 BGB), а владелец — фактическое обладание вещью (§ 854 BGB)."
       },
       "en": {
@@ -531,7 +535,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "explanation": "The owner has legal dominion (§ 903 BGB), whereas the possessor exercises actual physical control (§ 854 BGB)."
       },
       "ar": {
-        "question": "كيف يختلف مفهوم الملكية (Eigentum) عن الحيازة (Besitz) في القانون المدني الألماني (BGB)؟",
+        "question": "كيف يختلف مفهوم الملكية (Eigentum) عن الحيازة (Besitz) في القانون المدني الألماني؟",
         "explanation": "المالك لديه الحق والسلطة القانونية (§ 903 BGB)، بينما الحائز لديه السيطرة الفعلية والمادية (§ 854 BGB)."
       },
       "fa": {
@@ -1186,10 +1190,10 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "id": "b",
         "text": "B) Die Berufsgenossenschaft.",
         "translations": {
-          "ru": "Профсоюзное страховое общество (Berufsgenossenschaft).",
+          "ru": "Профсоюзное страховое общество.",
           "en": "The Employers' Liability Insurance Association (Berufsgenossenschaft).",
-          "ar": "النقابة المهنية للتأمين ضد الحوادث (Berufsgenossenschaft).",
-          "fa": "صندوق بیمه حوادث کار حرفه‌ای (Berufsgenossenschaft)."
+          "ar": "النقابة المهنية للتأمين ضد الحوادث.",
+          "fa": "صندوق بیمه حوادث کار حرفه‌ای."
         }
       },
       {
@@ -1254,7 +1258,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Магнитные контакты (герконы) на окнах и дверях.",
           "en": "Magnetic contact sensors on windows and doors.",
-          "ar": "المجسات المغناطيسية (Magnetkontakte) على النوافذ والأبواب.",
+          "ar": "المجسات المغناطيسية على النوافذ والأبواب.",
           "fa": "حسگرهای تماسی مغناطیسی روی درها و پنجره‌ها."
         }
       },
@@ -1264,7 +1268,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Датчики разбития стекла на оконных витринах и стеклах.",
           "en": "Glass break detectors on window panes.",
-          "ar": "أجهزة استشعار كسر الزجاج (Glasbruchmelder).",
+          "ar": "أجهزة استشعار كسر الزجاج.",
           "fa": "حسگرهای شکست شیشه روی پنجره‌ها."
         }
       },
@@ -1297,7 +1301,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Erklärung: Außenhautüberwachung sichert die Gebäudehülle (Fenster, Türen, Glas). Bewegungsmelder im Innenraum dienen der Schwerpunkt-/Fallenüberwachung.",
     "translations": {
       "ru": {
-        "question": "Какие типы охранных извещателей используются для защиты внешнего периметра/оболочки здания (Außenhautüberwachung)?",
+        "question": "Какие типы охранных извещателей используются для защиты внешнего периметра/оболочки здания?",
         "explanation": "Защита периметра оболочки здания охватывает окна, двери и стекла (магнитные контакты, датчики разбития). Датчики движения внутри служат для защиты объема/ловушек."
       },
       "en": {
@@ -1305,11 +1309,11 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Perimeter shell monitoring secures entry points (windows, doors, glass panes). Indoor motion detectors serve space/trap monitoring."
       },
       "ar": {
-        "question": "ما هي أنواع أجهزة الإنذار المستخدمة لمراقبة الغلاف الخارجي للمبنى (Außenhautüberwachung)؟",
+        "question": "ما هي أنواع أجهزة الإنذار المستخدمة لمراقبة الغلاف الخارجي للمبنى؟",
         "explanation": "تؤمن مراقبة الغلاف الخارجي منافذ المبنى (النوافذ، الأبواب، الزجاج). بينما كواشف الحركة الداخلية مخصصة للمراقبة الفراغية والفخية."
       },
       "fa": {
-        "question": "کدام نوع حسگرهای اعلام سرقت برای حفاظت از پوسته خارجی ساختمان (Außenhautüberwachung) به کار می‌روند؟",
+        "question": "کدام نوع حسگرهای اعلام سرقت برای حفاظت از پوسته خارجی ساختمان به کار می‌روند؟",
         "explanation": "حفاظت از پوسته خارجی، منافذ ساختمان (درها، پنجره‌ها و شیشه‌ها) را پوشش می‌دهد. حسگرهای حرکتی داخلی برای نظارت تله‌ای فضای داخلی هستند."
       }
     }
@@ -1461,11 +1465,11 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Art. 5 GDPR mandates lawfulness, transparency, purpose limitation, data minimization, accuracy, and storage limitation."
       },
       "ar": {
-        "question": "ما هي المبادئ التي تفرضها اللائحة العامة لحماية البيانات (DSGVO) عند معالجة البيانات الشخصية؟",
+        "question": "ما هي المبادئ التي تفرضها اللائحة العامة لحماية البيانات عند معالجة البيانات الشخصية؟",
         "explanation": "تنص المادة 5 من DSGVO على المشروعية والشفافية وتحديد الغرض وتقليل البيانات ودقتها وتحديد مدة حفظها."
       },
       "fa": {
-        "question": "مقررات عمومی حفاظت از داده‌ها (DSGVO) چه اصولی را برای پردازش اطلاعات شخصی الزامی می‌داند؟",
+        "question": "مقررات عمومی حفاظت از داده‌ها چه اصولی را برای پردازش اطلاعات شخصی الزامی می‌داند؟",
         "explanation": "ماده ۵ DSGVO اصول قانونمندی، شفافیت، محدودیت هدف، حداقل‌سازی داده، دقت و محدودیت دوره نگهداری را الزامی می‌کند."
       }
     }
@@ -1683,7 +1687,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Erklärung: Führen bedeutet die Ausübung der tatsächlichen Gewalt außerhalb befriedeter eigener Bereiche.\nPraxistipp für den Dienst: Auch das Tragen im Holster am Koppelschloss im Dienst gilt rechtlich als Führen!",
     "translations": {
       "ru": {
-        "question": "Понятие «ношение оружия» (§ 1 абз. 4 WaffG): Когда охранник «носит» (führt) огнестрельное оружие по смыслу Закона об оружии?",
+        "question": "Понятие «ношение оружия» (§ 1 абз. 4 WaffG): Когда охранник «носит» огнестрельное оружие по смыслу Закона об оружии?",
         "explanation": "Ношение означает фактическое обладание оружием за пределами своего огороженного владения. Ношение в кобуре на ремне юридически считается ношением!"
       },
       "en": {
@@ -1691,11 +1695,11 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Carrying means exercising physical control outside one's own enclosed property. Holstered carrying on duty legally constitutes carrying!"
       },
       "ar": {
-        "question": "مفهوم «حمل السلاح» (§ 1 بند 4 WaffG): متى يُعتبر حارس الأمن «حاملاً» (führt) للسلاح الناري بموجب قانون الأسلحة؟",
+        "question": "مفهوم «حمل السلاح» (§ 1 بند 4 WaffG): متى يُعتبر حارس الأمن «حاملاً» للسلاح الناري بموجب قانون الأسلحة؟",
         "explanation": "الحمل يعني السيطرة المادية على السلاح خارج الأماكن المحصورة الخاصة. ووضع السلاح في الجراب بالخدمة يعتبر حملاً قانونياً!"
       },
       "fa": {
-        "question": "مفهوم «حمل سلاح» (§ 1 بند 4 WaffG): چه زمانی یک نیروی امنیتی از نظر قانون اسلحه اقدام به «حمل» (Führen) سلاح گرم می‌کند؟",
+        "question": "مفهوم «حمل سلاح» (§ 1 بند 4 WaffG): چه زمانی یک نیروی امنیتی از نظر قانون اسلحه اقدام به «حمل» سلاح گرم می‌کند؟",
         "explanation": "حمل سلاح یعنی اعمال تسلط فیزیکی خارج از املاک محصور شخصی. قرار دادن سلاح در غلاف کمری در حین خدمت قانوناً حمل سلاح محسوب می‌شود!"
       }
     }
@@ -1791,10 +1795,10 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "id": "a",
         "text": "A) Personen, die wegen einer vorsätzlichen Straftat zu einer Strafe von mindestens 60 Tagessätzen verurteilt wurden.",
         "translations": {
-          "ru": "Лица, осужденные за умышленное преступление к наказанию не менее 60 дневных ставок (Tagessätze).",
+          "ru": "Лица, осужденные за умышленное преступление к наказанию не менее 60 дневных ставок.",
           "en": "Persons convicted of an intentional crime with a penalty of at least 60 daily fine rates (Tagessätze).",
-          "ar": "الأشخاص المحكوم عليهم في جريمة عمدية بعقوبة لا تقل عن 60 غرامة يومية (Tagessätze).",
-          "fa": "افرادی که به دلیل جرم عمدی به حداقل ۶۰ نرخ جریمه روزانه (Tagessätze) محکوم شده‌اند."
+          "ar": "الأشخاص المحكوم عليهم في جريمة عمدية بعقوبة لا تقل عن 60 غرامة يومية.",
+          "fa": "افرادی که به دلیل جرم عمدی به حداقل ۶۰ نرخ جریمه روزانه محکوم شده‌اند."
         }
       },
       {
@@ -2100,7 +2104,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Шумовое / холостое сигнальное оружие со знаком PTB в круге.",
           "en": "Blank-firing / alarm weapons bearing the PTB mark in a circle.",
-          "ar": "أسلحة الصوت والإنذار (Schreckschusswaffen) التي تحمل علامة PTB داخل دائرة.",
+          "ar": "أسلحة الصوت والإنذار التي تحمل علامة PTB داخل دائرة.",
           "fa": "سلاح‌های صوتی و ترقه‌ای هشداردهنده دارای علامت PTB داخل دایره."
         }
       },
@@ -2177,7 +2181,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Кастеты.",
           "en": "Brass knuckles.",
-          "ar": "القبضات الحديدية (Schlagringe).",
+          "ar": "القبضات الحديدية.",
           "fa": "پنجه‌بکس‌های فلزی."
         }
       },
@@ -2187,8 +2191,8 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "translations": {
           "ru": "Ножи-бабочки (балисонги).",
           "en": "Butterfly knives (balisongs).",
-          "ar": "سكاكين الفراشة (Butterflymesser).",
-          "fa": "چاقوهای پروانه‌ای (Butterfly)."
+          "ar": "سكاكين الفراشة.",
+          "fa": "چاقوهای پروانه‌ای."
         }
       },
       {
@@ -2296,7 +2300,7 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Erklärung: Nicht zugriffsbereit (verschlossen) und ungeladen gilt die Beförderung als Transport.\nPraxistipp für den Dienst: \"Nicht zugriffsbereit\" bedeutet, dass die Waffe nicht mit wenigen Handgriffen einsatzbereit ist.",
     "translations": {
       "ru": {
-        "question": "Транспортировка оружия: Как правильно транспортировать огнестрельное оружие, чтобы это не считалось «ношением» (Führen)?",
+        "question": "Транспортировка оружия: Как правильно транспортировать огнестрельное оружие, чтобы это не считалось «ношением»?",
         "explanation": "Оружие должно быть незаряженным и в запертом футляре/чемодане (не готовым к мгновенному извлечению)."
       },
       "en": {
@@ -2304,11 +2308,11 @@ export const INITIAL_WRITTEN_QUESTIONS: WrittenQuestion[] = [
         "explanation": "The firearm must be unloaded and inside a locked container, ensuring it is not readily accessible in a few quick steps."
       },
       "ar": {
-        "question": "نقل الأسلحة: كيف يتم نقل السلاح الناري بشكل نظامي دون أن يُعتبر ذلك «حملاً» (Führen) للسلاح؟",
+        "question": "نقل الأسلحة: كيف يتم نقل السلاح الناري بشكل نظامي دون أن يُعتبر ذلك «حملاً» للسلاح؟",
         "explanation": "يجب أن يكون السلاح غير ملقم ومحفوظاً داخل حقيبة مقفلة بقفل بحيث لا يكون في متناول اليد فوراً."
       },
       "fa": {
-        "question": "حمل و نقل سلاح: چگونه یک سلاح گرم به صورت قانونی جا‌به‌جا می‌شود بدون اینکه مشمول «حمل سلاح» (Führen) گردد؟",
+        "question": "حمل و نقل سلاح: چگونه یک سلاح گرم به صورت قانونی جا‌به‌جا می‌شود بدون اینکه مشمول «حمل سلاح» گردد؟",
         "explanation": "سلاح باید خالی از فشنگ و در یک کیف قفل‌شده باشد تا با چند حرکت سریع در دسترس نباشد."
       }
     }

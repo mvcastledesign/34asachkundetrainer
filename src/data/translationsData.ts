@@ -533,6 +533,12 @@ export const TRANSLATIONS_BY_ID: Record<string, TranslationEntry> = {
     russisch: "Проверить подлинность и возраст, вежливо вернуть и запросить осмотр сумки.",
     englisch: "Check document validity and age, return politely, and request bag check."
   },
+  "video_club_aura_1_scene_2_opt_wrong": {
+    farsi: "نادیده گرفتن مدرک بدون بازبینی بصری و اجازه ورود سریع به شخص.",
+    arabisch: "تجاهل الوثيقة دون فحص والسماح للشخص بالدخول فوراً.",
+    russisch: "Игнорировать документ без проверки и сразу пропустить человека.",
+    englisch: "Ignore the document without visual check and wave the person through immediately."
+  },
   "video_club_aura_1_scene_3": {
     farsi: "در چارچوب حق مقررات مکانی (§ 903 BGB) بازرسی کیف مدنظر است. نحوه اقدام صحیح چیست؟",
     arabisch: "في إطار حق إدارة المكان (§ 903 BGB) يلزم فحص الحقيبة. كيف تتصرف؟",

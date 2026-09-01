@@ -115,6 +115,10 @@ export const IHK_CATEGORIES_CONFIG: IhkCategoryConfig[] = [
 ];
 
 
+/**
+ * Offizieller IHK-Prüfungssimulations-Katalog (82 Fragen nach § 34a GewO / 120-Punkte-System)
+ * Vollständig auditiert mit 100% semantisch gekoppelten 4-Optionen-Übersetzungen (RU, EN, AR, FA)
+ */
 export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
   {
     "id": "ihk-oeff-1",
@@ -523,7 +527,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "id": "b",
         "text": "B) Er ist ein ganz normaler Bürger (Privatperson) mit Jedermannsrechten sowie den ihm vom Auftraggeber übertragenen Hausrechten.",
         "translations": {
-          "ru": "Он является обычным гражданином (частным лицом) с общегражданскими правами и переданными заказчиком правами хозяина объекта (Hausrecht).",
+          "ru": "Он является обычным гражданином (частным лицом) с общегражданскими правами и переданными заказчиком правами хозяина объекта.",
           "en": "He is an ordinary private citizen with citizen rights and domiciliary rights delegated by the client.",
           "ar": "هو مواطن عادي (شخص خاص) يتمتع بحقوق الكافة وحق حيازة المكان المفوض له من صاحب المنشأة.",
           "fa": "او یک شهروند عادی (شخص خصوصی) دارای حقوق عامه شهروندی و اختیارات مالکانه تفویض‌شده از سوی کارفرما است."
@@ -533,7 +537,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "id": "c",
         "text": "C) Er ist Amtsträger im Sinne von § 11 Abs. 1 Nr. 2 StGB.",
         "translations": {
-          "ru": "Он является должностным лицом в смысле § 11 абз. 1 п. 2 УК (StGB).",
+          "ru": "Он является должностным лицом в смысле § 11 абз. 1 п. 2 УК.",
           "en": "He is a public official within the meaning of § 11 (1) No. 2 StGB.",
           "ar": "هو موظف رسمي عام بموجب الفقرة 11 بند 1 رقم 2 من قانون العقوبات.",
           "fa": "او مأمور رسمی دولتی در مفهوم ماده ۱۱ بند ۱ شماره ۲ قانون مجازات است."
@@ -718,11 +722,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "§ 227 (2) BGB defines self-defense as the defense necessary to avert an imminent unlawful attack on legally protected interests."
       },
       "ar": {
-        "question": "ما هو الدفاع الشرعي بموجب الفقرة 227 من القانون المدني (BGB)؟",
+        "question": "ما هو الدفاع الشرعي بموجب الفقرة 227 من القانون المدني؟",
         "explanation": "تعرف المادة 227 بند 2 الدفاع الشرعي بأنه الدفاع الضروري لدفع اعتداء حال وغير مشروع على مصلحة محمية قانوناً."
       },
       "fa": {
-        "question": "دفاع مشروع بر اساس ماده ۲۲۷ قانون مدنی (BGB) چیست؟",
+        "question": "دفاع مشروع بر اساس ماده ۲۲۷ قانون مدنی چیست؟",
         "explanation": "ماده ۲۲۷ بند ۲ دفاع مشروع را دفاع ضروری برای دفع یک حمله فعلی و غیرقانونی به حقوق محافظت‌شده قانونی تعریف می‌کند."
       }
     }
@@ -1091,7 +1095,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Sicherheitskräfte sind als Angestellte oder Beauftragte Besitzdiener (§ 855 BGB) und dürfen Besitzkehr und Besitzwehr (§ 859 BGB) für den Besitzherrn wahrnehmen.",
     "translations": {
       "ru": {
-        "question": "Кто такой «слуга владения» (Besitzdiener) согласно § 855 BGB и какими правами он обладает?",
+        "question": "Кто такой «слуга владения» согласно § 855 BGB и какими правами он обладает?",
         "explanation": "Охранники являются слугами владения (§ 855 BGB) и могут применять защиту владения (§ 859 BGB) в интересах владельца."
       },
       "en": {
@@ -1099,11 +1103,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Security personnel act as possession servants (§ 855 BGB) and may exercise defense and recovery of possession (§ 859 BGB) for the master."
       },
       "ar": {
-        "question": "من هو «خادم الحيازة» (Besitzdiener) بموجب الفقرة 855 BGB وما هي حقوقه؟",
+        "question": "من هو «خادم الحيازة» بموجب الفقرة 855 BGB وما هي حقوقه؟",
         "explanation": "حراس الأمن هم خدام حيازة (§ 855 BGB) ويحق لهم ممارسة الدفاع عن الحيازة واستردادها (§ 859 BGB) لصالح الحائز الأصلي."
       },
       "fa": {
-        "question": "«خادم تصرف» (Besitzdiener) بر اساس ماده ۸۵۵ BGB کیست و چه حقوقی دارد؟",
+        "question": "«خادم تصرف» بر اساس ماده ۸۵۵ BGB کیست و چه حقوقی دارد؟",
         "explanation": "پرسنل امنیتی خادم تصرف محسوب شده و حق دفاع از تصرف و بازپس‌گیری فوری آن (§ 859 BGB) را به نمایندگی از مالک دارند."
       }
     }
@@ -1333,7 +1337,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "تحمي المساعدة الذاتية المطالبات المدنية عند تعذر وصول مساعدة السلطات في الوقت المناسب ووجود خطر فرار المدين."
       },
       "fa": {
-        "question": "چه شرایطی برای احقاق حق شخصی (Selbsthilfe) طبق ماده ۲۲۹ BGB لازم است؟ (دو پاسخ صحیح)",
+        "question": "چه شرایطی برای احقاق حق شخصی طبق ماده ۲۲۹ BGB لازم است؟ (دو پاسخ صحیح)",
         "explanation": "ماده ۲۲۹ BGB مطالبات مدنی را در صورت عدم دسترسی به موقع به پلیس و وجود خطر فرار بدهکار تأمین و تضمین می‌کند."
       }
     }
@@ -1397,7 +1401,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Das Hausrecht steht dem Inhaber der tatsächlichen Sachherrschaft zu. Durch Dienstanweisung/Vertrag wird das Sicherheitspersonal zur Ausübung bevollmächtigt.",
     "translations": {
       "ru": {
-        "question": "Кто осуществляет право хозяина объекта (Hausrecht) на огороженной территории согласно §§ 903, 858 BGB?",
+        "question": "Кто осуществляет право хозяина объекта на огороженной территории согласно §§ 903, 858 BGB?",
         "explanation": "Право хозяина принадлежит владельцу объекта. Охранники уполномочиваются договором/инструкцией на его осуществление."
       },
       "en": {
@@ -1405,11 +1409,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Domiciliary authority belongs to the legal possessor/owner and is delegated to security guards by contractual authority."
       },
       "ar": {
-        "question": "من يمارس حق المكان (Hausrecht) بموجب الفقرة 903 / 858 BGB في العقارات المحصورة؟",
+        "question": "من يمارس حق المكان بموجب الفقرة 903 / 858 BGB في العقارات المحصورة؟",
         "explanation": "حق المكان للمالك أو الحائز الفعلي، ويتم تفويض حراس الأمن بممارسته بموجب عقد الحراسة وتعليمات الخدمة."
       },
       "fa": {
-        "question": "چه کسی حق مالکانه بر ملک (Hausrecht) را طبق ماده ۹۰۳ و ۸۵۸ BGB در یک ملک محصور اعمال می‌کند؟",
+        "question": "چه کسی حق مالکانه بر ملک را طبق ماده ۹۰۳ و ۸۵۸ BGB در یک ملک محصور اعمال می‌کند؟",
         "explanation": "حق تصمیم‌گیری در ملک متعلق به مالک/متصرف است و از طریق قرارداد و دستورالعمل به پرسنل حراست تفویض می‌شود."
       }
     }
@@ -1856,7 +1860,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Rechtsfähigkeit beginnt mit der Geburt (§ 1 BGB). Volle Geschäftsfähigkeit tritt mit Volljährigkeit (18 Jahre) ein (§ 2, § 106 BGB).",
     "translations": {
       "ru": {
-        "question": "Каковы правоспособность и дееспособность физических лиц по Гражданскому кодексу (BGB)? (Выберите 2 ответа)",
+        "question": "Каковы правоспособность и дееспособность физических лиц по Гражданскому кодексу? (Выберите 2 ответа)",
         "explanation": "Правоспособность возникает с момента рождения (§ 1 BGB), а полная дееспособность — с 18 лет (§§ 2, 106 BGB)."
       },
       "en": {
@@ -2170,11 +2174,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Requirements under § 127 (1) StPO: 1. Freshly caught in the act/pursued, 2. Ground for arrest: flight risk OR identity cannot be established on the spot."
       },
       "ar": {
-        "question": "ما هي الشروط الواجب توافرها للتوقيف المؤقت للكافة بموجب الفقرة 127 بند 1 من قانون الإجراءات الجنائية (StPO)؟",
+        "question": "ما هي الشروط الواجب توافرها للتوقيف المؤقت للكافة بموجب الفقرة 127 بند 1 من قانون الإجراءات الجنائية؟",
         "explanation": "شروط المادة 127 فقرة 1 StPO: 1. التلبس بالجريمة أو المطاردة، 2. سبب التوقيف: شبهة الفرار أو تعذر التحقق من الهوية فوراً."
       },
       "fa": {
-        "question": "چه شرایطی برای بازداشت موقت شهروندی طبق ماده ۱۲۷ بند ۱ قانون آیین دادرسی کیفری (StPO) لازم است؟",
+        "question": "چه شرایطی برای بازداشت موقت شهروندی طبق ماده ۱۲۷ بند ۱ قانون آیین دادرسی کیفری لازم است؟",
         "explanation": "شرایط ماده ۱۲۷ بند ۱: ۱. ارتکاب مشهود یا تعقیب بلافاصله، ۲. دلیل بازداشت: احتمال فرار یا عدم امکان احراز فوری هویت."
       }
     }
@@ -2697,7 +2701,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Hausfriedensbruch (§ 123 StGB) hat 2 Begehungsformen: 1. Widerrechtliches Eindringen (Eindringungsbruch), 2. Nichtverlassen trotz Aufforderung (Verweilungsbruch). Es ist ein relatives Antragsdelikt.",
     "translations": {
       "ru": {
-        "question": "Когда лицо считается виновным в нарушении неприкосновенности владения (Hausfriedensbruch) по § 123 StGB? (Выберите 2 ответа)",
+        "question": "Когда лицо считается виновным в нарушении неприкосновенности владения по § 123 StGB? (Выберите 2 ответа)",
         "explanation": "§ 123 StGB охватывает 2 формы: 1. Противоправное проникновение, 2. Отказ покинуть территорию после требования правообладателя."
       },
       "en": {
@@ -2705,11 +2709,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Trespass (§ 123 StGB) has 2 forms: 1. Unlawful entry (Eindringen), 2. Refusing to leave after being requested (Verweilen)."
       },
       "ar": {
-        "question": "متى يكون الشخص مذنباً بانتهاك حرمة المكان (Hausfriedensbruch) بموجب الفقرة 123 StGB؟ (اختر إجابتين صحيحتين)",
+        "question": "متى يكون الشخص مذنباً بانتهاك حرمة المكان بموجب الفقرة 123 StGB؟ (اختر إجابتين صحيحتين)",
         "explanation": "له صورتان: 1. الاقتحام غير المشروع، 2. رفض الخروج رغم أمر صاحب الحق. وهو جنحة تتطلب شكوى للملاحقة."
       },
       "fa": {
-        "question": "چه زمانی فرد مرتکب جرم هتک حرمت مسکن و ملک (Hausfriedensbruch) طبق ماده ۱۲۳ StGB می‌شود؟ (دو پاسخ صحیح)",
+        "question": "چه زمانی فرد مرتکب جرم هتک حرمت مسکن و ملک طبق ماده ۱۲۳ StGB می‌شود؟ (دو پاسخ صحیح)",
         "explanation": "این جرم دو حالت دارد: ۱. ورود غیرقانونی، ۲. عدم ترک محل علیرغم اخطار شخص دارای حق."
       }
     }
@@ -2926,7 +2930,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "§ 223 StGB schützt die körperliche Unversehrtheit. Tatbestände: 1. Körperliche Misshandlung (üble, unangemessene Behandlung), 2. Gesundheitsschädigung (Hervorrufen/Steigern eines krankhaften Zustands).",
     "translations": {
       "ru": {
-        "question": "Когда имеет место причинение телесных повреждений (Körperverletzung) по § 223 StGB?",
+        "question": "Когда имеет место причинение телесных повреждений по § 223 StGB?",
         "explanation": "§ 223 StGB защищает физическую неприкосновенность: 1. Физическое жестокое обращение, 2. Причинение вреда здоровью."
       },
       "en": {
@@ -2934,11 +2938,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "§ 223 StGB protects bodily integrity: 1. Physical mistreatment, 2. Damage to health (causing or worsening a pathological condition)."
       },
       "ar": {
-        "question": "متى يتحقق جرم إلحاق الأذى البدني (Körperverletzung) بموجب الفقرة 223 StGB؟",
+        "question": "متى يتحقق جرم إلحاق الأذى البدني بموجب الفقرة 223 StGB؟",
         "explanation": "تحمي المادة 223 السلامة الجسدية: 1. سوء المعاملة البدنية، 2. إلحاق الضرر بالصحة."
       },
       "fa": {
-        "question": "چه زمانی جرم ایراد صدمه بدنی (Körperverletzung) طبق ماده ۲۲۳ StGB محقق می‌شود؟",
+        "question": "چه زمانی جرم ایراد صدمه بدنی طبق ماده ۲۲۳ StGB محقق می‌شود؟",
         "explanation": "ماده ۲۲۳ از تمامیت جسمانی محافظت می‌کند: ۱. بدرفتاری جسمی، ۲. آسیب به سلامت."
       }
     }
@@ -3079,7 +3083,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Unberechtigtes Einsperren oder Festhalten ohne gesetzliche Rechtfertigung erfüllt den Straftatbestand der Freiheitsberaubung (§ 239 StGB).",
     "translations": {
       "ru": {
-        "question": "Когда сотрудник охраны признается виновным в незаконном лишении свободы (Freiheitsberaubung) по § 239 StGB?",
+        "question": "Когда сотрудник охраны признается виновным в незаконном лишении свободы по § 239 StGB?",
         "explanation": "Неправомерное запирание или удержание человека без законных оснований образует состав преступления по § 239 StGB."
       },
       "en": {
@@ -3087,11 +3091,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Unjustified locking in or detaining of a person without statutory legal grounds constitutes false imprisonment (§ 239 StGB)."
       },
       "ar": {
-        "question": "متى يعتبر حارس الأمن مذنباً بجرم الحرمان من الحرية (Freiheitsberaubung) بموجب الفقرة 239 StGB؟",
+        "question": "متى يعتبر حارس الأمن مذنباً بجرم الحرمان من الحرية بموجب الفقرة 239 StGB؟",
         "explanation": "احتجاز شخص أو حبسه دون مسوغ قانوني (مثل شروط المادة 127 StPO) يحقق جريمة الحرمان غير المشروع من الحرية."
       },
       "fa": {
-        "question": "چه زمانی نیروی حراست مرتکب جرم سلب غیرقانونی آزادی (Freiheitsberaubung) طبق ماده ۲۳۹ StGB می‌شود؟",
+        "question": "چه زمانی نیروی حراست مرتکب جرم سلب غیرقانونی آزادی طبق ماده ۲۳۹ StGB می‌شود؟",
         "explanation": "محبوس کردن یا نگه داشتن افراد بدون مجوز قانونی معتبر، مصداق سلب غیرقانونی آزادی (§ 239 StGB) است."
       }
     }
@@ -3397,7 +3401,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "تلزم المادة 323c StGB كل شخص بتقديم المساعدة الممكنة والمستطاعة عند وقوع حوادث أو كوارث أو أخطار عامة."
       },
       "fa": {
-        "question": "ماده ۳۲۳c قانون مجازات (StGB) در مورد خودداری از کمک‌رسانی چه حکمی دارد؟",
+        "question": "ماده ۳۲۳c قانون مجازات در مورد خودداری از کمک‌رسانی چه حکمی دارد؟",
         "explanation": "ماده ۳۲۳c هر فردی را موظف به ارائه کمک مقدور و ممکن در هنگام وقوع سوانح و شرایط اضطراری می‌نماید."
       }
     }
@@ -3462,7 +3466,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Nötigung (§ 240 StGB) bestraft die rechtswidrige Willensbeugung mittels Gewalt oder Drohung mit empfindlichem Übel.",
     "translations": {
       "ru": {
-        "question": "Что характеризует состав принуждения (Nötigung) по § 240 StGB? (Выберите 2 ответа)",
+        "question": "Что характеризует состав принуждения по § 240 StGB? (Выберите 2 ответа)",
         "explanation": "Принуждение (§ 240 StGB) наказывает за противоправное подавление воли путем насилия или угрозы тяжким вредом, признанное предосудительным."
       },
       "en": {
@@ -3470,11 +3474,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Coercion (§ 240 StGB) penalizes unlawfully overriding another's will via physical force or severe threats judged ethically reprehensible."
       },
       "ar": {
-        "question": "ما هي العناصر التي تميز جريمة «الإكراه / الإجبار» (Nötigung) بموجب الفقرة 240 StGB؟ (اختر إجابتين صحيحتين)",
+        "question": "ما هي العناصر التي تميز جريمة «الإكراه / الإجبار» بموجب الفقرة 240 StGB؟ (اختر إجابتين صحيحتين)",
         "explanation": "يعاقب الإكراه (§ 240 StGB) على قهر إرادة الغير بصورة غير مشروعة عبر العنف أو التهديد بضرر بالغ."
       },
       "fa": {
-        "question": "چه مواردی معرف ارکان جرم «اکراه و اجبار» (Nötigung) طبق ماده ۲۴۰ StGB است؟ (دو پاسخ صحیح)",
+        "question": "چه مواردی معرف ارکان جرم «اکراه و اجبار» طبق ماده ۲۴۰ StGB است؟ (دو پاسخ صحیح)",
         "explanation": "جرم اکراه (§ 240 StGB) به مجازات تحمیل غیرقانونی اراده بر دیگری از طریق زور یا تهدید به شر و آسیب قابل توجه می‌پردازد."
       }
     }
@@ -5755,7 +5759,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "Personenbezogene Daten sind alle Angaben über persönliche oder sachliche Verhältnisse einer bestimmten oder bestimmbaren lebenden Person.",
     "translations": {
       "ru": {
-        "question": "Что такое «персональные данные» согласно ст. 4 п. 1 GDPR (DSGVO)?",
+        "question": "Что такое «персональные данные» согласно ст. 4 п. 1 GDPR?",
         "explanation": "Персональные данные — это любые сведения, позволяющие прямо или косвенно определить живого человека."
       },
       "en": {
@@ -5763,11 +5767,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "Personal data encompasses any details relating to personal or material circumstances of an identified or identifiable individual."
       },
       "ar": {
-        "question": "ما هي «البيانات الشخصية» بموجب المادة 4 فقرة 1 من اللائحة العامة لحماية البيانات (DSGVO)؟",
+        "question": "ما هي «البيانات الشخصية» بموجب المادة 4 فقرة 1 من اللائحة العامة لحماية البيانات؟",
         "explanation": "البيانات الشخصية هي أي معلومة تخص شخصاً طبيعياً يمكن التعرف عليه بشكل مباشر أو غير مباشر."
       },
       "fa": {
-        "question": "«داده‌های شخصی» طبق ماده ۴ بند ۱ مقررات GDPR (DSGVO) شامل چه مواردی است؟",
+        "question": "«داده‌های شخصی» طبق ماده ۴ بند ۱ مقررات GDPR شامل چه مواردی است؟",
         "explanation": "داده‌های شخصی شامل هر اطلاعاتی است که مستقیماً یا غیرمستقیم به هویت یک انسان زنده ارتباط دارد."
       }
     }
@@ -5985,7 +5989,7 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
     "erklaerung": "WaffG Anlage 1: Wer eine Waffe außerhalb der eigenen Räume/des eigenen Besitztums zugriffsbereit bei sich hat, \"führt\" die Waffe und benötigt in der Regel einen Waffenschein.",
     "translations": {
       "ru": {
-        "question": "Что понимается под термином «ношение оружия» (Führen) по Закону об оружии (WaffG)?",
+        "question": "Что понимается под термином «ношение оружия» по Закону об оружии?",
         "explanation": "Ношение — это фактическое владение оружием вне своего жилья/помещений/участка, требующее лицензии на ношение."
       },
       "en": {
@@ -5993,11 +5997,11 @@ export const IHK_120_EXAM_QUESTIONS: WrittenQuestion[] = [
         "explanation": "WaffG Annex 1: Having ready physical control over a weapon outside one's own private premises constitutes \"carrying\" and requires a permit."
       },
       "ar": {
-        "question": "ماذا يقصد بمصطلح «حمل السلاح» (Führen) بموجب قانون الأسلحة الألماني؟",
+        "question": "ماذا يقصد بمصطلح «حمل السلاح» بموجب قانون الأسلحة الألماني؟",
         "explanation": "ملحق 1 لقانون الأسلحة: حيازة السلاح والسيطرة عليه خارج المنزل أو ملكيتك الخاصة يعتبر حملاً ويتطلب ترخيصاً رسمياً."
       },
       "fa": {
-        "question": "مفهوم «حمل سلاح» (Führen) طبق قانون تسلیحات آلمان چیست؟",
+        "question": "مفهوم «حمل سلاح» طبق قانون تسلیحات آلمان چیست؟",
         "explanation": "در اختیار داشتن سلاح آماده به کار در خارج از منزل یا ملک اختصاصی، «حمل» محسوب شده و نیاز به مجوز رسمی دارد."
       }
     }

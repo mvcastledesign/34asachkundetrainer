@@ -20,8 +20,8 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Szene 1: Erstkontakt & Begrüßung
   "video_scene_1": {
     frage: {
-      fa: "یک مهمان به ورودی کلوب نزدیک می‌شود. طبق ماده 34a قانون تجارت (GewO) چگونه رفتار حرفه‌ای خواهید داشت؟",
-      ar: "يقترب أحد الضيوف من مدخل النادي. كيف تتصرف باحترافية وفقاً للمادة 34a من قانون تنظيم الحرف (GewO)؟",
+      fa: "یک مهمان به ورودی کلوب نزدیک می‌شود. طبق ماده 34a قانون تجارت چگونه رفتار حرفه‌ای خواهید داشت؟",
+      ar: "يقترب أحد الضيوف من مدخل النادي. كيف تتصرف باحترافية وفقاً للمادة 34a من قانون تنظيم الحرف؟",
       ru: "Гость подходит ко входу в клуб. Как профессионально вести себя в соответствии с § 34a GewO?",
       en: "A guest approaches the club entrance. How do you act professionally in accordance with § 34a GewO?"
     },
@@ -104,10 +104,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Szene 3: Taschenkontrolle
   "video_scene_3": {
     frage: {
-      fa: "در چارچوب حق مالکیت و ورود به محل (§ 903 BGB) قرار است کیف بازرسی شود. چگونه عمل می‌کنید؟",
-      ar: "في إطار حق صاحب المكان/المنشأة (§ 903 BGB) يجب إجراء تفتيش للحقائب. كيف تتصرف؟",
-      ru: "В рамках права распоряжения имуществом (§ 903 BGB) необходимо провести проверку сумки. Как вы поступите?",
-      en: "As part of the domiciliary rights (§ 903 BGB), a bag check is to be conducted. How do you proceed?"
+      fa: "در چارچوب حق مالکیت و ورود به محل قرار است کیف بازرسی شود. چگونه عمل می‌کنید؟",
+      ar: "في إطار حق صاحب المكان/المنشأة يجب إجراء تفتيش للحقائب. كيف تتصرف؟",
+      ru: "В рамках права распоряжения имуществом необходимо провести проверку сумки. Как вы поступите?",
+      en: "As part of the domiciliary rights, a bag check is to be conducted. How do you proceed?"
     },
     loesung: {
       fa: "درخواست از مهمان تا شخصاً کیف را باز کرده و محتویات را نشان دهد.",
@@ -198,35 +198,35 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "What rights do private security personnel possess in public spaces?"
     },
     loesung: {
-      fa: "حقوق عمومی همه شهروندان (Jedermannsrechte)",
-      ar: "حقوق عامة الناس (Jedermannsrechte)",
-      ru: "Права каждого гражданина (Jedermannsrechte)",
-      en: "Citizen's rights / Everyone's rights (Jedermannsrechte)"
+      fa: "حقوق عمومی همه شهروندان",
+      ar: "حقوق عامة الناس",
+      ru: "Права каждого гражданина",
+      en: "Citizen's rights / Everyone's rights"
     },
     optionen: {
       "0": {
-        fa: "حقوق عمومی شهروندان (Jedermannsrechte)",
-        ar: "حقوق عامة الناس (Jedermannsrechte)",
-        ru: "Права каждого гражданина (Jedermannsrechte)",
-        en: "Citizen's rights (Jedermannsrechte)"
+        fa: "حقوق عمومی شهروندان",
+        ar: "حقوق عامة الناس",
+        ru: "Права каждого гражданина",
+        en: "Citizen's rights"
       },
       "1": {
-        fa: "حقوق حاکمیتی دولتی (Hoheitsrechte)",
-        ar: "الحقوق السيادية / السلطوية (Hoheitsrechte)",
-        ru: "Суверенные государственные права (Hoheitsrechte)",
-        en: "Sovereign rights (Hoheitsrechte)"
+        fa: "حقوق حاکمیتی دولتی",
+        ar: "الحقوق السيادية / السلطوية",
+        ru: "Суверенные государственные права",
+        en: "Sovereign rights"
       },
       "2": {
-        fa: "اختیارات پلیسی (Polizeibefugnisse)",
-        ar: "صلاحيات الشرطة (Polizeibefugnisse)",
-        ru: "Полномочия полиции (Polizeibefugnisse)",
-        en: "Police powers (Polizeibefugnisse)"
+        fa: "اختیارات پلیسی",
+        ar: "صلاحيات الشرطة",
+        ru: "Полномочия полиции",
+        en: "Police powers"
       },
       "3": {
-        fa: "اختیارات قضایی (Richterliche Gewalt)",
-        ar: "السلطة القضائية (Richterliche Gewalt)",
-        ru: "Судебная власть (Richterliche Gewalt)",
-        en: "Judicial authority (Richterliche Gewalt)"
+        fa: "اختیارات قضایی",
+        ar: "السلطة القضائية",
+        ru: "Судебная власть",
+        en: "Judicial authority"
       }
     }
   },
@@ -234,16 +234,16 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Streak Frage 2
   "streak_2": {
     frage: {
-      fa: "برای کدام فعالیت، آزمون تخصص ماده 34a قانون تجارت (GewO) اجباری است؟",
+      fa: "برای کدام فعالیت، آزمون تخصص ماده 34a قانون تجارت اجباری است؟",
       ar: "لأي نشاط يُعتبر امتحان الكفاءة والخبرة § 34a إلزامياً بشكل قاطع؟",
       ru: "Для какой деятельности сдача экзамена на компетентность § 34a GewO обязательна?",
       en: "For which activity is the § 34a expert knowledge examination mandatory?"
     },
     loesung: {
-      fa: "گشت شهری در پارک (Citystreife)",
-      ar: "دوريات المدينة في الحدائق العامة (Citystreife)",
-      ru: "Городское патрулирование в парке (Citystreife)",
-      en: "City patrol in public parks (Citystreife)"
+      fa: "گشت شهری در پارک",
+      ar: "دوريات المدينة في الحدائق العامة",
+      ru: "Городское патрулирование в парке",
+      en: "City patrol in public parks"
     },
     optionen: {
       "0": {
@@ -282,23 +282,23 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "Which certificate/ID must security personnel always carry while on duty?"
     },
     loesung: {
-      fa: "کارت شناسایی خدمت (Dienstausweis)",
-      ar: "بطاقة الهوية المهنية / بطاقة الخدمة (Dienstausweis)",
-      ru: "Служебное удостоверение (Dienstausweis)",
-      en: "Service ID card (Dienstausweis)"
+      fa: "کارت شناسایی خدمت",
+      ar: "بطاقة الهوية المهنية / بطاقة الخدمة",
+      ru: "Служебное удостоверение",
+      en: "Service ID card"
     },
     optionen: {
       "0": {
-        fa: "کارت شناسایی خدمت (Dienstausweis)",
-        ar: "بطاقة الخدمة (Dienstausweis)",
-        ru: "Служебное удостоверение (Dienstausweis)",
-        en: "Service ID card (Dienstausweis)"
+        fa: "کارت شناسایی خدمت",
+        ar: "بطاقة الخدمة",
+        ru: "Служебное удостоверение",
+        en: "Service ID card"
       },
       "1": {
-        fa: "ثبت جواز کسب (Gewerbeanmeldung)",
-        ar: "تسجيل الترخيص التجاري (Gewerbeanmeldung)",
+        fa: "ثبت جواز کسب",
+        ar: "تسجيل الترخيص التجاري",
         ru: "Регистрация предпринимательской деятельности",
-        en: "Trade/business registration (Gewerbeanmeldung)"
+        en: "Trade/business registration"
       },
       "2": {
         fa: "قرارداد کاری",
@@ -309,8 +309,8 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       "3": {
         fa: "گواهی عدم سوء‌پیشینه",
         ar: "شهادة السجل الجنائي / حسن السيرة",
-        ru: "Справка о несудимости (Führungszeugnis)",
-        en: "Certificate of good conduct (Führungszeugnis)"
+        ru: "Справка о несудимости",
+        en: "Certificate of good conduct"
       }
     }
   },
@@ -366,10 +366,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "What must strictly be present for video surveillance in public spaces?"
     },
     loesung: {
-      fa: "تابلوی اطلاع‌رسانی (Hinweisschild)",
-      ar: "لوحة إرشادية / لافتة تحذيرية (Hinweisschild)",
-      ru: "Информационная табличка / знак (Hinweisschild)",
-      en: "Notice sign / Warning sign (Hinweisschild)"
+      fa: "تابلوی اطلاع‌رسانی",
+      ar: "لوحة إرشادية / لافتة تحذيرية",
+      ru: "Информационная табличка / знак",
+      en: "Notice sign / Warning sign"
     },
     optionen: {
       "0": {
@@ -402,41 +402,41 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Streak Frage 6
   "streak_6": {
     frage: {
-      fa: "چه کسی تسلط و حق قانونی کامل (rechtliche Herrschaft) بر یک شیء را دارد؟",
+      fa: "چه کسی تسلط و حق قانونی کامل بر یک شیء را دارد؟",
       ar: "من يملك السيطرة القانونية والحق القانوني الكامل على الشيء؟",
       ru: "Кто обладает юридическим господством (правом собственности) над вещью?",
       en: "Who has the legal ownership / dominance over a thing?"
     },
     loesung: {
-      fa: "مالک (Der Eigentümer)",
-      ar: "المالك (Der Eigentümer)",
-      ru: "Собственник / Владелец (Der Eigentümer)",
-      en: "The Owner (Der Eigentümer)"
+      fa: "مالک",
+      ar: "المالك",
+      ru: "Собственник / Владелец",
+      en: "The Owner"
     },
     optionen: {
       "0": {
-        fa: "مالک (Eigentümer)",
-        ar: "المالك (Eigentümer)",
-        ru: "Собственник (Eigentümer)",
-        en: "The owner (Eigentümer)"
+        fa: "مالک",
+        ar: "المالك",
+        ru: "Собственник",
+        en: "The owner"
       },
       "1": {
-        fa: "خادم تصرف / کارگزار متصرف (Besitzdiener)",
-        ar: "خادم الحيازة (Besitzdiener)",
-        ru: "Слуга владения (Besitzdiener)",
-        en: "Possession servant (Besitzdiener)"
+        fa: "خادم تصرف / کارگزار متصرف",
+        ar: "خادم الحيازة",
+        ru: "Слуга владения",
+        en: "Possession servant"
       },
       "2": {
-        fa: "امانت‌گیرنده (Entleiher)",
-        ar: "المستعير (Entleiher)",
+        fa: "امانت‌گیرنده",
+        ar: "المستعير",
         ru: "Заемщик / Ссудополучатель",
-        en: "The borrower (Entleiher)"
+        en: "The borrower"
       },
       "3": {
-        fa: "یابنده شیء (Finder)",
+        fa: "یابنده شیء",
         ar: "العاثر على الشيء / الواجد",
-        ru: "Нашедший вещь (Finder)",
-        en: "The finder (Finder)"
+        ru: "Нашедший вещь",
+        en: "The finder"
       }
     }
   },
@@ -450,32 +450,32 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "What is the security officer's legal status at the entrance control?"
     },
     loesung: {
-      fa: "خادم تصرف (Besitzdiener nach § 855 BGB)",
-      ar: "خادم الحيازة (Besitzdiener)",
+      fa: "خادم تصرف",
+      ar: "خادم الحيازة",
       ru: "Слуга владения (Besitzdiener по § 855 BGB)",
-      en: "Possession servant (Besitzdiener under § 855 BGB)"
+      en: "Possession servant"
     },
     optionen: {
       "0": {
-        fa: "خادم تصرف (Besitzdiener)",
-        ar: "خادم الحيازة (Besitzdiener)",
-        ru: "Слуга владения (Besitzdiener)",
-        en: "Possession servant (Besitzdiener)"
+        fa: "خادم تصرف",
+        ar: "خادم الحيازة",
+        ru: "Слуга владения",
+        en: "Possession servant"
       },
       "1": {
-        fa: "مالک (Eigentümer)",
-        ar: "المالك (Eigentümer)",
-        ru: "Собственник (Eigentümer)",
-        en: "Owner (Eigentümer)"
+        fa: "مالک",
+        ar: "المالك",
+        ru: "Собственник",
+        en: "Owner"
       },
       "2": {
-        fa: "مقام رسمی دولتی (Amtsträger)",
+        fa: "مقام رسمی دولتی",
         ar: "موظف رسمي / صاحب منصب عام",
-        ru: "Должностное лицо (Amtsträger)",
-        en: "Public official (Amtsträger)"
+        ru: "Должностное лицо",
+        en: "Public official"
       },
       "3": {
-        fa: "نماینده مراجع دولتی (Behördenvertreter)",
+        fa: "نماینده مراجع دولتی",
         ar: "ممثل السلطات الحكومية",
         ru: "Представитель органа власти",
         en: "Authority representative"
@@ -492,35 +492,35 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "Which right allows the immediate recovery of stolen goods caught in the act?"
     },
     loesung: {
-      fa: "اعاده تصرف (Besitzkehr nach § 859 Abs. 2 BGB)",
-      ar: "استرداد الحيازة بالقوة فوراً (Besitzkehr)",
-      ru: "Возврат владения по горячим следам (Besitzkehr)",
-      en: "Recovery of possession (Besitzkehr under § 859 (2) BGB)"
+      fa: "اعاده تصرف",
+      ar: "استرداد الحيازة بالقوة فوراً",
+      ru: "Возврат владения по горячим следам",
+      en: "Recovery of possession (Besitzkehr under § 859 BGB)"
     },
     optionen: {
       "0": {
-        fa: "اعاده تصرف (Besitzkehr)",
-        ar: "استرداد الحيازة بالقوة (Besitzkehr)",
-        ru: "Возврат владения по горячим следам (Besitzkehr)",
-        en: "Recovery of possession (Besitzkehr)"
+        fa: "اعاده تصرف",
+        ar: "استرداد الحيازة بالقوة",
+        ru: "Возврат владения по горячим следам",
+        en: "Recovery of possession"
       },
       "1": {
-        fa: "دفاع از تصرف (Besitzwehr)",
-        ar: "الدفاع عن الحيازة (Besitzwehr)",
-        ru: "Защита владения (Besitzwehr)",
-        en: "Defense of possession (Besitzwehr)"
+        fa: "دفاع از تصرف",
+        ar: "الدفاع عن الحيازة",
+        ru: "Защита владения",
+        en: "Defense of possession"
       },
       "2": {
-        fa: "حق مالکیت بر مکان (Hausrecht)",
-        ar: "حق صاحب المنشأة (Hausrecht)",
-        ru: "Право распоряжения помещением (Hausrecht)",
-        en: "Domiciliary right (Hausrecht)"
+        fa: "حق مالکیت بر مکان",
+        ar: "حق صاحب المنشأة",
+        ru: "Право распоряжения помещением",
+        en: "Domiciliary right"
       },
       "3": {
-        fa: "وضعیت اضطراری (Notstand)",
-        ar: "حالة الضرورة / الطوارئ (Notstand)",
-        ru: "Крайняя необходимость (Notstand)",
-        en: "State of emergency (Notstand)"
+        fa: "وضعیت اضطراری",
+        ar: "حالة الضرورة / الطوارئ",
+        ru: "Крайняя необходимость",
+        en: "State of emergency"
       }
     }
   },
@@ -528,10 +528,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Streak Frage 9
   "streak_9": {
     frage: {
-      fa: "در برابر چه حملاتی می‌توان دفاع مشروع (Notwehr) انجام داد؟",
-      ar: "ضد أي اعتداءات يجوز ممارسة الدفاع الشرعي عن النفس (Notwehr)؟",
-      ru: "Против каких посягательств разрешена необходимая оборона (Notwehr)?",
-      en: "Against which attacks may self-defense (Notwehr) be exercised?"
+      fa: "در برابر چه حملاتی می‌توان دفاع مشروع انجام داد؟",
+      ar: "ضد أي اعتداءات يجوز ممارسة الدفاع الشرعي عن النفس؟",
+      ru: "Против каких посягательств разрешена необходимая оборона?",
+      en: "Against which attacks may self-defense be exercised?"
     },
     loesung: {
       fa: "حملات فعلی و غیرقانونی (Gegenwärtige & rechtswidrige)",
@@ -570,23 +570,23 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Streak Frage 10
   "streak_10": {
     frage: {
-      fa: "طبق ماده 127 بند 1 قانون آیین دادرسی کیفری (StPO)، چه کسی مجاز به بازداشت موقت است؟",
-      ar: "وفقاً للمادة 127 الفقرة 1 من قانون الإجراءات الجنائية (StPO)، من يحق له التوقيف المؤقت للشخص؟",
-      ru: "Кто имеет право временно задержать лицо по § 127 абз. 1 УПК Германии (StPO)?",
-      en: "Who may provisionally apprehend a person under § 127 (1) StPO?"
+      fa: "طبق ماده 127 بند 1 قانون آیین دادرسی کیفری، چه کسی مجاز به بازداشت موقت است؟",
+      ar: "وفقاً للمادة 127 الفقرة 1 من قانون الإجراءات الجنائية، من يحق له التوقيف المؤقت للشخص؟",
+      ru: "Кто имеет право временно задержать лицо по § 127 абз. 1 УПК Германии?",
+      en: "Who may provisionally apprehend a person under § 127 StPO?"
     },
     loesung: {
-      fa: "هر فرد و شهروندی (Jedermann)",
-      ar: "أي شخص / عامة الناس (Jedermann)",
-      ru: "Каждый гражданин (Jedermann)",
-      en: "Anyone / Every citizen (Jedermann)"
+      fa: "هر فرد و شهروندی",
+      ar: "أي شخص / عامة الناس",
+      ru: "Каждый гражданин",
+      en: "Anyone / Every citizen"
     },
     optionen: {
       "0": {
-        fa: "هر فردی (Jedermann)",
-        ar: "أي شخص (Jedermann)",
-        ru: "Каждый человек (Jedermann)",
-        en: "Anyone (Jedermann)"
+        fa: "هر فردی",
+        ar: "أي شخص",
+        ru: "Каждый человек",
+        en: "Anyone"
       },
       "1": {
         fa: "فقط پلیس",
@@ -612,41 +612,41 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Streak Frage 11
   "streak_11": {
     frage: {
-      fa: "در صورت نقض و نادیده گرفتن ممنوعیت ورود (Hausverbot)، چه جرمی واقع می‌شود؟",
-      ar: "ما هو الجرم القانوني المرتكب عند انتهاك حظر الدخول إلى المكان (Hausverbot)؟",
-      ru: "Какой состав преступления имеет место при нарушении запрета на вход (Hausverbot)?",
-      en: "What offense is committed when a ban from the premises (Hausverbot) is violated?"
+      fa: "در صورت نقض و نادیده گرفتن ممنوعیت ورود، چه جرمی واقع می‌شود؟",
+      ar: "ما هو الجرم القانوني المرتكب عند انتهاك حظر الدخول إلى المكان؟",
+      ru: "Какой состав преступления имеет место при нарушении запрета на вход?",
+      en: "What offense is committed when a ban from the premises is violated?"
     },
     loesung: {
-      fa: "ورود غیرمجاز به حریم خصوصی/ملک (Hausfriedensbruch nach § 123 StGB)",
-      ar: "انتهاك حرمة المكان / التعدي على ملك الغير (Hausfriedensbruch)",
-      ru: "Нарушение неприкосновенности жилища/помещения (§ 123 StGB)",
-      en: "Trespassing / Breach of domestic peace (Hausfriedensbruch under § 123 StGB)"
+      fa: "ورود غیرمجاز به حریم خصوصی/ملک",
+      ar: "انتهاك حرمة المكان / التعدي على ملك الغير",
+      ru: "Нарушение неприкосновенности жилища/помещения",
+      en: "Trespassing / Breach of domestic peace"
     },
     optionen: {
       "0": {
-        fa: "ورود غیرمجاز به ملک (Hausfriedensbruch)",
-        ar: "انتهاك حرمة المكان (Hausfriedensbruch)",
+        fa: "ورود غیرمجاز به ملک",
+        ar: "انتهاك حرمة المكان",
         ru: "Нарушение неприкосновенности владения",
-        en: "Trespassing (Hausfriedensbruch)"
+        en: "Trespassing"
       },
       "1": {
-        fa: "اجبار و تهدید (Nötigung)",
-        ar: "الإكراه / الإجبار (Nötigung)",
-        ru: "Принуждение (Nötigung)",
-        en: "Coercion (Nötigung)"
+        fa: "اجبار و تهدید",
+        ar: "الإكراه / الإجبار",
+        ru: "Принуждение",
+        en: "Coercion"
       },
       "2": {
-        fa: "خیانت در امانت / تصاحب غیرقانونی (Unterschlagung)",
+        fa: "خیانت در امانت / تصاحب غیرقانونی",
         ar: "خيانة الأمانة / الاختلاس",
-        ru: "Присвоение имущества (Unterschlagung)",
-        en: "Embezzlement (Unterschlagung)"
+        ru: "Присвоение имущества",
+        en: "Embezzlement"
       },
       "3": {
-        fa: "سرقت مقرون به آزار و زورگیری (Raub)",
-        ar: "السطو والسرقة بالإكراه (Raub)",
-        ru: "Грабеж / Разбой (Raub)",
-        en: "Robbery (Raub)"
+        fa: "سرقت مقرون به آزار و زورگیری",
+        ar: "السطو والسرقة بالإكراه",
+        ru: "Грабеж / Разбой",
+        en: "Robbery"
       }
     }
   },
@@ -660,10 +660,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "When may the use of firearms in security services occur as self-defense?"
     },
     loesung: {
-      fa: "به عنوان کاملاً آخرین راهکار ممکن (Als absolut letztes Mittel)",
-      ar: "كحل أخير للغاية ومطلق (Als absolut letztes Mittel)",
-      ru: "Как абсолютно крайняя мера (Als absolut letztes Mittel)",
-      en: "As an absolute last resort (Als absolut letztes Mittel)"
+      fa: "به عنوان کاملاً آخرین راهکار ممکن",
+      ar: "كحل أخير للغاية ومطلق",
+      ru: "Как абсолютно крайняя мера",
+      en: "As an absolute last resort"
     },
     optionen: {
       "0": {
@@ -702,10 +702,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "Which license is required to carry pepper spray labeled for animal defense?"
     },
     loesung: {
-      fa: "هیچ مجوز سلاحی لازم نیست (Kein Waffenschein nötig)",
-      ar: "لا يلزم أي ترخيص حمل سلاح (Kein Waffenschein nötig)",
-      ru: "Разрешение на оружие не требуется (Kein Waffenschein nötig)",
-      en: "No firearms license required (Kein Waffenschein nötig)"
+      fa: "هیچ مجوز سلاحی لازم نیست",
+      ar: "لا يلزم أي ترخيص حمل سلاح",
+      ru: "Разрешение на оружие не требуется",
+      en: "No firearms license required"
     },
     optionen: {
       "0": {
@@ -715,22 +715,22 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
         en: "No license required"
       },
       "1": {
-        fa: "مجوز کوچک حمل سلاح (Kleiner Waffenschein)",
-        ar: "ترخيص السلاح الصغير (Kleiner Waffenschein)",
+        fa: "مجوز کوچک حمل سلاح",
+        ar: "ترخيص السلاح الصغير",
         ru: "Малое разрешение на оружие",
-        en: "Small firearms license (Kleiner Waffenschein)"
+        en: "Small firearms license"
       },
       "2": {
-        fa: "مجوز بزرگ حمل سلاح (Großer Waffenschein)",
-        ar: "ترخيص السلاح الكبير (Großer Waffenschein)",
+        fa: "مجوز بزرگ حمل سلاح",
+        ar: "ترخيص السلاح الكبير",
         ru: "Большое разрешение на оружие",
-        en: "Standard firearms license (Großer Waffenschein)"
+        en: "Standard firearms license"
       },
       "3": {
-        fa: "کارت مالکیت سلاح (Waffenbesitzkarte)",
-        ar: "بطاقة ملكية السلاح (WBK)",
-        ru: "Карта владельца оружия (WBK)",
-        en: "Firearms ownership card (WBK)"
+        fa: "کارت مالکیت سلاح",
+        ar: "بطاقة ملكية السلاح",
+        ru: "Карта владельца оружия",
+        en: "Firearms ownership card"
       }
     }
   },
@@ -738,8 +738,8 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
   // Streak Frage 14
   "streak_14": {
     frage: {
-      fa: "کدام مقررات پیشگیری از حوادث (UVV) خدمات نگهبانی و حراست را تنظیم می‌کند؟",
-      ar: "أي لائحة لمنع الحوادث (UVV) تنظم خدمات الحراسة والأمن؟",
+      fa: "کدام مقررات پیشگیری از حوادث خدمات نگهبانی و حراست را تنظیم می‌کند؟",
+      ar: "أي لائحة لمنع الحوادث تنظم خدمات الحراسة والأمن؟",
       ru: "Какое предписание по технике безопасности регулирует службу охраны?",
       en: "Which accident prevention regulation governs guard and security services?"
     },
@@ -747,7 +747,7 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       fa: "مقررات DGUV شماره 23 (قبلاً BGV C7)",
       ar: "لائحة DGUV رقم 23 (سابقاً BGV C7)",
       ru: "Предписание DGUV 23 (ранее BGV C7)",
-      en: "DGUV Regulation 23 (formerly BGV C7)"
+      en: "DGUV Regulation 23"
     },
     optionen: {
       "0": {
@@ -763,16 +763,16 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
         en: "DGUV Regulation 1"
       },
       "2": {
-        fa: "ماده 1 آیین‌نامه راهنمایی و رانندگی (StVO)",
-        ar: "المادة 1 من قانون المرور (StVO)",
-        ru: "§ 1 Правил дорожного движения (StVO)",
-        en: "StVO § 1 (Traffic Regulations)"
+        fa: "ماده 1 آیین‌نامه راهنمایی و رانندگی",
+        ar: "المادة 1 من قانون المرور",
+        ru: "§ 1 Правил дорожного движения",
+        en: "StVO § 1"
       },
       "3": {
-        fa: "ماده 34a قانون تجارت (GewO)",
-        ar: "المادة 34a من قانون الحرف (GewO)",
-        ru: "§ 34a Закона о промысле (GewO)",
-        en: "GewO § 34a (Trade Regulation)"
+        fa: "ماده 34a قانون تجارت",
+        ar: "المادة 34a من قانون الحرف",
+        ru: "§ 34a Закона о промысле",
+        en: "GewO § 34a"
       }
     }
   },
@@ -786,10 +786,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "Which principle always applies in security services when your own life is in danger?"
     },
     loesung: {
-      fa: "حفظ جان و ایمنی شخصی در اولویت است (Eigensicherung geht vor)",
-      ar: "الحماية الذاتية والسلامة الشخصية تأتي أولاً (Eigensicherung geht vor)",
-      ru: "Собственная безопасность превыше всего (Eigensicherung geht vor)",
-      en: "Self-protection takes priority (Eigensicherung geht vor)"
+      fa: "حفظ جان و ایمنی شخصی در اولویت است",
+      ar: "الحماية الذاتية والسلامة الشخصية تأتي أولاً",
+      ru: "Собственная безопасность превыше всего",
+      en: "Self-protection takes priority"
     },
     optionen: {
       "0": {
@@ -828,10 +828,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "What belongs to the passive security technology of a facility?"
     },
     loesung: {
-      fa: "فنس‌ها و نرده‌های فلزی (Zäune und Gitter)",
-      ar: "الأسوار والشبكات الحديدية (Zäune und Gitter)",
-      ru: "Заборы и решетки (Zäune und Gitter)",
-      en: "Fences and barriers / grilles (Zäune und Gitter)"
+      fa: "فنس‌ها و نرده‌های فلزی",
+      ar: "الأسوار والشبكات الحديدية",
+      ru: "Заборы и решетки",
+      en: "Fences and barriers / grilles"
     },
     optionen: {
       "0": {
@@ -873,7 +873,7 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       fa: "کلاس حریق B (مایعات)",
       ar: "فئة الحريق B (السوائل)",
       ru: "Класс пожара B (жидкости)",
-      en: "Fire Class B (liquids)"
+      en: "Fire Class B"
     },
     optionen: {
       "0": {
@@ -957,14 +957,14 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       fa: "فاصله یک دست (حدود ۱٫۵ تا ۲ متر)",
       ar: "مسافة طول الذراع (حوالي 1.5 إلى 2 متر)",
       ru: "Длина вытянутой руки (ок. 1,5–2 м)",
-      en: "Arm's length (approx. 1.5–2 m)"
+      en: "Arm's length"
     },
     optionen: {
       "0": {
         fa: "فاصله یک دست (حدود ۱٫۵ تا ۲ متر)",
         ar: "مسافة طول الذراع (حوالي 1.5 إلى 2 متر)",
         ru: "Длина вытянутой руки (ок. 1,5–2 м)",
-        en: "Arm's length (approx. 1.5–2 m)"
+        en: "Arm's length"
       },
       "1": {
         fa: "۱۰ سانتی‌متر",
@@ -996,10 +996,10 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
       en: "What describes biases and prejudices towards people of other origins?"
     },
     loesung: {
-      fa: "کلیشه‌ها / پیش‌داوری‌ها (Stereotypen / Vorurteile)",
-      ar: "الصور النمطية / الأحكام المسبقة (Stereotypen / Vorurteile)",
-      ru: "Стереотипы / Предрассудки (Stereotypen / Vorurteile)",
-      en: "Stereotypes / Prejudices (Stereotypen / Vorurteile)"
+      fa: "کلیشه‌ها / پیش‌داوری‌ها",
+      ar: "الصور النمطية / الأحكام المسبقة",
+      ru: "Стереотипы / Предрассудки",
+      en: "Stereotypes / Prejudices"
     },
     optionen: {
       "0": {
@@ -1015,15 +1015,15 @@ export const TRANSLATIONS_SPECIAL_A: Record<string, TranslationBlockItem> = {
         en: "Active listening"
       },
       "2": {
-        fa: "مسئولیت ضامن و کفیل قانونی (Garantenpflicht)",
-        ar: "واجب الضامن القانوني (Garantenpflicht)",
-        ru: "Обязанность гаранта (Garantenpflicht)",
-        en: "Guarantor duty (Garantenpflicht)"
+        fa: "مسئولیت ضامن و کفیل قانونی",
+        ar: "واجب الضامن القانوني",
+        ru: "Обязанность гаранта",
+        en: "Guarantor duty"
       },
       "3": {
-        fa: "اصل تناسب و اعتدال (Verhältnismäßigkeit)",
-        ar: "مبدأ التناسب والاعتدال (Verhältnismäßigkeit)",
-        ru: "Принцип соразмерности (Verhältnismäßigkeit)",
+        fa: "اصل تناسب و اعتدال",
+        ar: "مبدأ التناسب والاعتدال",
+        ru: "Принцип соразмерности",
         en: "Principle of proportionality"
       }
     }

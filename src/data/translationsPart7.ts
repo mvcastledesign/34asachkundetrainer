@@ -29,29 +29,29 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 1: Suspicion at exit - EAS alarm triggers, customer continues walking. You block his path. What is the legal assessment?"
     },
     loesung: {
-      fa: "اقدام شما طبق ماده ۱۲۷ بند ۱ آیین دادرسی کیفری (StPO) برای بازداشت موقت به دلیل جرم مشهود و خطر فرار موجه است.",
+      fa: "اقدام شما طبق ماده ۱۲۷ بند ۱ آیین دادرسی کیفری برای بازداشت موقت به دلیل جرم مشهود و خطر فرار موجه است.",
       ar: "تصرفك مبرر بموجب المادة 127 فقرة 1 StPO للتوقيف المؤقت بسبب الشبهة في جرم مشهود وخطر الفرار.",
-      ru: "Ваши действия оправданы согласно § 127 ч. 1 УПК (StPO) для задержания при свежем деянии и опасности побега.",
-      en: "Your action is justified under § 127 (1) StPO (citizen's arrest) due to a fresh offense and flight risk."
+      ru: "Ваши действия оправданы согласно § 127 ч. 1 УПК для задержания при свежем деянии и опасности побега.",
+      en: "Your action is justified under § 127 StPO (citizen's arrest) due to a fresh offense and flight risk."
     },
     optionen: {
       "0": {
-        fa: "اقدام شما غیرقانونی و مصداق اکراه (§ 240 StGB) است.",
-        ar: "تصرفك غير قانوني ويشكل جريمة إكراه (§ 240 StGB).",
-        ru: "Действие незаконно и является принуждением (§ 240 StGB).",
-        en: "Your action is unlawful and constitutes coercion (§ 240 StGB)."
+        fa: "اقدام شما غیرقانونی و مصداق اکراه است.",
+        ar: "تصرفك غير قانوني ويشكل جريمة إكراه.",
+        ru: "Действие незаконно и является принуждением.",
+        en: "Your action is unlawful and constitutes coercion."
       },
       "1": {
         fa: "اقدام شما طبق ماده ۱۲۷ بند ۱ آیین دادرسی کیفری به دلیل جرم مشهود و خطر فرار قانونی است.",
         ar: "تصرفك مبرر بموجب § 127 فقرة 1 StPO لوقوع جرم مشهود وخطر الفرار.",
         ru: "Действие оправдано по § 127 ч. 1 УПК из-за свежего деяния и риска побега.",
-        en: "Your action is justified under § 127 (1) StPO due to a fresh offense and flight risk."
+        en: "Your action is justified under § 127 StPO due to a fresh offense and flight risk."
       },
       "2": {
-        fa: "اقدام شما بر اساس دفاع مشروع (§ 32 StGB) موجه است.",
-        ar: "تصرفك مبرر بموجب الدفاع الشرعي (§ 32 StGB).",
-        ru: "Действие оправдано необходимой обороной (§ 32 StGB).",
-        en: "Your action is justified as self-defense (§ 32 StGB)."
+        fa: "اقدام شما بر اساس دفاع مشروع موجه است.",
+        ar: "تصرفك مبرر بموجب الدفاع الشرعي.",
+        ru: "Действие оправдано необходимой обороной.",
+        en: "Your action is justified as self-defense."
       },
       "3": {
         fa: "اقدام تنها با تفهیم قبلی حق سکوت قانونی است.",
@@ -70,10 +70,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 2: Unleashed dog - A guard dog attacks you, you injure it with spray. What is the legal justification?"
     },
     loesung: {
-      fa: "اضطرار تدافعی طبق ماده ۲۲۸ قانون مدنی (§ 228 BGB)، زیرا خطر از خود شیء غیر (حیوان) ناشی شده است.",
+      fa: "اضطرار تدافعی طبق ماده ۲۲۸ قانون مدنی، زیرا خطر از خود شیء غیر (حیوان) ناشی شده است.",
       ar: "حالة الضرورة الدفاعية بموجب § 228 BGB، لأن الخطر صادر من الشيء نفسه (الحيوان).",
       ru: "Оборонительная крайняя необходимость по § 228 BGB, так как опасность исходит от самого животного.",
-      en: "Defensive necessity under § 228 BGB, because danger arose from the foreign object (animal) itself."
+      en: "Defensive necessity under § 228 BGB, because danger arose from the foreign object itself."
     },
     optionen: {
       "0": {
@@ -89,7 +89,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
         en: "Self-defense under § 227 BGB."
       },
       "2": {
-        fa: "اضطرار تدافعی طبق ماده ۲۲۸ قانون مدنی (§ 228 BGB).",
+        fa: "اضطرار تدافعی طبق ماده ۲۲۸ قانون مدنی.",
         ar: "حالة الضرورة الدفاعية بموجب § 228 BGB.",
         ru: "Оборонительная крайняя необходимость по § 228 BGB.",
         en: "Defensive necessity under § 228 BGB."
@@ -111,17 +111,17 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 3: Defiant club guest - Guest ignores house ban and pushes in. What action is permitted for the bouncer?"
     },
     loesung: {
-      fa: "اخراج مهمان با اعمال نیروی متناسب در چارچوب دفاع از تصرف (§ 859 BGB).",
-      ar: "طرد الزبون بالقوة المتناسبة في إطار الدفاع عن الحيازة (§ 859 BGB).",
-      ru: "Выдворение нарушителя соразмерной силой в рамках защиты владения (§ 859 BGB).",
-      en: "Expelling the guest with proportionate force under defense of possession (§ 859 BGB)."
+      fa: "اخراج مهمان با اعمال نیروی متناسب در چارچوب دفاع از تصرف.",
+      ar: "طرد الزبون بالقوة المتناسبة في إطار الدفاع عن الحيازة.",
+      ru: "Выдворение нарушителя соразмерной силой в рамках защиты владения.",
+      en: "Expelling the guest with proportionate force under defense of possession."
     },
     optionen: {
       "0": {
-        fa: "نگهبان مجاز است با زور متناسب مانع ورود شده و او را از ملک بیرون کند (§ 859 BGB).",
-        ar: "يجوز للحارس استخدام القوة المتناسبة لطرده من العقار (§ 859 BGB).",
-        ru: "Охранник вправе применить соразмерную силу для выдворения (§ 859 BGB).",
-        en: "The bouncer may use proportionate force to expel him from the property (§ 859 BGB)."
+        fa: "نگهبان مجاز است با زور متناسب مانع ورود شده و او را از ملک بیرون کند.",
+        ar: "يجوز للحارس استخدام القوة المتناسبة لطرده من العقار.",
+        ru: "Охранник вправе применить соразмерную силу для выдворения.",
+        en: "The bouncer may use proportionate force to expel him from the property."
       },
       "1": {
         fa: "نگهبان تنها در صورت تخریب اموال حق اقدام فیزیکی دارد.",
@@ -152,23 +152,23 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 4: Refused bag search - Guard forcibly searches bag against visitor's will. What is the evaluation?"
     },
     loesung: {
-      fa: "این عمل غیرقانونی بوده و مصداق اکراه کیفری (§ 240 StGB) است؛ مامور فقط حق ممانعت از ورود داشت.",
-      ar: "التصرف غير قانوني ويشكل إكراهاً (§ 240 StGB)؛ كان يحق له فقط رفض دخوله.",
-      ru: "Действие незаконно и является принуждением (§ 240 StGB); разрешался лишь отказ во входе.",
-      en: "The action was unlawful and constitutes coercion (§ 240 StGB); staff could only deny entry."
+      fa: "این عمل غیرقانونی بوده و مصداق اکراه کیفری است؛ مامور فقط حق ممانعت از ورود داشت.",
+      ar: "التصرف غير قانوني ويشكل إكراهاً؛ كان يحق له فقط رفض دخوله.",
+      ru: "Действие незаконно и является принуждением; разрешался лишь отказ во входе.",
+      en: "The action was unlawful and constitutes coercion; staff could only deny entry."
     },
     optionen: {
       "0": {
-        fa: "رفتار به دلیل شرایط عمومی قرارداد (AGB) قانونی است.",
+        fa: "رفتار به دلیل شرایط عمومی قرارداد قانونی است.",
         ar: "التصرف قانوني استناداً للشروط العامة.",
         ru: "Действие законно на основании правил площадки.",
         en: "The action was lawful based on general terms."
       },
       "1": {
-        fa: "رفتار غیرقانونی و مصداق اکراه کیفری (§ 240 StGB) است.",
-        ar: "التصرف غير قانوني ويعد جريمة إكراه (§ 240 StGB).",
-        ru: "Действие незаконно и образует принуждение (§ 240 StGB).",
-        en: "The action was unlawful and constitutes coercion (§ 240 StGB)."
+        fa: "رفتار غیرقانونی و مصداق اکراه کیفری است.",
+        ar: "التصرف غير قانوني ويعد جريمة إكراه.",
+        ru: "Действие незаконно и образует принуждение.",
+        en: "The action was unlawful and constitutes coercion."
       },
       "2": {
         fa: "رفتار طبق ماده ۱۲۷ آیین دادرسی مجاز است.",
@@ -196,14 +196,14 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "بله، طبق ماده ۱۲۷ بند ۱ آیین دادرسی کیفری، زیرا جرم مشهود بوده و خطر فرار وجود دارد.",
       ar: "نعم، بموجب § 127 فقرة 1 StPO لوجود تلبس بجريمة إتلاف الممتلكات وخطر الفرار.",
       ru: "Да, по § 127 ч. 1 УПК, так как совершено преступление на месте и есть риск побега.",
-      en: "Yes, under § 127 (1) StPO, because a crime was caught in the act with flight risk."
+      en: "Yes, under § 127 StPO, because a crime was caught in the act with flight risk."
     },
     optionen: {
       "0": {
         fa: "بله، طبق § 127 بند ۱ آیین دادرسی کیفری (جرم مشهود و ظن فرار).",
         ar: "نعم، بموجب § 127 فقرة 1 StPO (تلبس وخطر فرار).",
         ru: "Да, по § 127 ч. 1 УПК (свежее деяние и побег).",
-        en: "Yes, under § 127 (1) StPO (caught in the act and flight risk)."
+        en: "Yes, under § 127 StPO."
       },
       "1": {
         fa: "خیر، تخریب اموال فقط تخلف اداری است.",
@@ -234,35 +234,35 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 6: Found wallet - Guard finds wallet with €500 and keeps it for himself. Which offense?"
     },
     loesung: {
-      fa: "تصاحب غیرقانونی مال گم‌شده / اختلاس (Unterschlagung - § 246 StGB).",
-      ar: "الاستيلاء غير المشروع على لقطة / خيانة الأمانة (§ 246 StGB).",
-      ru: "Присвоение найденного имущества (§ 246 StGB).",
-      en: "Unlawful appropriation / embezzlement (§ 246 StGB)."
+      fa: "تصاحب غیرقانونی مال گم‌شده / اختلاس.",
+      ar: "الاستيلاء غير المشروع على لقطة / خيانة الأمانة.",
+      ru: "Присвоение найденного имущества.",
+      en: "Unlawful appropriation / embezzlement."
     },
     optionen: {
       "0": {
-        fa: "سرقت (§ 242 StGB).",
-        ar: "سرقة (§ 242 StGB).",
-        ru: "Кража (§ 242 StGB).",
-        en: "Theft (§ 242 StGB)."
+        fa: "سرقت.",
+        ar: "سرقة.",
+        ru: "Кража.",
+        en: "Theft."
       },
       "1": {
-        fa: "تصاحب غیرقانونی / اختلاس (§ 246 StGB).",
-        ar: "الاستيلاء غير المشروع / خيانة الأمانة (§ 246 StGB).",
-        ru: "Присвоение (§ 246 StGB).",
-        en: "Embezzlement / Appropriation (§ 246 StGB)."
+        fa: "تصاحب غیرقانونی / اختلاس.",
+        ar: "الاستيلاء غير المشروع / خيانة الأمانة.",
+        ru: "Присвоение.",
+        en: "Embezzlement / Appropriation."
       },
       "2": {
-        fa: "سرقت با زور و سرقت مقرون به آزار (§ 249 StGB).",
-        ar: "سطو (§ 249 StGB).",
-        ru: "Грабеж (§ 249 StGB).",
-        en: "Robbery (§ 249 StGB)."
+        fa: "سرقت با زور و سرقت مقرون به آزار.",
+        ar: "سطو.",
+        ru: "Грабеж.",
+        en: "Robbery."
       },
       "3": {
-        fa: "کلاهبرداری (§ 263 StGB).",
-        ar: "احتيال (§ 263 StGB).",
-        ru: "Мошенничество (§ 263 StGB).",
-        en: "Fraud (§ 263 StGB)."
+        fa: "کلاهبرداری.",
+        ar: "احتيال.",
+        ru: "Мошенничество.",
+        en: "Fraud."
       }
     }
   },
@@ -275,17 +275,17 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 7: Escape by car - Driver accelerates towards you to run you over, you shoot the tires. Evaluation?"
     },
     loesung: {
-      fa: "قانونی به عنوان دفاع مشروع (§ 32 StGB) برای دفع حمله به جان.",
-      ar: "قانوني كدفاع شرعي (§ 32 StGB) لرد اعتداء مهدد للحياة.",
-      ru: "Правомерно как необходимая оборона (§ 32 StGB) от угрозы жизни.",
-      en: "Lawful as self-defense (§ 32 StGB) against a life-threatening attack."
+      fa: "قانونی به عنوان دفاع مشروع برای دفع حمله به جان.",
+      ar: "قانوني كدفاع شرعي لرد اعتداء مهدد للحياة.",
+      ru: "Правомерно как необходимая оборона от угрозы жизни.",
+      en: "Lawful as self-defense against a life-threatening attack."
     },
     optionen: {
       "0": {
-        fa: "قانونی به عنوان دفاع مشروع (§ 32 StGB) با خفیف‌ترین وسیله مؤثر.",
-        ar: "قانوني كدفاع شرعي (§ 32 StGB) بأخف وسيلة فعالة.",
-        ru: "Правомерно как необходимая оборона (§ 32 StGB) наименее вредным средством.",
-        en: "Lawful as self-defense (§ 32 StGB) with mildest effective means."
+        fa: "قانونی به عنوان دفاع مشروع با خفیف‌ترین وسیله مؤثر.",
+        ar: "قانوني كدفاع شرعي بأخف وسيلة فعالة.",
+        ru: "Правомерно как необходимая оборона наименее вредным средством.",
+        en: "Lawful as self-defense with mildest effective means."
       },
       "1": {
         fa: "غیرقانونی چون شلیک به خودروها ممنوع است.",
@@ -316,10 +316,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 8: Knife-wielding intruder - Attacks with knife, you use pepper spray. Assessment?"
     },
     loesung: {
-      fa: "دفاع مشروع قانونی (§ 32 StGB) در برابر حمله فعلی و غیرقانونی به جان و تمامیت جسمانی.",
-      ar: "دفاع شرعي قانوني (§ 32 StGB) ضد اعتداء حال وغير مشروع على السلامة الجسدية.",
-      ru: "Правомерная оборона (§ 32 StGB) против наличного противоправного посягательства на жизнь.",
-      en: "Lawful self-defense (§ 32 StGB) against a present, unlawful attack on life and body."
+      fa: "دفاع مشروع قانونی در برابر حمله فعلی و غیرقانونی به جان و تمامیت جسمانی.",
+      ar: "دفاع شرعي قانوني ضد اعتداء حال وغير مشروع على السلامة الجسدية.",
+      ru: "Правомерная оборона против наличного противоправного посягательства на жизнь.",
+      en: "Lawful self-defense against a present, unlawful attack on life and body."
     },
     optionen: {
       "0": {
@@ -329,22 +329,22 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
         en: "Necessity under § 228 BGB."
       },
       "1": {
-        fa: "دفاع مشروع قانونی (§ 32 StGB) در برابر حمله فعلی به جان.",
-        ar: "دفاع شرعي قانوني (§ 32 StGB) ضد اعتداء حال على الحياة.",
-        ru: "Правомерная оборона (§ 32 StGB) против наличного посягательства на жизнь.",
-        en: "Lawful self-defense (§ 32 StGB) against a present attack on life."
+        fa: "دفاع مشروع قانونی در برابر حمله فعلی به جان.",
+        ar: "دفاع شرعي قانوني ضد اعتداء حال على الحياة.",
+        ru: "Правомерная оборона против наличного посягательства на жизнь.",
+        en: "Lawful self-defense against a present attack on life."
       },
       "2": {
-        fa: "افراط در دفاع مشروع (§ 33 StGB).",
-        ar: "تجاوز الدفاع الشرعي (§ 33 StGB).",
-        ru: "Превышение пределов обороны (§ 33 StGB).",
-        en: "Excessive self-defense (§ 33 StGB)."
+        fa: "افراط در دفاع مشروع.",
+        ar: "تجاوز الدفاع الشرعي.",
+        ru: "Превышение пределов обороны.",
+        en: "Excessive self-defense."
       },
       "3": {
-        fa: "غصب عنوان دولتی (§ 132 StGB).",
-        ar: "انتحال صفة رسمية (§ 132 StGB).",
-        ru: "Присвоение полномочий (§ 132 StGB).",
-        en: "Usurpation of office (§ 132 StGB)."
+        fa: "غصب عنوان دولتی.",
+        ar: "انتحال صفة رسمية.",
+        ru: "Присвоение полномочий.",
+        en: "Usurpation of office."
       }
     }
   },
@@ -358,9 +358,9 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
     },
     loesung: {
       fa: "بله، بر اساس اعمال حق مقر و بازرسی کارفرما (Hausrecht بر پایه مواد ۹۰۳ و ۸۵۸ قانون مدنی) کاملاً قانونی است.",
-      ar: "نعم، استناداً لممارسة حق إدارة المكان والحيازة (§ 903 / § 858 BGB) لصاحب المنشأة.",
-      ru: "Да, на основании реализации права распоряжения объектом (Hausrecht, §§ 903, 858 BGB).",
-      en: "Yes, based on exercising domestic authority/property rights (§§ 903, 858 BGB)."
+      ar: "نعم، استناداً لممارسة حق إدارة المكان والحيازة لصاحب المنشأة.",
+      ru: "Да, на основании реализации права распоряжения объектом.",
+      en: "Yes, based on exercising domestic authority/property rights."
     },
     optionen: {
       "0": {
@@ -370,10 +370,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
         en: "No, citizens have free access rights everywhere."
       },
       "1": {
-        fa: "بله، ممانعت بر اساس اعمال حق مقر کارفرما (§ 903 / § 858 BGB) قانونی است.",
-        ar: "نعم، يستند المنع لممارسة حق صاحب المكان (§ 903 / § 858 BGB).",
-        ru: "Да, отказ на основании права распоряжения объектом (§§ 903, 858 BGB) законен.",
-        en: "Yes, refusal based on exercising domestic rights (§§ 903, 858 BGB) is lawful."
+        fa: "بله، ممانعت بر اساس اعمال حق مقر کارفرما قانونی است.",
+        ar: "نعم، يستند المنع لممارسة حق صاحب المكان.",
+        ru: "Да, отказ на основании права распоряжения объектом законен.",
+        en: "Yes, refusal based on exercising domestic rights is lawful."
       },
       "2": {
         fa: "بله، اما فقط چون قانون اصناف اختیارات پلیسی داده است.",
@@ -398,23 +398,23 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Case 10: Excessive defense out of fear - Guard strikes assailant with baton repeatedly out of panic. What is the result?"
     },
     loesung: {
-      fa: "افراط در دفاع مشروع به دلیل ترس یا وحشت (§ 33 StGB)؛ فرد مرتکب مجازات کیفری نمی‌شود.",
-      ar: "تجاوز الدفاع الشرعي بدافع الخوف أو الذعر (§ 33 StGB)؛ لا يُعاقب الفاعل جنائياً.",
-      ru: "Эксцесс обороны из-за страха (§ 33 StGB); оборонявшийся не подлежит уголовному наказанию.",
-      en: "Excessive self-defense out of fear (§ 33 StGB); the defender is exempt from punishment."
+      fa: "افراط در دفاع مشروع به دلیل ترس یا وحشت؛ فرد مرتکب مجازات کیفری نمی‌شود.",
+      ar: "تجاوز الدفاع الشرعي بدافع الخوف أو الذعر؛ لا يُعاقب الفاعل جنائياً.",
+      ru: "Эксцесс обороны из-за страха; оборонявшийся не подлежит уголовному наказанию.",
+      en: "Excessive self-defense out of fear; the defender is exempt from punishment."
     },
     optionen: {
       "0": {
-        fa: "اقدام به عنوان دفاع مشروع کامل (§ 32 StGB) موجه است.",
-        ar: "الفعل مبرر تماماً كدفاع شرعي (§ 32 StGB).",
-        ru: "Действие полностью оправдано обороной (§ 32 StGB).",
-        en: "The action is justified as full self-defense (§ 32 StGB)."
+        fa: "اقدام به عنوان دفاع مشروع کامل موجه است.",
+        ar: "الفعل مبرر تماماً كدفاع شرعي.",
+        ru: "Действие полностью оправдано обороной.",
+        en: "The action is justified as full self-defense."
       },
       "1": {
-        fa: "افراط در دفاع مشروع به دلیل ترس رخ داده و فرد مجازات نمی‌شود (§ 33 StGB).",
-        ar: "هناك تجاوز لحدود الدفاع بدافع الخوف ولا عقوبة جنائية (§ 33 StGB).",
-        ru: "Имеет место эксцесс обороны из-за страха, наказание не назначается (§ 33 StGB).",
-        en: "Excessive self-defense occurred out of fear; actor is not punished (§ 33 StGB)."
+        fa: "افراط در دفاع مشروع به دلیل ترس رخ داده و فرد مجازات نمی‌شود.",
+        ar: "هناك تجاوز لحدود الدفاع بدافع الخوف ولا عقوبة جنائية.",
+        ru: "Имеет место эксцесс обороны из-за страха, наказание не назначается.",
+        en: "Excessive self-defense occurred out of fear; actor is not punished."
       },
       "2": {
         fa: "دفاع مشروع عمدی رخ داده است.",
@@ -507,10 +507,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "What rights do private security guards possess in public spaces?"
     },
     loesung: {
-      fa: "حقوق همگانی (Jedermannsrechte)",
-      ar: "حقوق الجميع (Jedermannsrechte)",
-      ru: "Общегражданские права (Jedermannsrechte)",
-      en: "Citizen's rights (Jedermannsrechte)"
+      fa: "حقوق همگانی",
+      ar: "حقوق الجميع",
+      ru: "Общегражданские права",
+      en: "Citizen's rights"
     }
   },
 
@@ -522,7 +522,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "For which activity is the § 34a proficiency examination strictly mandatory?"
     },
     loesung: {
-      fa: "گشت‌زنی در اماکن عمومی شهری (Citystreife)",
+      fa: "گشت‌زنی در اماکن عمومی شهری",
       ar: "دوريات المدن في الأماكن العامة والحدائق",
       ru: "Городской патруль в общественных парках/улицах",
       en: "City patrols in public areas/parks"
@@ -537,10 +537,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Which credential must security personnel always carry while on duty?"
     },
     loesung: {
-      fa: "کارت شناسایی خدمت (Dienstausweis)",
-      ar: "بطاقة الهوية المهنية (Dienstausweis)",
-      ru: "Служебное удостоверение (Dienstausweis)",
-      en: "Service ID card (Dienstausweis)"
+      fa: "کارت شناسایی خدمت",
+      ar: "بطاقة الهوية المهنية",
+      ru: "Служебное удостоверение",
+      en: "Service ID card"
     }
   },
 
@@ -555,7 +555,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "خیر، هرگز مجاز نیست (اصل محدودیت ذخیره‌سازی DSGVO)",
       ar: "لا، على الإطلاق (مبدأ تحديد مدة الحفظ في DSGVO)",
       ru: "Нет, ни в коем случае (принцип ограничения хранения GDPR)",
-      en: "No, never (GDPR storage limitation principle)"
+      en: "No, never"
     }
   },
 
@@ -582,10 +582,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Who holds legal control over an object?"
     },
     loesung: {
-      fa: "مالک (Eigentümer)",
-      ar: "المالك (Eigentümer)",
-      ru: "Собственник (Eigentümer)",
-      en: "The owner (Eigentümer)"
+      fa: "مالک",
+      ar: "المالك",
+      ru: "Собственник",
+      en: "The owner"
     }
   },
 
@@ -597,10 +597,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "What is the security officer's legal status at the access control checkpoint?"
     },
     loesung: {
-      fa: "خادم تصرف (Besitzdiener)",
-      ar: "تابع الحيازة (Besitzdiener)",
-      ru: "Слуга владения (Besitzdiener)",
-      en: "Possession servant (Besitzdiener)"
+      fa: "خادم تصرف",
+      ar: "تابع الحيازة",
+      ru: "Слуга владения",
+      en: "Possession servant"
     }
   },
 
@@ -612,10 +612,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Which right permits immediate recovery of stolen goods caught in the act?"
     },
     loesung: {
-      fa: "بازپس‌گیری تصرف (Besitzkehr - § 859 BGB)",
-      ar: "استرداد الحيازة (Besitzkehr)",
-      ru: "Возвращение владения (Besitzkehr)",
-      en: "Recovery of possession (Besitzkehr)"
+      fa: "بازپس‌گیری تصرف",
+      ar: "استرداد الحيازة",
+      ru: "Возвращение владения",
+      en: "Recovery of possession"
     }
   },
 
@@ -639,13 +639,13 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "چه کسی مجاز به بازداشت موقت طبق ماده ۱۲۷ بند ۱ آیین دادرسی کیفری است؟",
       ar: "من يحق له توقيف شخص مؤقتاً بموجب § 127 فقرة 1 StPO؟",
       ru: "Кто имеет право предварительно задержать лицо по § 127 ч. 1 УПК?",
-      en: "Who is authorized to provisionally arrest a person under § 127 (1) StPO?"
+      en: "Who is authorized to provisionally arrest a person under § 127 StPO?"
     },
     loesung: {
-      fa: "هر فردی (Jedermann)",
-      ar: "أي شخص / الكافة (Jedermann)",
-      ru: "Каждый гражданин (Jedermann)",
-      en: "Anyone (Jedermann)"
+      fa: "هر فردی",
+      ar: "أي شخص / الكافة",
+      ru: "Каждый гражданин",
+      en: "Anyone"
     }
   },
 
@@ -654,13 +654,13 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "نادیده گرفتن دستور ممنوعیت ورود به ملک مصداق کدام جرم است؟",
       ar: "ما هي الجريمة المرتكبة عند انتهاك أمر المنع من الدخول؟",
       ru: "Какой состав преступления имеет место при нарушении запрета на вход?",
-      en: "Which offense occurs when a property ban (Hausverbot) is violated?"
+      en: "Which offense occurs when a property ban is violated?"
     },
     loesung: {
-      fa: "ورود غیرقانونی به ملک / نقض حریم (Hausfriedensbruch - § 123 StGB)",
-      ar: "انتهاك حرمة المكان (Hausfriedensbruch)",
-      ru: "Нарушение неприкосновенности владения (Hausfriedensbruch)",
-      en: "Trespassing (Hausfriedensbruch)"
+      fa: "ورود غیرقانونی به ملک / نقض حریم",
+      ar: "انتهاك حرمة المكان",
+      ru: "Нарушение неприкосновенности владения",
+      en: "Trespassing"
     }
   },
 
@@ -672,10 +672,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "When may firearm use occur in security duty as self-defense?"
     },
     loesung: {
-      fa: "به عنوان آخرین راهکار قطعی (Ultima Ratio)",
-      ar: "كحل أخير مطلق (Ultima Ratio)",
-      ru: "В качестве крайней меры (Ultima Ratio)",
-      en: "As an absolute last resort (Ultima Ratio)"
+      fa: "به عنوان آخرین راهکار قطعی",
+      ar: "كحل أخير مطلق",
+      ru: "В качестве крайней меры",
+      en: "As an absolute last resort"
     }
   },
 
@@ -717,10 +717,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Which principle always takes precedence in security when your own life is endangered?"
     },
     loesung: {
-      fa: "حفظ جان و ایمنی خود بر همه چیز مقدم است (Eigensicherung geht vor)",
+      fa: "حفظ جان و ایمنی خود بر همه چیز مقدم است",
       ar: "السلامة الشخصية للحارس مقدمة على ما سواها",
       ru: "Собственная безопасность превыше всего",
-      en: "Self-protection comes first (Eigensicherung)"
+      en: "Self-protection comes first"
     }
   },
 
@@ -732,7 +732,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "What belongs to the passive physical security technology of a facility?"
     },
     loesung: {
-      fa: "فنس‌ها، نرده‌ها و حفاظ‌های فلزی (Zäune und Gitter)",
+      fa: "فنس‌ها، نرده‌ها و حفاظ‌های فلزی",
       ar: "الأسوار والشبكات والقواطع الحديدية",
       ru: "Заборы и решетки",
       en: "Fences and grilles"
@@ -747,7 +747,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Which fire class includes flammable liquids such as gasoline?"
     },
     loesung: {
-      fa: "کلاس آتش B (Brandklasse B)",
+      fa: "کلاس آتش B",
       ar: "فئة الحريق B",
       ru: "Класс пожара B",
       en: "Fire class B"
@@ -780,7 +780,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "طول یک دست باز (حدود ۱٫۵ تا ۲ متر)",
       ar: "مسافة ذراع مبسوطة (حوالي 1.5 إلى 2 متر)",
       ru: "Длина вытянутой руки (ок. 1,5–2 м)",
-      en: "Arm's length (approx. 1.5–2 m)"
+      en: "Arm's length"
     }
   },
 
@@ -792,7 +792,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "What describes generalized preconceptions towards people of different backgrounds?"
     },
     loesung: {
-      fa: "کلیشه‌ها و تعصبات ذهنی (Stereotypen / Vorurteile)",
+      fa: "کلیشه‌ها و تعصبات ذهنی",
       ar: "الصور النمطية والأحكام المسبقة",
       ru: "Стереотипы и предрассудки",
       en: "Stereotypes / Prejudices"
@@ -811,10 +811,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 1: I take effect against a present, unlawful attack with mildest means. What am I?"
     },
     loesung: {
-      fa: "دفاع مشروع / کمک در دفاع (Notwehr / Nothilfe)",
-      ar: "الدفاع الشرعي وإغاثة الغير (Notwehr / Nothilfe)",
-      ru: "Необходимая оборона / Помощь в обороне (Notwehr / Nothilfe)",
-      en: "Self-defense / Aid in defense (Notwehr / Nothilfe)"
+      fa: "دفاع مشروع / کمک در دفاع",
+      ar: "الدفاع الشرعي وإغاثة الغير",
+      ru: "Необходимая оборона / Помощь в обороне",
+      en: "Self-defense / Aid in defense"
     }
   },
 
@@ -826,10 +826,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 2: I allow damaging property if danger originates from it itself. What am I?"
     },
     loesung: {
-      fa: "اضطرار تدافعی (Defensiver Notstand - § 228 BGB)",
-      ar: "حالة الضرورة الدفاعية (Defensiver Notstand)",
-      ru: "Оборонительная крайняя необходимость (Defensiver Notstand)",
-      en: "Defensive necessity (Defensiver Notstand)"
+      fa: "اضطرار تدافعی",
+      ar: "حالة الضرورة الدفاعية",
+      ru: "Оборонительная крайняя необходимость",
+      en: "Defensive necessity"
     }
   },
 
@@ -841,10 +841,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 3: Citizen's arrest of offender caught in the act with flight risk. What am I?"
     },
     loesung: {
-      fa: "بازداشت موقت همگانی (Vorläufige Festnahme - § 127 StPO)",
-      ar: "التوقيف المؤقت للجميع (Vorläufige Festnahme)",
-      ru: "Предварительное задержание (Vorläufige Festnahme)",
-      en: "Provisional citizen's arrest (Vorläufige Festnahme)"
+      fa: "بازداشت موقت همگانی",
+      ar: "التوقيف المؤقت للجميع",
+      ru: "Предварительное задержание",
+      en: "Provisional citizen's arrest"
     }
   },
 
@@ -856,10 +856,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 4: Status of guard exercising physical control on behalf of principal. What am I?"
     },
     loesung: {
-      fa: "خادم تصرف (Besitzdiener - § 855 BGB)",
-      ar: "تابع الحيازة (Besitzdiener)",
-      ru: "Слуга владения (Besitzdiener)",
-      en: "Possession servant (Besitzdiener)"
+      fa: "خادم تصرف",
+      ar: "تابع الحيازة",
+      ru: "Слуга владения",
+      en: "Possession servant"
     }
   },
 
@@ -871,10 +871,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 5: Right of possessor or owner to grant or deny access to property. What am I?"
     },
     loesung: {
-      fa: "حق مقر و ملکیت (Hausrecht)",
-      ar: "حق إدارة المكان ومنع الدخول (Hausrecht)",
-      ru: "Право распоряжения территорией (Hausrecht)",
-      en: "Domestic authority / House rules (Hausrecht)"
+      fa: "حق مقر و ملکیت",
+      ar: "حق إدارة المكان ومنع الدخول",
+      ru: "Право распоряжения территорией",
+      en: "Domestic authority / House rules"
     }
   },
 
@@ -886,10 +886,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 6: Unauthorized entry into enclosed property or refusing to leave. What am I?"
     },
     loesung: {
-      fa: "ورود غیرقانونی به ملک (Hausfriedensbruch - § 123 StGB)",
-      ar: "انتهاك حرمة المكان (Hausfriedensbruch)",
-      ru: "Нарушение неприкосновенности владения (Hausfriedensbruch)",
-      en: "Trespassing (Hausfriedensbruch)"
+      fa: "ورود غیرقانونی به ملک",
+      ar: "انتهاك حرمة المكان",
+      ru: "Нарушение неприкосновенности владения",
+      en: "Trespassing"
     }
   },
 
@@ -901,10 +901,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 7: Damaging property of an uninvolved third party to avert danger. What am I?"
     },
     loesung: {
-      fa: "اضطرار تهاجمی (Aggressiver Notstand - § 904 BGB)",
-      ar: "حالة الضرورة الهجومية (Aggressiver Notstand)",
-      ru: "Агрессивная крайняя необходимость (Aggressiver Notstand)",
-      en: "Aggressive necessity (Aggressiver Notstand)"
+      fa: "اضطرار تهاجمی",
+      ar: "حالة الضرورة الهجومية",
+      ru: "Агрессивная крайняя необходимость",
+      en: "Aggressive necessity"
     }
   },
 
@@ -916,10 +916,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 8: Right of possessor to resist unlawful interference with force. What am I?"
     },
     loesung: {
-      fa: "دفاع از تصرف (Besitzwehr - § 859 Abs. 1 BGB)",
-      ar: "الدفاع عن الحيازة (Besitzwehr)",
-      ru: "Защита владения (Besitzwehr)",
-      en: "Defense of possession (Besitzwehr)"
+      fa: "دفاع از تصرف",
+      ar: "الدفاع عن الحيازة",
+      ru: "Защита владения",
+      en: "Defense of possession"
     }
   },
 
@@ -931,10 +931,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 9: Forcefully recovering stolen movable property upon fresh pursuit. What am I?"
     },
     loesung: {
-      fa: "بازپس‌گیری تصرف (Besitzkehr - § 859 Abs. 2 BGB)",
-      ar: "استرداد الحيازة (Besitzkehr)",
-      ru: "Возвращение владения (Besitzkehr)",
-      en: "Recovery of possession (Besitzkehr)"
+      fa: "بازپس‌گیری تصرف",
+      ar: "استرداد الحيازة",
+      ru: "Возвращение владения",
+      en: "Recovery of possession"
     }
   },
 
@@ -946,10 +946,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 10: Legal duty to protect assets, where omission results in liability. What am I?"
     },
     loesung: {
-      fa: "موقعیت ضامن (Garantenstellung - § 13 StGB)",
-      ar: "صفة الضامن (Garantenstellung)",
-      ru: "Статус гаранта (Garantenstellung)",
-      en: "Guarantor position (Garantenstellung)"
+      fa: "موقعیت ضامن",
+      ar: "صفة الضامن",
+      ru: "Статус гаранта",
+      en: "Guarantor position"
     }
   },
 
@@ -961,10 +961,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 11: Detaining a debtor to secure a civil claim when police aid is late. What am I?"
     },
     loesung: {
-      fa: "خودیاری حقوق مدنی (Selbsthilfe - § 229 BGB)",
-      ar: "المساعدة الذاتية (Selbsthilfe)",
-      ru: "Самопомощь (Selbsthilfe)",
-      en: "Self-help (Selbsthilfe)"
+      fa: "خودیاری حقوق مدنی",
+      ar: "المساعدة الذاتية",
+      ru: "Самопомощь",
+      en: "Self-help"
     }
   },
 
@@ -976,10 +976,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 12: Crime occurring right now or pursued immediately at the scene. What am I?"
     },
     loesung: {
-      fa: "جرم مشهود و تازه (Auf frischer Tat)",
-      ar: "التلبس بالجرم (Auf frischer Tat)",
-      ru: "На месте преступления (Auf frischer Tat)",
-      en: "Caught in the act (Auf frischer Tat)"
+      fa: "جرم مشهود و تازه",
+      ar: "التلبس بالجرم",
+      ru: "На месте преступления",
+      en: "Caught in the act"
     }
   },
 
@@ -991,10 +991,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 13: Prohibition of searching persons or bags forcibly without warrant. What am I?"
     },
     loesung: {
-      fa: "ممنوعیت بازرسی اجباری (Verbot der Durchsuchung)",
-      ar: "حظر التفتيش القسري (Verbot der Durchsuchung)",
-      ru: "Запрет на досмотр (Verbot der Durchsuchung)",
-      en: "Prohibition of search by citizens (Verbot der Durchsuchung)"
+      fa: "ممنوعیت بازرسی اجباری",
+      ar: "حظر التفتيش القسري",
+      ru: "Запрет на досмотр",
+      en: "Prohibition of search by citizens"
     }
   },
 
@@ -1006,10 +1006,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 14: Exclusive state prerogative to exercise force via police and judiciary. What am I?"
     },
     loesung: {
-      fa: "انحصار دولتی کاربرد زور (Staatliches Gewaltmonopol)",
-      ar: "احتكار الدولة للقوة (Staatliches Gewaltmonopol)",
-      ru: "Государственная монополия на насилие (Staatliches Gewaltmonopol)",
-      en: "State monopoly on force (Staatliches Gewaltmonopol)"
+      fa: "انحصار دولتی کاربرد زور",
+      ar: "احتكار الدولة للقوة",
+      ru: "Государственная монополия на насилие",
+      en: "State monopoly on force"
     }
   },
 
@@ -1021,10 +1021,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 15: Depriving or disturbing possession without possessor's consent or law. What am I?"
     },
     loesung: {
-      fa: "تصرف عدوانی / دست‌اندازی غیرقانونی (Verbotene Eigenmacht - § 858 BGB)",
-      ar: "التصرف غير المشروع في الحيازة (Verbotene Eigenmacht)",
-      ru: "Самовольное нарушение владения (Verbotene Eigenmacht)",
-      en: "Unlawful interference with possession (Verbotene Eigenmacht)"
+      fa: "تصرف عدوانی / دست‌اندازی غیرقانونی",
+      ar: "التصرف غير المشروع في الحيازة",
+      ru: "Самовольное нарушение владения",
+      en: "Unlawful interference with possession"
     }
   },
 
@@ -1036,10 +1036,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 16: Unlawfully compelling someone by force or threat to act or omit. What am I?"
     },
     loesung: {
-      fa: "اکراه و اجبار غیرقانونی (Nötigung - § 240 StGB)",
-      ar: "الإكراه غير المشروع (Nötigung)",
-      ru: "Принуждение (Nötigung - § 240 StGB)",
-      en: "Coercion (Nötigung - § 240 StGB)"
+      fa: "اکراه و اجبار غیرقانونی",
+      ar: "الإكراه غير المشروع",
+      ru: "Принуждение",
+      en: "Coercion"
     }
   },
 
@@ -1051,10 +1051,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 17: Unlawfully locking someone up or depriving freedom of movement. What am I?"
     },
     loesung: {
-      fa: "سلب غیرقانونی آزادی (Freiheitsberaubung - § 239 StGB)",
-      ar: "سلب الحرية غير المشروع (Freiheitsberaubung)",
-      ru: "Незаконное лишение свободы (Freiheitsberaubung)",
-      en: "Deprivation of liberty (Freiheitsberaubung)"
+      fa: "سلب غیرقانونی آزادی",
+      ar: "سلب الحرية غير المشروع",
+      ru: "Незаконное лишение свободы",
+      en: "Deprivation of liberty"
     }
   },
 
@@ -1066,10 +1066,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 18: Principle that any measure must be suitable, necessary, and proportionate. What am I?"
     },
     loesung: {
-      fa: "اصل تناسب (Grundsatz der Verhältnismäßigkeit)",
-      ar: "مبدأ التناسب والاعتدال (Grundsatz der Verhältnismäßigkeit)",
-      ru: "Принцип соразмерности (Verhältnismäßigkeit)",
-      en: "Principle of proportionality (Verhältnismäßigkeit)"
+      fa: "اصل تناسب",
+      ar: "مبدأ التناسب والاعتدال",
+      ru: "Принцип соразмерности",
+      en: "Principle of proportionality"
     }
   },
 
@@ -1081,10 +1081,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 19: Crime committed by posing as police or exercising public office authority. What am I?"
     },
     loesung: {
-      fa: "غصب عنوان و جعل سمت دولتی (Amtsanmaßung - § 132 StGB)",
-      ar: "انتحال صفة رسمية (Amtsanmaßung)",
-      ru: "Самовольное присвоение полномочий (Amtsanmaßung)",
-      en: "Usurpation of public office (Amtsanmaßung)"
+      fa: "غصب عنوان و جعل سمت دولتی",
+      ar: "انتحال صفة رسمية",
+      ru: "Самовольное присвоение полномочий",
+      en: "Usurpation of public office"
     }
   },
 
@@ -1096,10 +1096,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Riddle 20: Unlawfully causing physical pain or harm to another person's health. What am I?"
     },
     loesung: {
-      fa: "صدمه بدنی و ایراد ضرب و جرح (Körperverletzung - § 223 StGB)",
-      ar: "إلحاق الأذى الجسدي (Körperverletzung)",
-      ru: "Причинение телесных повреждений (Körperverletzung)",
-      en: "Bodily harm (Körperverletzung)"
+      fa: "صدمه بدنی و ایراد ضرب و جرح",
+      ar: "إلحاق الأذى الجسدي",
+      ru: "Причинение телесных повреждений",
+      en: "Bodily harm"
     }
   },
 
@@ -1118,7 +1118,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "حفاظت از نظم حقوقی مدون، حقوق فردی (جان، سلامت، آزادی، مال) و نهادهای دولتی.",
       ar: "حماية النظام القانوني، وحقوق الأفراد (الحياة، الصحة، الحرية، الملكية)، ومؤسسات الدولة.",
       ru: "Защиту правопорядка, индивидуальных прав (жизнь, здоровье, свобода, собственность) и институтов государства.",
-      en: "Protection of the legal order, individual rights (life, health, freedom, property), and state institutions."
+      en: "Protection of the legal order, individual rights, and state institutions."
     }
   },
 
@@ -1131,7 +1131,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
     },
     loesung: {
       fa: "بازداشت موقت طبق ماده ۱۲۷ آیین دادرسی و دفاع مشروع طبق ماده ۳۲ قانون مجازات.",
-      ar: "التوقيف المؤقت (§ 127 StPO) وحق الدفاع الشرعي (§ 32 StGB).",
+      ar: "التوقيف المؤقت وحق الدفاع الشرعي.",
       ru: "Задержание по § 127 УПК и необходимая оборона по § 32 StGB.",
       en: "Provisional arrest under § 127 StPO and self-defense under § 32 StGB."
     }
@@ -1148,7 +1148,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "نیروهای امنیتی تنها در چارچوب حقوق اضطراری و استثنایی قانون مجاز به کاربرد زور هستند.",
       ar: "يسمح للأمن باستخدام القوة فقط في إطار حقوق الطوارئ القانونية (الدفاع الشرعي والمساعدة الذاتية).",
       ru: "Охранники могут применять силу только в рамках законных прав на крайнюю необходимость.",
-      en: "Security guards may use force only within statutory emergency rights (self-defense, self-help)."
+      en: "Security guards may use force only within statutory emergency rights."
     }
   },
 
@@ -1177,7 +1177,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
     loesung: {
       fa: "ثبت و تایید در سامانه ثبت نگهبانان و داشتن مدرک صلاحیت لازم.",
       ar: "التسجيل في سجل الحراس والاعتماد الرسمي، وحمل المؤهل المطلوب.",
-      ru: "Регистрация в Реестре охранников (Bewacherregister) и наличие квалификации.",
+      ru: "Регистрация в Реестре охранников и наличие квалификации.",
       en: "Registration/clearance in Guard Register and possessing required qualification."
     }
   },
@@ -1190,10 +1190,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "What must a guard's service ID card contain under BewachV?"
     },
     loesung: {
-      fa: "نام و نام خانوادگی، نام و نشانی شرکت، عکس و شناسه ثبت نگهبانان (BewR-ID).",
-      ar: "الاسم واللقب، واسم وعنوان المنشأة، والصورة، ورقم معرف السجل (BewR-ID).",
+      fa: "نام و نام خانوادگی، نام و نشانی شرکت، عکس و شناسه ثبت نگهبانان.",
+      ar: "الاسم واللقب، واسم وعنوان المنشأة، والصورة، ورقم معرف السجل.",
       ru: "Имя, фамилия, название и адрес предприятия, фото и номер BewR-ID.",
-      en: "First/last name, company name/address, photo, and Guard Register ID (BewR-ID)."
+      en: "First/last name, company name/address, photo, and Guard Register ID."
     }
   },
 
@@ -1205,19 +1205,19 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "What is the difference between ownership and possession in BGB?"
     },
     loesung: {
-      fa: "مالکیت سلطه حقوقی (§ 903 BGB) و تصرف سلطه عملی و فیزیکی بر مال است (§ 854 BGB).",
-      ar: "الملكية هي السلطة القانونية (§ 903 BGB) والحيازة هي السيطرة المادية المباشرة (§ 854 BGB).",
-      ru: "Собственность — правовое господство (§ 903 BGB), владение — фактическое обладание (§ 854 BGB).",
-      en: "Ownership is legal authority (§ 903 BGB), possession is physical control (§ 854 BGB)."
+      fa: "مالکیت سلطه حقوقی و تصرف سلطه عملی و فیزیکی بر مال است.",
+      ar: "الملكية هي السلطة القانونية والحيازة هي السيطرة المادية المباشرة.",
+      ru: "Собственность — правовое господство, владение — фактическое обладание.",
+      en: "Ownership is legal authority, possession is physical control."
     }
   },
 
   "wq-bgb-2": {
     frage: {
-      fa: "تصرف عدوانی (§ 858 BGB) تحت چه شرایطی محقق می‌شود؟",
-      ar: "متى يتحقق التصرف غير المشروع في الحيازة (§ 858 BGB)؟",
-      ru: "При каких условиях возникает нарушение владения (§ 858 BGB)?",
-      en: "When does unlawful interference with possession (§ 858 BGB) occur?"
+      fa: "تصرف عدوانی تحت چه شرایطی محقق می‌شود؟",
+      ar: "متى يتحقق التصرف غير المشروع في الحيازة؟",
+      ru: "При каких условиях возникает нарушение владения?",
+      en: "When does unlawful interference with possession occur?"
     },
     loesung: {
       fa: "سلب یا اخلال در تصرف بدون رضایت متصرف و بدون مجوز قانونی.",
@@ -1229,10 +1229,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-bgb-3": {
     frage: {
-      fa: "تفاوت اضطرار تدافعی (§ 228 BGB) با اضطرار تهاجمی (§ 904 BGB) چیست؟",
-      ar: "ما الفرق بين الضرورة الدفاعية (§ 228 BGB) والضرورة الهجومية (§ 904 BGB)؟",
-      ru: "В чем различие между оборонительной (§ 228 BGB) и агрессивной (§ 904 BGB) необходимостью?",
-      en: "What is the difference between defensive (§ 228 BGB) and aggressive necessity (§ 904 BGB)?"
+      fa: "تفاوت اضطرار تدافعی با اضطرار تهاجمی چیست؟",
+      ar: "ما الفرق بين الضرورة الدفاعية والضرورة الهجومية؟",
+      ru: "В чем различие между оборонительной и агрессивной необходимостью?",
+      en: "What is the difference between defensive and aggressive necessity?"
     },
     loesung: {
       fa: "در تدافعی خطر از خود شیء ناشی می‌شود؛ در تهاجمی به شیء شخص ثالث برای دفع خطر خارجی آسیب زده می‌شود.",
@@ -1262,7 +1262,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "بازداشت موقت طبق ماده ۱۲۷ بند ۱ آیین دادرسی چه زمانی مجاز است؟",
       ar: "متى يجوز التوقيف المؤقت بموجب § 127 فقرة 1 StPO؟",
       ru: "Когда разрешено задержание по § 127 ч. 1 УПК?",
-      en: "When is provisional citizen's arrest under § 127 (1) StPO permitted?"
+      en: "When is provisional citizen's arrest under § 127 StPO permitted?"
     },
     loesung: {
       fa: "مشاهده در جرم مشهود با ظن فرار یا عدم امکان احراز فوری هویت.",
@@ -1274,10 +1274,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-stgb-3": {
     frage: {
-      fa: "تفاوت سرقت (§ 242 StGB) با اختلاس / تصاحب غیرقانونی (§ 246 StGB) چیست؟",
-      ar: "ما الفرق بين السرقة (§ 242 StGB) والاستيلاء غير المشروع (§ 246 StGB)؟",
-      ru: "В чем разница между кражей (§ 242 StGB) и присвоением (§ 246 StGB)?",
-      en: "How does theft (§ 242 StGB) differ from embezzlement (§ 246 StGB)?"
+      fa: "تفاوت سرقت با اختلاس / تصاحب غیرقانونی چیست؟",
+      ar: "ما الفرق بين السرقة والاستيلاء غير المشروع؟",
+      ru: "В чем разница между кражей и присвоением?",
+      en: "How does theft differ from embezzlement?"
     },
     loesung: {
       fa: "سرقت نیازمند شکستن تصرف قبلی است؛ در اختلاس شیء از قبل نزد فرد بوده یا فاقد متصرف است.",
@@ -1304,10 +1304,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-mensch-2": {
     frage: {
-      fa: "مفهوم حفاظت و ایمنی فردی (Eigensicherung) در نگهبانی شامل چیست؟",
-      ar: "ماذا يشمل مفهوم السلامة الذاتية (Eigensicherung) في الحراسة؟",
-      ru: "Что включает в себя личная безопасность (Eigensicherung) в охране?",
-      en: "What does self-protection (Eigensicherung) in guard duty involve?"
+      fa: "مفهوم حفاظت و ایمنی فردی در نگهبانی شامل چیست؟",
+      ar: "ماذا يشمل مفهوم السلامة الذاتية في الحراسة؟",
+      ru: "Что включает в себя личная безопасность в охране?",
+      en: "What does self-protection in guard duty involve?"
     },
     loesung: {
       fa: "هوشیاری مداوم نسبت به محیط، حفظ فاصله و در نظر داشتن راه‌های فرار و پشتیبانی.",
@@ -1340,10 +1340,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       en: "Who is responsible for providing work equipment and protective gear?"
     },
     loesung: {
-      fa: "کارفرما و صاحب شرکت امنیتی (Arbeitgeber).",
-      ar: "صاحب العمل / شركة الحراسة (Arbeitgeber).",
-      ru: "Работодатель / охранное предприятие (Arbeitgeber).",
-      en: "The employer / security company (Arbeitgeber)."
+      fa: "کارفرما و صاحب شرکت امنیتی.",
+      ar: "صاحب العمل / شركة الحراسة.",
+      ru: "Работодатель / охранное предприятие.",
+      en: "The employer / security company."
     }
   },
 
@@ -1379,10 +1379,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-dsgvo-1": {
     frage: {
-      fa: "مقررات عمومی حفاظت از داده‌ها (GDPR) چه اصولی را تعیین می‌کند؟",
-      ar: "ما هي المبادئ الأساسية في اللائحة العامة لحماية البيانات (DSGVO)؟",
-      ru: "Каковы основные принципы регламента защиты данных (GDPR)?",
-      en: "What principles are mandated by the General Data Protection Regulation (GDPR)?"
+      fa: "مقررات عمومی حفاظت از داده‌ها چه اصولی را تعیین می‌کند؟",
+      ar: "ما هي المبادئ الأساسية في اللائحة العامة لحماية البيانات؟",
+      ru: "Каковы основные принципы регламента защиты данных?",
+      en: "What principles are mandated by the General Data Protection Regulation?"
     },
     loesung: {
       fa: "قانونی بودن، شفافیت، محدودیت هدف، حداقل‌سازی داده‌ها، صحت و محدودیت ذخیره‌سازی.",
@@ -1409,10 +1409,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-waffen-1": {
     frage: {
-      fa: "هدف اصلی قانون سلاح (§ 1 WaffG) چیست؟",
-      ar: "ما الهدف الرئيسي لقانون الأسلحة (§ 1 WaffG)؟",
-      ru: "Какова главная цель Закона об оружии (§ 1 WaffG)?",
-      en: "What is the primary purpose of the Weapons Act (§ 1 WaffG)?"
+      fa: "هدف اصلی قانون سلاح چیست؟",
+      ar: "ما الهدف الرئيسي لقانون الأسلحة؟",
+      ru: "Какова главная цель Закона об оружии?",
+      en: "What is the primary purpose of the Weapons Act?"
     },
     loesung: {
       fa: "حفظ امنیت و نظم عمومی از طریق نظارت سخت‌گیرانه بر اسلحه و مهمات.",
@@ -1424,9 +1424,9 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-waffen-2": {
     frage: {
-      fa: "نیروی امنیتی چه زمانی «حمل سلاح (Führen)» کرده است؟",
-      ar: "متى يُعتبر حارس الأمن «حاملاً للسلاح (Führen)»؟",
-      ru: "Когда охранник осуществляет «ношение оружия» (Führen)?",
+      fa: "نیروی امنیتی چه زمانی «حمل سلاح» کرده است؟",
+      ar: "متى يُعتبر حارس الأمن «حاملاً للسلاح»؟",
+      ru: "Когда охранник осуществляет «ношение оружия»?",
       en: "When does a security guard 'carry' a weapon within the meaning of weapons law?"
     },
     loesung: {
@@ -1439,25 +1439,25 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "wq-waffen-3": {
     frage: {
-      fa: "دارنده رسمی کارت مالکیت سلاح (WBK) برای سلاح‌های خدمت کیست؟",
-      ar: "من هو الحائز الرسمي لبطاقة حيازة السلاح (WBK) لأسلحة الخدمة؟",
-      ru: "Кто является владельцем разрешения на оружие (WBK) для служебного оружия?",
-      en: "Who is the official holder of the Weapons Ownership Card (WBK) for service weapons?"
+      fa: "دارنده رسمی کارت مالکیت سلاح برای سلاح‌های خدمت کیست؟",
+      ar: "من هو الحائز الرسمي لبطاقة حيازة السلاح لأسلحة الخدمة؟",
+      ru: "Кто является владельцем разрешения на оружие для служебного оружия?",
+      en: "Who is the official holder of the Weapons Ownership Card for service weapons?"
     },
     loesung: {
-      fa: "شرکت امنیتی و کارفرما (Arbeitgeber).",
-      ar: "شركة الحراسة وصاحب العمل (Arbeitgeber).",
-      ru: "Охранное предприятие / работодатель (Arbeitgeber).",
-      en: "The security company / employer (Arbeitgeber)."
+      fa: "شرکت امنیتی و کارفرما.",
+      ar: "شركة الحراسة وصاحب العمل.",
+      ru: "Охранное предприятие / работодатель.",
+      en: "The security company / employer."
     }
   },
 
   "wq-waffen-4": {
     frage: {
-      fa: "چه کسانی فاقد قابلیت اطمینان لازم برای حمل سلاح هستند (§§ 5, 6 WaffG)؟",
-      ar: "من هم الفاقدون للأهلية والموثوقية لحمل السلاح (§§ 5, 6 WaffG)؟",
-      ru: "Кто не обладает надежностью для владения оружием (§§ 5, 6 WaffG)?",
-      en: "Who lacks reliability and suitability to carry weapons (§§ 5, 6 WaffG)?"
+      fa: "چه کسانی فاقد قابلیت اطمینان لازم برای حمل سلاح هستند؟",
+      ar: "من هم الفاقدون للأهلية والموثوقية لحمل السلاح؟",
+      ru: "Кто не обладает надежностью для владения оружием?",
+      en: "Who lacks reliability and suitability to carry weapons?"
     },
     loesung: {
       fa: "محکومان کیفری عمدی به حداقل ۶۰ جریمه روزانه یا افراد وابسته به مواد و الکل.",
@@ -1478,16 +1478,16 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "تامین انحصاری توسط شرکت همراه با دستور کتبی (ممنوعیت سلاح شخصی).",
       ar: "التوفير حصراً من المنشأة مع تعليمات خطية (حظر الأسلحة الشخصية).",
       ru: "Предоставление только предприятием с письменным инструктажем (личное оружие запрещено).",
-      en: "Exclusive provision by the company with written instructions (private weapons prohibited)."
+      en: "Exclusive provision by the company with written instructions."
     }
   },
 
   "wq-waffen-6": {
     frage: {
-      fa: "سلاح‌های خدمت پس از شیفت چگونه باید نگهداری شوند (§ 36 WaffG)؟",
+      fa: "سلاح‌های خدمت پس از شیفت چگونه باید نگهداری شوند؟",
       ar: "كيف تُخزن أسلحة الخدمة والذخائر بعد انتهاء النوبة؟",
-      ru: "Как должно храниться служебное оружие после смены (§ 36 WaffG)?",
-      en: "How must service weapons and ammunition be stored after duty (§ 36 WaffG)?"
+      ru: "Как должно храниться служебное оружие после смены?",
+      en: "How must service weapons and ammunition be stored after duty?"
     },
     loesung: {
       fa: "در گاوصندوق استاندارد دارای گواهی، مجزا از مهمات و محفوظ از دسترس غیرمجاز.",
@@ -1500,21 +1500,21 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
   "wq-waffen-7": {
     frage: {
       fa: "پیش‌شرط شلیک با سلاح در دفاع مشروع چیست؟",
-      ar: "ما شرط استخدام السلاح الناري في الدفاع الشرعي (§ 32 StGB)؟",
+      ar: "ما شرط استخدام السلاح الناري في الدفاع الشرعي؟",
       ru: "Каково условие применения оружия при необходимой обороне?",
-      en: "What is the requirement for firearm use in self-defense (§ 32 StGB)?"
+      en: "What is the requirement for firearm use in self-defense?"
     },
     loesung: {
-      fa: "شلیک باید آخرین راهکار قطعی (Ultima Ratio) برای دفع خطر جانی باشد.",
-      ar: "أن يكون إطلاق النار هو الملاذ الأخير المطلق (Ultima Ratio) لرد خطر يهدد الحياة.",
-      ru: "Применение оружия должно быть крайней мерой (Ultima Ratio) для защиты жизни.",
-      en: "Firearm use must be the absolute last resort (Ultima Ratio) against a lethal attack."
+      fa: "شلیک باید آخرین راهکار قطعی برای دفع خطر جانی باشد.",
+      ar: "أن يكون إطلاق النار هو الملاذ الأخير المطلق لرد خطر يهدد الحياة.",
+      ru: "Применение оружия должно быть крайней мерой для защиты жизни.",
+      en: "Firearm use must be the absolute last resort against a lethal attack."
     }
   },
 
   "wq-waffen-8": {
     frage: {
-      fa: "حمل کدام سلاح‌ها در اماکن عمومی نیازمند مجوز سلاح سبک (Kleiner Waffenschein) است؟",
+      fa: "حمل کدام سلاح‌ها در اماکن عمومی نیازمند مجوز سلاح سبک است؟",
       ar: "أي أسلحة تتطلب «رخصة السلاح الصغيرة» لحملها علناً؟",
       ru: "Для ношения какого оружия требуется «Малое разрешение на оружие»?",
       en: "For which weapons is the 'Small Firearms Permit' required in public?"
@@ -1563,10 +1563,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-verbotene-eigenmacht": {
     frage: {
-      fa: "اصطلاح تخصصی: تصرف عدوانی / دست‌اندازی غیرقانونی (§ 858 BGB)",
-      ar: "المصطلح القانوني: التصرف غير المشروع في الحيازة (§ 858 BGB)",
-      ru: "Юридический термин: Самовольное нарушение владения (§ 858 BGB)",
-      en: "Legal Term: Unlawful Interference with Possession (§ 858 BGB)"
+      fa: "اصطلاح تخصصی: تصرف عدوانی / دست‌اندازی غیرقانونی",
+      ar: "المصطلح القانوني: التصرف غير المشروع في الحيازة",
+      ru: "Юридический термин: Самовольное нарушение владения",
+      en: "Legal Term: Unlawful Interference with Possession"
     },
     loesung: {
       fa: "سلب یا اخلال در تصرف بدون رضایت متصرف و بدون مجوز قانونی عمل غیرقانونی است.",
@@ -1578,10 +1578,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-garantenstellung": {
     frage: {
-      fa: "اصطلاح تخصصی: جایگاه ضامن (§ 13 StGB)",
-      ar: "المصطلح القانوني: صفة الضامن والمسؤولية الجنائية (§ 13 StGB)",
-      ru: "Юридический термин: Статус гаранта (§ 13 StGB)",
-      en: "Legal Term: Guarantor Position (§ 13 StGB)"
+      fa: "اصطلاح تخصصی: جایگاه ضامن",
+      ar: "المصطلح القانوني: صفة الضامن والمسؤولية الجنائية",
+      ru: "Юридический термин: Статус гаранта",
+      en: "Legal Term: Guarantor Position"
     },
     loesung: {
       fa: "وظیفه قانونی برای دفع خطر از جان و مال؛ ترک فعل موجب مسئولیت کیفری است.",
@@ -1593,25 +1593,25 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-besitzdiener-besitzer": {
     frage: {
-      fa: "اصطلاح تخصصی: خادم تصرف در برابر متصرف (§ 855 BGB vs. § 854 BGB)",
-      ar: "المصطلح القانوني: تابع الحيازة مقابل الحائز (§ 855 BGB)",
-      ru: "Юридический термин: Слуга владения против владельца (§ 855 BGB)",
-      en: "Legal Term: Servant of Possession vs. Possessor (§ 855 BGB)"
+      fa: "اصطلاح تخصصی: خادم تصرف در برابر متصرف",
+      ar: "المصطلح القانوني: تابع الحيازة مقابل الحائز",
+      ru: "Юридический термин: Слуга владения против владельца",
+      en: "Legal Term: Servant of Possession vs. Possessor"
     },
     loesung: {
       fa: "متصرف سلطه واقعی دارد؛ خادم تصرف (نگهبان) این سلطه را تحت دستور کارفرما اعمال می‌کند.",
       ar: "الحائز يملك السيطرة الفعلية؛ وتابع الحيازة (الحارس) يمارسها بأوامر صاحب العمل.",
       ru: "Владелец имеет фактическую власть; слуга владения (охранник) исполняет ее по указанию.",
-      en: "The possessor has actual control; the servant of possession (guard) acts under orders."
+      en: "The possessor has actual control; the servant of possession acts under orders."
     }
   },
 
   "term-vorlaeufige-festnahme": {
     frage: {
-      fa: "اصطلاح تخصصی: بازداشت موقت همگانی (§ 127 Abs. 1 StPO)",
-      ar: "المصطلح القانوني: التوقيف المؤقت لعموم المواطنين (§ 127 StPO)",
-      ru: "Юридический термин: Предварительное задержание (§ 127 StPO)",
-      en: "Legal Term: Provisional Citizen's Arrest (§ 127 (1) StPO)"
+      fa: "اصطلاح تخصصی: بازداشت موقت همگانی",
+      ar: "المصطلح القانوني: التوقيف المؤقت لعموم المواطنين",
+      ru: "Юридический термин: Предварительное задержание",
+      en: "Legal Term: Provisional Citizen's Arrest (§ 127 StPO)"
     },
     loesung: {
       fa: "حق هر فرد برای توقیف متهم در جرم مشهود تا رسیدن پلیس در صورت ظن فرار یا هویت نامعلوم.",
@@ -1624,9 +1624,9 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
   "term-hausverbot-hausfriedensbruch": {
     frage: {
       fa: "اصطلاح تخصصی: ممنوعیت ورود و نقض حریم (§ 903 BGB & § 123 StGB)",
-      ar: "المصطلح القانوني: حظر الدخول وانتهاك حرمة المكان (§ 123 StGB)",
-      ru: "Юридический термин: Запрет на вход и нарушение неприкосновенности (§ 123 StGB)",
-      en: "Legal Term: Property Ban vs. Trespassing (§ 123 StGB)"
+      ar: "المصطلح القانوني: حظر الدخول وانتهاك حرمة المكان",
+      ru: "Юридический термин: Запрет на вход и нарушение неприкосновенности",
+      en: "Legal Term: Property Ban vs. Trespassing"
     },
     loesung: {
       fa: "منع ورود یک حق مدنی است؛ ورود غیرمجاز یا نرفتن، جرم ورود غیرقانونی است.",
@@ -1639,9 +1639,9 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
   "term-notwehr-nothilfe": {
     frage: {
       fa: "اصطلاح تخصصی: دفاع مشروع و کمک در دفاع (§ 32 StGB & § 227 BGB)",
-      ar: "المصطلح القانوني: الدفاع الشرعي وإغاثة الغير (§ 32 StGB)",
-      ru: "Юридический термин: Необходимая оборона и помощь (§ 32 StGB)",
-      en: "Legal Term: Self-Defense & Aid in Defense (§ 32 StGB)"
+      ar: "المصطلح القانوني: الدفاع الشرعي وإغاثة الغير",
+      ru: "Юридический термин: Необходимая оборона и помощь",
+      en: "Legal Term: Self-Defense & Aid in Defense"
     },
     loesung: {
       fa: "دفاع لازم برای دفع حمله جاری و غیرقانونی از خود یا دیگری.",
@@ -1653,10 +1653,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-besitzkehr": {
     frage: {
-      fa: "اصطلاح تخصصی: دفاع و بازپس‌گیری تصرف (§ 859 BGB)",
-      ar: "المصطلح القانوني: الدفاع عن الحيازة واستردادها (§ 859 BGB)",
-      ru: "Юридический термин: Защита и возврат владения (§ 859 BGB)",
-      en: "Legal Term: Defense and Recovery of Possession (§ 859 BGB)"
+      fa: "اصطلاح تخصصی: دفاع و بازپس‌گیری تصرف",
+      ar: "المصطلح القانوني: الدفاع عن الحيازة واستردادها",
+      ru: "Юридический термин: Защита и возврат владения",
+      en: "Legal Term: Defense and Recovery of Possession"
     },
     loesung: {
       fa: "دفاع از تصرف با زور در حین عمل؛ بازپس‌گیری فوری مال منقول در تعقیب مستقیم.",
@@ -1668,10 +1668,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-rechtfertigender-notstand": {
     frage: {
-      fa: "اصطلاح تخصصی: حالت اضطرار موجه (§ 34 StGB)",
-      ar: "المصطلح القانوني: حالة الضرورة المبررة (§ 34 StGB)",
-      ru: "Юридический термин: Оправдывающая крайняя необходимость (§ 34 StGB)",
-      en: "Legal Term: Justifying Necessity (§ 34 StGB)"
+      fa: "اصطلاح تخصصی: حالت اضطرار موجه",
+      ar: "المصطلح القانوني: حالة الضرورة المبررة",
+      ru: "Юридический термин: Оправдывающая крайняя необходимость",
+      en: "Legal Term: Justifying Necessity"
     },
     loesung: {
       fa: "عمل برای دفع خطر از جان یا مال در صورتی که منفعت حفظ‌شده به مراتب بیشتر باشد.",
@@ -1683,10 +1683,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-unverzueglich": {
     frage: {
-      fa: "اصطلاح تخصصی: بدون تأخیر مقصرانه (§ 121 Abs. 1 BGB)",
-      ar: "المصطلح القانوني: دون تأخير مريب (§ 121 BGB)",
-      ru: "Юридический термин: Без виновного промедления (§ 121 BGB)",
-      en: "Legal Term: Without Culpable Delay (§ 121 (1) BGB)"
+      fa: "اصطلاح تخصصی: بدون تأخیر مقصرانه",
+      ar: "المصطلح القانوني: دون تأخير مريب",
+      ru: "Юридический термин: Без виновного промедления",
+      en: "Legal Term: Without Culpable Delay (§ 121 BGB)"
     },
     loesung: {
       fa: "به معنای انجام کار در سریع‌ترین زمان ممکن بدون کوتاهی و مسامحه بی‌دلیل.",
@@ -1713,10 +1713,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-dsgvo-zweckbindung": {
     frage: {
-      fa: "اصطلاح تخصصی: اصل تحدید هدف و شفافیت در داده‌ها (DSGVO)",
-      ar: "المصطلح القانوني: مبدأ تخصيص الغرض والشفافية (DSGVO)",
-      ru: "Юридический термин: Ограничение цели и прозрачность (GDPR)",
-      en: "Legal Term: Purpose Limitation & Transparency (GDPR)"
+      fa: "اصطلاح تخصصی: اصل تحدید هدف و شفافیت در داده‌ها",
+      ar: "المصطلح القانوني: مبدأ تخصيص الغرض والشفافية",
+      ru: "Юридический термин: Ограничение цели и прозрачность",
+      en: "Legal Term: Purpose Limitation & Transparency"
     },
     loesung: {
       fa: "داده‌های شخصی فقط برای هدف امنیتی مشخص‌شده قابل استفاده هستند و نصب تابلو الزامی است.",
@@ -1728,10 +1728,10 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
 
   "term-waffengesetz-fuehren": {
     frage: {
-      fa: "اصطلاح تخصصی: حمل سلاح در برابر ترابری و جابجایی (§ 12 WaffG)",
-      ar: "المصطلح القانوني: حمل السلاح مقابل النقل (§ 12 WaffG)",
-      ru: "Юридический термин: Ношение оружия против транспортировки (§ 12 WaffG)",
-      en: "Legal Term: Carrying a Weapon vs. Transport (§ 12 WaffG)"
+      fa: "اصطلاح تخصصی: حمل سلاح در برابر ترابری و جابجایی",
+      ar: "المصطلح القانوني: حمل السلاح مقابل النقل",
+      ru: "Юридический термин: Ношение оружия против транспортировки",
+      en: "Legal Term: Carrying a Weapon vs. Transport"
     },
     loesung: {
       fa: "حمل سلاح در اماکن عمومی نیاز به مجوز حمل دارد؛ جابجایی در جعبه قفل‌شده حمل نیست.",
@@ -1746,7 +1746,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "تله آزمون: کدام عبارت صحیح نمی‌باشد؟ (منطق معکوس)",
       ar: "فخ الامتحان: «أي العبارات التالية غير صحيحة؟» (المنطق العكسي)",
       ru: "Экзаменационная ловушка: «Какое утверждение НЕверно?» (обратная логика)",
-      en: "Exam Trap: 'Which statement is NOT correct?' (Inverse Logic)"
+      en: "Exam Trap: 'Which statement is NOT correct?'"
     },
     loesung: {
       fa: "۳ گزینه از نظر قانونی صحیح هستند؛ باید عبارتی که از نظر قانونی غلط است را به عنوان پاسخ انتخاب کنید.",
@@ -1761,7 +1761,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "تله آزمون: کدام دو پاسخ صحیح هستند؟ (انتخاب دوگانه)",
       ar: "فخ الامتحان: «أي إجابتين صحيحتان؟» (اختيار متعدد)",
       ru: "Экзаменационная ловушка: «Какие ДВА ответа верны?» (множественный выбор)",
-      en: "Exam Trap: 'Which TWO answers are correct?' (Multiple Selection)"
+      en: "Exam Trap: 'Which TWO answers are correct?'"
     },
     loesung: {
       fa: "دقیقاً دو گزینه را علامت بزنید؛ علامت زدن یک گزینه یا سه گزینه باعث کسر امتیاز می‌شود.",
@@ -1776,13 +1776,13 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "تله آزمون: مفهوم حقوقی «بدون فوت وقت / unverzüglich»",
       ar: "فخ الامتحان: المفهوم القانوني لمصطلح «دون تأخير مريب / unverzüglich»",
       ru: "Экзаменационная ловушка: Юридическое определение «без виновного промедления»",
-      en: "Exam Trap: Legal definition of 'unverzüglich' (without culpable delay)"
+      en: "Exam Trap: Legal definition of 'unverzüglich'"
     },
     loesung: {
-      fa: "تعریف دقیق قانونی: «بدون مسامحه و تأخیر مقصرانه» (§ 121 BGB)، نه مهلت ساعتی یا روزانه معین.",
-      ar: "التعريف القانوني الحصري: «دون تأخير مريب» (§ 121 BGB) وليس مهلة 24 ساعة محددة.",
-      ru: "Юридическое определение: «без виновного промедления» (§ 121 BGB), а не жесткий срок 24 часа.",
-      en: "The strictly legal definition is 'without culpable delay' (§ 121 (1) BGB), not rigid 24h limits."
+      fa: "تعریف دقیق قانونی: «بدون مسامحه و تأخیر مقصرانه»، نه مهلت ساعتی یا روزانه معین.",
+      ar: "التعريف القانوني الحصري: «دون تأخير مريب» وليس مهلة 24 ساعة محددة.",
+      ru: "Юридическое определение: «без виновного промедления», а не жесткий срок 24 часа.",
+      en: "The strictly legal definition is 'without culpable delay' (§ 121 BGB), not rigid 24h limits."
     }
   },
 
@@ -1812,7 +1812,7 @@ export const TRANSLATIONS_PART_7: Record<string, TranslationBlockItem> = {
       fa: "نیروهای امنیتی فاقد اختیارات پلیسی (مانند تفتیش اجباری، جریمه، دستور ترک مکان عمومی) هستند.",
       ar: "لا يمتلك حراس الأمن صلاحيات الشرطة (كالتفتيش القسري، والغرامات، والإخلاء في الأماكن العامة).",
       ru: "Охрана не имеет прав полиции (принудительный досмотр, штрафы, удаление из общественных мест).",
-      en: "Private guards have NO police powers (no forced search, fines, or sovereign public ejections)."
+      en: "Private guards have NO police powers."
     }
   }
 };

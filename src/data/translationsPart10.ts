@@ -16,7 +16,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 61: ihk-menschen-5
   "ihk-menschen-5": {
     frage: {
-      fa: "چگونه باید در برابر فردی بسیار پرخاشگر رفتار تنش‌زدا (Deeskalation) از خود نشان داد؟",
+      fa: "چگونه باید در برابر فردی بسیار پرخاشگر رفتار تنش‌زدا از خود نشان داد؟",
       ar: "كيف تتصرف بأسلوب خافض للتصعيد تجاه شخص عدواني للغاية؟",
       ru: "Как следует вести себя для деэскалации с крайне агрессивным человеком?",
       en: "How should one behave in a de-escalating manner toward a highly aggressive person?"
@@ -59,9 +59,9 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   "ihk-menschen-6": {
     frage: {
       fa: "منظور از «مدل چهار گوش» شولتس فون تون چیست؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما المقصود بـ 'نموذج الجوانب الأربعة للرسالة' (4-Ohren-Modell) لشولتس فون تون؟ (اختر إجابتين صحيحتين)",
+      ar: "ما المقصود بـ 'نموذج الجوانب الأربعة للرسالة' لشولتس فون تون؟ (اختر إجابتين صحيحتين)",
       ru: "Что понимается под «моделью четырех ушей» Шульца фон Туна? (Выберите два правильных ответа)",
-      en: "What is understood by Schulz von Thun's 'Four-Ears Model' of communication? (Choose two correct answers)"
+      en: "What is understood by Schulz von Thun's 'Four-Ears Model' of communication?"
     },
     loesung: {
       fa: "مدل شولتس فون تون: ۱. محتوای موضوعی، ۲. افشای خود، ۳. جنبه ارتباطی، ۴. درخواست/تأکید. بسیاری از تعارضات در سطح رابطه شکل می‌گیرند.",
@@ -100,8 +100,8 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 63: ihk-menschen-7
   "ihk-menschen-7": {
     frage: {
-      fa: "چه چیزی مشخصه «شایستگی بین‌فرهنگی» (Interkulturelle Kompetenz) در خدمات امنیتی است؟",
-      ar: "ما الذي يميز 'الكفاءة بين الثقافات' (Interkulturelle Kompetenz) في مجال الحراسة والأمن؟",
+      fa: "چه چیزی مشخصه «شایستگی بین‌فرهنگی» در خدمات امنیتی است؟",
+      ar: "ما الذي يميز 'الكفاءة بين الثقافات' في مجال الحراسة والأمن؟",
       ru: "Что характеризует «межкультурную компетентность» в охранной деятельности?",
       en: "What characterizes 'intercultural competence' in security services?"
     },
@@ -145,7 +145,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
       fa: "چه پدیده‌های روان‌شناختی ممکن است در یک جمعیت متراکم (وحشت همگانی / Massenpanik) رخ دهد؟ (دو پاسخ صحیح را انتخاب کنید)",
       ar: "ما هي الظواهر النفسية التي قد تظهر بين الحشود الجماهيرية (حالة الهلع الجماعي)؟ (اختر إجابتين صحيحتين)",
       ru: "Какие психологические феномены могут возникать в толпе (массовая паника)? (Выберите два правильных ответа)",
-      en: "Which psychological phenomena can occur in a crowd (mass panic)? (Choose two correct answers)"
+      en: "Which psychological phenomena can occur in a crowd?"
     },
     loesung: {
       fa: "روانشناسی توده: گمنامی در جمعیت آستانه بازدارندگی را کاهش می‌دهد و هیجانات و رفتارهای فرار با سرعت سرایت می‌کنند.",
@@ -158,7 +158,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "الف) رفتار گله‌ای و اثرات سرایتی (تقلید از حرکت فرار دیگران بدون بررسی واقعی خطر).",
         ar: "أ) سلوك القطيع وتأثيرات العدوى النفسية (تقليد حركة الهروب دون التحقق من وجود الخطر).",
         ru: "A) Стадное поведение и эффект заражения (подражание паническому бегству без проверки реальности опасности).",
-        en: "A) Herd behavior and contagion effects (imitating flight movements without verifying the actual danger)."
+        en: "A) Herd behavior and contagion effects."
       },
       "1": {
         fa: "ب) کاهش آستانه مهار فردی و تضعیف قدرت قضاوت منطقی و عقلانی.",
@@ -184,10 +184,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 65: ihk-menschen-9
   "ihk-menschen-9": {
     frage: {
-      fa: "منظور از مفهوم «پیش‌داوری» (Vorurteil) چیست؟",
-      ar: "ما المقصود بمصطلح 'الحكم المسبق' (Vorurteil)؟",
-      ru: "Что понимается под понятием «предрассудок» (Vorurteil)?",
-      en: "What is meant by the term 'prejudice' (Vorurteil)?"
+      fa: "منظور از مفهوم «پیش‌داوری» چیست؟",
+      ar: "ما المقصود بمصطلح 'الحكم المسبق'؟",
+      ru: "Что понимается под понятием «предрассудок»?",
+      en: "What is meant by the term 'prejudice'?"
     },
     loesung: {
       fa: "پیش‌داوری‌ها نگرش‌های تعمیم‌یافته و ناآگاهانه‌ای هستند که در خدمات امنیتی باید با واقع‌بینی و بی‌طرفی حرفه‌ای جایگزین شوند.",
@@ -229,7 +229,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
       fa: "مامور امنیتی در صورتی که در جریان یک درگیری مورد توهین قرار گیرد، چگونه باید واکنش نشان دهد؟ (دو پاسخ صحیح را انتخاب کنید)",
       ar: "كيف ينبغي لموظف الأمن أن يتصرف إذا تعرض هو شخصياً للإهانة أثناء نزاع؟ (اختر إجابتين صحيحتين)",
       ru: "Как должен реагировать сотрудник охраны, если его оскорбляют в ходе конфликта? (Выберите два правильных ответа)",
-      en: "How should a security officer respond if insulted during a conflict? (Choose two correct answers)"
+      en: "How should a security officer respond if insulted during a conflict?"
     },
     loesung: {
       fa: "حفظ فاصله حرفه‌ای: کنترل احساسات شخصی، مشخص کردن قاطعانه مرزها به صورت عینی و اطلاع‌رسانی آرام در مورد عواقب قانونی.",
@@ -245,7 +245,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         en: "A) Remain factual and professional, do not retaliate against insults on a personal level."
       },
       "1": {
-        fa: "ب) مشخص کردن شفاف مرزها، اخطار دادن به فرد و در صورت ادامه، اعمال حق مالکیت مکان (Hausrecht) یا تنظیم شکایت کیفری.",
+        fa: "ب) مشخص کردن شفاف مرزها، اخطار دادن به فرد و در صورت ادامه، اعمال حق مالکیت مکان یا تنظیم شکایت کیفری.",
         ar: "ب) توضيح الحدود بحزم، وتوجيه تحذير للشخص، وإذا استمر، تطبيق حق صاحب المكان أو تقديم بلاغ جنائي.",
         ru: "B) Четко обозначить границы, предупредить нарушителя, а при продолжении применить права владельца или подать заявление.",
         en: "B) Clearly set boundaries, warn the person, and if it continues, enforce house rules or file a criminal complaint."
@@ -268,10 +268,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 67: ihk-menschen-11
   "ihk-menschen-11": {
     frage: {
-      fa: "مفهوم «حفاظت از خود» (Eigensicherung) در کار عملی نگهبانی و حراست به چه معناست؟",
-      ar: "ماذا يعني مفهوم 'تأمين الحماية الذاتية' (Eigensicherung) في العمل الأمني الميداني؟",
-      ru: "Что означает «личная безопасность / самостраховка» (Eigensicherung) на практике службы охраны?",
-      en: "What does 'self-protection / officer safety' (Eigensicherung) mean in practical security operations?"
+      fa: "مفهوم «حفاظت از خود» در کار عملی نگهبانی و حراست به چه معناست؟",
+      ar: "ماذا يعني مفهوم 'تأمين الحماية الذاتية' في العمل الأمني الميداني؟",
+      ru: "Что означает «личная безопасность / самостраховка» на практике службы охраны?",
+      en: "What does 'self-protection / officer safety' mean in practical security operations?"
     },
     loesung: {
       fa: "حفاظت از جان خود همواره بر حفاظت از اموال یا دیگران ارجحیت دارد: ارزیابی موقعیت، حفظ فاصله، ارتباط بی‌سیم و هماهنگی تیمی.",
@@ -310,16 +310,16 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 68: ihk-menschen-12
   "ihk-menschen-12": {
     frage: {
-      fa: "کدام نشانه‌های غیرکلامی (Nonverbale Signale) بیانگر پرخاشگری فیزیکی قریب‌الوقوع هستند؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي الإشارات غير اللفظية (Nonverbale Signale) التي تدل على قرب وقوع اعتداء جسدي وشيك؟ (اختر إجابتين صحيحتين)",
+      fa: "کدام نشانه‌های غیرکلامی بیانگر پرخاشگری فیزیکی قریب‌الوقوع هستند؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي الإشارات غير اللفظية التي تدل على قرب وقوع اعتداء جسدي وشيك؟ (اختر إجابتين صحيحتين)",
       ru: "Какие невербальные сигналы указывают на скорую физическую агрессию? (Выберите два правильных ответа)",
-      en: "Which nonverbal signals indicate imminent physical aggression? (Choose two correct answers)"
+      en: "Which nonverbal signals indicate imminent physical aggression?"
     },
     loesung: {
       fa: "علائم هشداردهنده بدنی (مشت کردن، فک جلو آمده، کاهش فاصله، درآوردن کت) نیازمند اقدامات فوری حفاظت فردی (گارد دفاعی و فاصله) است.",
       ar: "علامات التحذير الجسدية (القبضة المحكمة، بروز الفك، تقليص المسافة، خلع السترة) تتطلب تدابير حماية ذاتية فورية.",
       ru: "Физические предупреждающие сигналы (сжатые кулаки, сокращение дистанции, снятие куртки) требуют мер самозащиты.",
-      en: "Physical warning cues (clenched fists, reduced distance, removing jacket) require immediate self-protection measures."
+      en: "Physical warning cues require immediate self-protection measures."
     },
     optionen: {
       "0": {
@@ -332,7 +332,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "ب) انقباض شدید عضلات، دندان‌قروچه و درآوردن ناگهانی لباس‌ها (مانند درآوردن کاپشن).",
         ar: "ب) توتر وتصلب العضلات، وصرير الأسنان، ونزع قطع من الملابس (مثل خلع السترة استعداداً للعراك).",
         ru: "B) Напряжение мышц, скрежет зубами и снятие одежды (например, снятие куртки).",
-        en: "B) Muscle tension, clenching teeth, and removing items of clothing (e.g. taking off jacket)."
+        en: "B) Muscle tension, clenching teeth, and removing items of clothing."
       },
       "2": {
         fa: "ج) لبخند آرام و خمیازه کشیدن.",
@@ -352,9 +352,9 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 69: ihk-menschen-13
   "ihk-menschen-13": {
     frage: {
-      fa: "منظور از «اثر هاله‌ای» (Halo-Effekt) در روانشناسی ادراک چیست؟",
-      ar: "ما المقصود بـ 'تأثير الهالة' (Halo-Effekt) في علم نفس الإدراك؟",
-      ru: "Что понимается под «эффектом ореола» (Halo-Effekt) в психологии восприятия?",
+      fa: "منظور از «اثر هاله‌ای» در روانشناسی ادراک چیست؟",
+      ar: "ما المقصود بـ 'تأثير الهالة' في علم نفس الإدراك؟",
+      ru: "Что понимается под «эффектом ореола» в психологии восприятия?",
       en: "What is meant by the 'halo effect' in perceptual psychology?"
     },
     loesung: {
@@ -368,7 +368,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "الف) یک ویژگی برجسته در یک فرد (مانند لباس، ظاهر)، تمام ویژگی‌های دیگر او را تحت‌الشعاع قرار داده و قضاوت کلی ما را شکل می‌دهد.",
         ar: "أ) طغيان سمة بارزة واحدة في الشخص (مثل المظهر أو اللباس) على بقية صفاته لتحدد التقييم الشامل له.",
         ru: "A) Одна яркая черта человека (напр., одежда, внешность) затмевает все остальные качества и определяет общее суждение.",
-        en: "A) A single prominent feature of a person (e.g. clothing, appearance) overshadows all other traits and determines the overall judgment."
+        en: "A) A single prominent feature of a person overshadows all other traits and determines the overall judgment."
       },
       "1": {
         fa: "ب) اثر محافظتی جلیقه ضدگلوله کولار.",
@@ -397,7 +397,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
       fa: "واکنش صحیح در هنگام تهدید به بمب‌گذاری از طریق تماس تلفنی چیست؟ (دو پاسخ صحیح را انتخاب کنید)",
       ar: "ما هو التصرف الصحيح عند تلقي تهديد بوجود قنبلة عبر الهاتف؟ (اختر إجابتين صحيحتين)",
       ru: "Как правильно реагировать при угрозе взрыва бомбы по телефону? (Выберите два правильных ответа)",
-      en: "How to react properly to a bomb threat over the telephone? (Choose two correct answers)"
+      en: "How to react properly to a bomb threat over the telephone?"
     },
     loesung: {
       fa: "در تهدید به بمب‌گذاری: حفظ خونسردی، استفاده از چک‌لیست، یادداشت دقیق صدای تماس‌گیرنده و صداهای پس‌زمینه و اجرای سریع نقشه هشدار.",
@@ -410,7 +410,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "الف) حفظ خونسردی، قطع نکردن حرف تماس‌گیرنده، یادداشت دقیق جزئیات (صداهای پس‌زمینه، لهجه، لحن، متن) و هشدار همزمان به مرکز فرماندهی و پلیس.",
         ar: "أ) الحفاظ على الهدوء التام، وترك المتصل يكمل حديثه، وتدوين ملاحظات دقيقة (الأصوات المحيطة، نبرة الصوت، النص) وإبلاغ غرفة العمليات والشرطة بالتوازي.",
         ru: "A) Сохранять спокойствие, дать звонящему договорить, делать точные записи (фоновые шумы, голос, текст) и параллельно оповестить дежурную часть/полицию.",
-        en: "A) Stay calm, let the caller finish speaking, take precise notes (background noise, voice, text) and alert the control center/police in parallel."
+        en: "A) Stay calm, let the caller finish speaking, take precise notes and alert the control center/police in parallel."
       },
       "1": {
         fa: "ب) پرسیدن سوالات کلیدی: بمب کجاست؟ چه زمانی منفجر می‌شود؟ چه شکلی است؟ چرا این کار را می‌کنید؟",
@@ -436,23 +436,23 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 71: ihk-uvv-1
   "ihk-uvv-1": {
     frage: {
-      fa: "کدام آیین‌نامه DGUV، مقررات محوری پیشگیری از حوادث (UVV) برای خدمات نگهبانی و امنیتی است؟",
-      ar: "ما هي لائحة DGUV التي تعتبر اللائحة المركزية للوقاية من الحوادث (UVV) الخاصة بخدمات الحراسة والأمن؟",
-      ru: "Какое предписание DGUV является главным правилом предотвращения несчастных случаев (UVV) для охранных служб?",
+      fa: "کدام آیین‌نامه DGUV، مقررات محوری پیشگیری از حوادث برای خدمات نگهبانی و امنیتی است؟",
+      ar: "ما هي لائحة DGUV التي تعتبر اللائحة المركزية للوقاية من الحوادث الخاصة بخدمات الحراسة والأمن؟",
+      ru: "Какое предписание DGUV является главным правилом предотвращения несчастных случаев для охранных служб?",
       en: "Which DGUV regulation is the central accident prevention regulation for security and guarding services?"
     },
     loesung: {
       fa: "آیین‌نامه DGUV Vorschrift 23 (که قبلاً BGV C7 نامیده می‌شد) ایمنی کار و پیشگیری از حوادث را ویژه صنف حراست تنظیم می‌کند.",
       ar: "اللائحة DGUV Vorschrift 23 (المعروفة سابقاً باسم BGV C7) تنظم شؤون السلامة المهنية والوقاية من الحوادث الخاصة بشركات الحراسة والأمن.",
       ru: "Предписание DGUV 23 (ранее BGV C7) регулирует охрану труда и технику безопасности специально для сферы безопасности.",
-      en: "DGUV Regulation 23 (formerly BGV C7) governs occupational health and safety specifically for the guarding and security industry."
+      en: "DGUV Regulation 23 governs occupational health and safety specifically for the guarding and security industry."
     },
     optionen: {
       "0": {
         fa: "الف) مقررات DGUV Vorschrift 23 (با نام قبلی BGV C7).",
         ar: "أ) اللائحة DGUV Vorschrift 23 (المعروفة سابقاً باسم BGV C7).",
         ru: "A) Предписание DGUV 23 (ранее BGV C7).",
-        en: "A) DGUV Regulation 23 (formerly BGV C7)."
+        en: "A) DGUV Regulation 23."
       },
       "1": {
         fa: "ب) مقررات DGUV Vorschrift 100 برای کارهای راه‌سازی.",
@@ -461,10 +461,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         en: "B) DGUV Regulation 100 for road construction work."
       },
       "2": {
-        fa: "ج) آیین‌نامه راهنمایی و رانندگی (StVO).",
-        ar: "ج) قانون المرور وتسيير الطرقات (StVO).",
-        ru: "C) Правила дорожного движения (StVO).",
-        en: "C) Road Traffic Regulations (StVO)."
+        fa: "ج) آیین‌نامه راهنمایی و رانندگی.",
+        ar: "ج) قانون المرور وتسيير الطرقات.",
+        ru: "C) Правила дорожного движения.",
+        en: "C) Road Traffic Regulations."
       },
       "3": {
         fa: "د) مقررات ساختمانی ایالتی.",
@@ -478,8 +478,8 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 72: ihk-uvv-2
   "ihk-uvv-2": {
     frage: {
-      fa: "کارفرما طبق DGUV V23 در خصوص دستورالعمل‌های خدمت (Dienstanweisung) چه وظایفی دارد؟",
-      ar: "ما هي واجبات صاحب العمل بخصوص تعليمات الخدمة (Dienstanweisung) بموجب لائحة DGUV V23؟",
+      fa: "کارفرما طبق DGUV V23 در خصوص دستورالعمل‌های خدمت چه وظایفی دارد؟",
+      ar: "ما هي واجبات صاحب العمل بخصوص تعليمات الخدمة بموجب لائحة DGUV V23؟",
       ru: "Каковы обязанности работодателя в отношении служебной инструкции по DGUV V23?",
       en: "What duties does the employer have regarding service instructions under DGUV V23?"
     },
@@ -520,10 +520,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 73: ihk-uvv-3
   "ihk-uvv-3": {
     frage: {
-      fa: "طبق DGUV V23 چه الزاماتی برای به‌کارگیری سگ‌های نگهبان (Diensthunde) وجود دارد؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي المتطلبات الواجبة بموجب لائحة DGUV V23 عند استخدام كلاب الحراسة (Diensthunde)؟ (اختر إجابتين صحيحتين)",
+      fa: "طبق DGUV V23 چه الزاماتی برای به‌کارگیری سگ‌های نگهبان وجود دارد؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي المتطلبات الواجبة بموجب لائحة DGUV V23 عند استخدام كلاب الحراسة؟ (اختر إجابتين صحيحتين)",
       ru: "Какие требования предъявляются к служебным собакам по DGUV V23? (Выберите два правильных ответа)",
-      en: "What requirements apply under DGUV V23 for the deployment of service dogs? (Choose two correct answers)"
+      en: "What requirements apply under DGUV V23 for the deployment of service dogs?"
     },
     loesung: {
       fa: "مواد ۱۴ به بعد DGUV V23: سگ‌های نگهبان باید دارای آزمون صلاحیت و کاربری باشند و فقط توسط سگ‌بانان مجرب با قلاده و تجهیزات کنترل شوند.",
@@ -536,7 +536,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "الف) فقط سگ‌های آموزش‌دیده و دارای گواهی آزمون صلاحیت (مانند آزمون سگ محافظ) و تحت هدایت سگ‌بانان واجد شرایط مجاز به کار هستند.",
         ar: "أ) لا يجوز استخدام سوى الكلاب المدربة والمجتازة لاختبارات الصلاحية (مثل اختبار كلاب الحراسة) بقيادة مدربين ومربين مؤهلين.",
         ru: "A) Разрешается использовать только аттестованных собак с подтвержденной квалификацией под управлением обученных кинологов.",
-        en: "A) Only tested dogs with proven suitability (e.g. guard dog exam) guided by qualified dog handlers may be deployed."
+        en: "A) Only tested dogs with proven suitability guided by qualified dog handlers may be deployed."
       },
       "1": {
         fa: "ب) سگ باید دارای قلاده محکم، بند قلاده و در صورت لزوم پوزه‌بند باشد.",
@@ -565,7 +565,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
       fa: "مقررات DGUV V23 چه الزاماتی را برای خدمات امنیتی مسلح تعیین می‌کند؟ (دو پاسخ صحیح را انتخاب کنید)",
       ar: "ما الذي تنص عليه لائحة DGUV V23 بخصوص خدمات الحراسة المسلحة؟ (اختر إجابتين صحيحتين)",
       ru: "Что предписывает DGUV V23 для вооруженной службы охраны? (Выберите два правильных ответа)",
-      en: "What does DGUV V23 mandate for armed security services? (Choose two correct answers)"
+      en: "What does DGUV V23 mandate for armed security services?"
     },
     loesung: {
       fa: "مواد ۱۸ به بعد DGUV V23: حمل سلاح شخصی در شیفت ممنوع است! سلاح توسط شرکت تامین می‌شود و آموزش و نگهداری در گاوصندوق الزامی است.",
@@ -605,22 +605,22 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   "ihk-uvv-5": {
     frage: {
       fa: "مقررات UVV برای مشاغل پرخطر تک‌نفره (مانند گشت شبانه در محوطه‌های وسیع) چه چیزی را الزامی می‌داند؟",
-      ar: "ما الذي تلزم به لائحة الوقاية من الحوادث (UVV) لأماكن العمل الانفرادي الخطرة (مثل الدوريات الليلية في مناطق معزولة)؟",
-      ru: "Что предписывают правила охраны труда (UVV) для опасных одиночных рабочих мест (напр. ночной обход)?",
-      en: "What does the UVV mandate for dangerous lone-worker posts (e.g. night patrol in secluded terrain)?"
+      ar: "ما الذي تلزم به لائحة الوقاية من الحوادث لأماكن العمل الانفرادي الخطرة (مثل الدوريات الليلية في مناطق معزولة)؟",
+      ru: "Что предписывают правила охраны труда для опасных одиночных рабочих мест (напр. ночной обход)?",
+      en: "What does the UVV mandate for dangerous lone-worker posts?"
     },
     loesung: {
       fa: "در کار تک‌نفره طبق DGUV Vorschrift 1 / V23 باید از طریق تدابیر فنی (سیستم هشدار اضطراری فردی PNA) یا فواصل زمانی گزارش، زنجیره امداد تضمین شود.",
-      ar: "في العمل المنفرد وفق DGUV Vorschrift 1 / V23، يجب تأمين مسار الإغاثة عبر أجهزة الاستغاثة الشخصية (PNA) أو فترات الإبلاغ المنتظمة باللاسلكي.",
-      ru: "При одиночной работе по DGUV Vorschrift 1 / V23 спасательная цепочка должна обеспечиваться техническими средствами (PNA) или интервалами связи.",
-      en: "For lone work under DGUV Regulation 1 / V23, the rescue chain must be guaranteed through technical (PNA/dead-man systems) or organizational checks (call-in intervals)."
+      ar: "في العمل المنفرد وفق DGUV Vorschrift 1 / V23، يجب تأمين مسار الإغاثة عبر أجهزة الاستغاثة الشخصية أو فترات الإبلاغ المنتظمة باللاسلكي.",
+      ru: "При одиночной работе по DGUV Vorschrift 1 / V23 спасательная цепочка должна обеспечиваться техническими средствами или интервалами связи.",
+      en: "For lone work under DGUV Regulation 1 / V23, the rescue chain must be guaranteed through technical or organizational checks."
     },
     optionen: {
       "0": {
         fa: "الف) باید اقدامات کنترلی مناسب (مانند سیستم هشدار اضطراری فردی / PNA، حسگر عدم تحرک یا فواصل منظم اعلام وضعیت با بی‌سیم) تعبیه شده باشد.",
         ar: "أ) يجب اتخاذ تدابير رقابة وحماية ملائمة (مثل أجهزة استغاثة الطوارئ الشخصية PNA، أو أجهزة رصد الحركة، أو فترات إبلاغ دورية باللاسلكي).",
         ru: "A) Должны быть установлены меры контроля (системы персональной аварийной сигнализации / PNA, датчики неподвижности или регулярная радиосвязь).",
-        en: "A) Suitable control measures (e.g. personal emergency signal systems / PNA, man-down sensors, or regular radio check-in intervals) must be established."
+        en: "A) Suitable control measures must be established."
       },
       "1": {
         fa: "ب) کار تک‌نفره در شب تحت هر شرایطی از نظر قانونی ممنوع است.",
@@ -649,7 +649,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
       fa: "مامور امنیتی در صورت مشاهده منابع خطر (مانند دریچه‌های باز چاهک، نرده‌های خراب) چه وظایفی دارد؟",
       ar: "ما هي واجبات موظف الأمن عند ملاحظة مصادر خطر (مثل فتحات الصرف المكشوفة، حواجز الحماية التالفة)؟",
       ru: "Каковы обязанности сотрудника охраны при обнаружении источников опасности (открытые люки, сломанные перила)?",
-      en: "What duties does a security guard have upon noticing safety hazards (e.g. open shafts, broken railings)?"
+      en: "What duties does a security guard have upon noticing safety hazards?"
     },
     loesung: {
       fa: "طبق DGUV Vorschrift 1 و دستورالعمل خدمت، هر منبع خطری باید بلافاصله ایمن‌سازی شده، ثبت و به مسئولین گزارش داده شود.",
@@ -688,29 +688,29 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 77: ihk-uvv-7
   "ihk-uvv-7": {
     frage: {
-      fa: "کارفرما در صورت نیاز موظف به تهیه رایگان کدام تجهیزات حفاظت فردی (PSA) است؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي معدات الوقاية الشخصية (PSA) التي يجب على صاحب العمل توفيرها عند الحاجة؟ (اختر إجابتين صحيحتين)",
+      fa: "کارفرما در صورت نیاز موظف به تهیه رایگان کدام تجهیزات حفاظت فردی است؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي معدات الوقاية الشخصية التي يجب على صاحب العمل توفيرها عند الحاجة؟ (اختر إجابتين صحيحتين)",
       ru: "Какими средствами индивидуальной защиты (СИЗ / PSA) работодатель обязан обеспечить сотрудников при необходимости? (Выберите два правильных ответа)",
-      en: "Which personal protective equipment (PPE / PSA) must the employer provide when necessary? (Choose two correct answers)"
+      en: "Which personal protective equipment must the employer provide when necessary?"
     },
     loesung: {
       fa: "کارفرما باید با توجه به ارزیابی خطرات، تجهیزات حفاظت فردی مناسب (کفش ایمنی، جلیقه شب‌نما، جلیقه محافظ، محافظ گوش) را رایگان تهیه کند.",
       ar: "يجب على صاحب العمل توفير معدات الحماية المناسبة (أحذية سلامة، سترات عاكسة، سترات واقية، واقيات السمع) مجاناً وفق تقييم المخاطر.",
       ru: "Работодатель обязан бесплатно предоставить надлежащие СИЗ (спецобувь, сигнальные жилеты, бронежилеты, защиту слуха) согласно оценке рисков.",
-      en: "The employer must provide appropriate PPE (safety shoes, high-vis vests, protective vests, hearing protection) free of charge based on the risk assessment."
+      en: "The employer must provide appropriate PPE free of charge based on the risk assessment."
     },
     optionen: {
       "0": {
-        fa: "الف) کفش‌های ایمنی (S3) با زیره مقاوم در برابر نفوذ و سرپنجه محافظ، همراه با جلیقه شبرنگ برای کار در محدوده ترافیکی.",
-        ar: "أ) أحذية السلامة المهنية (S3) المزودة بنعل مقاوم للاختراق ومقدمة واقية للأصابع، وسترة عاكسة للعمل في مناطق حركة السير.",
-        ru: "A) Защитная спецобувь (S3) с защитой от проколов и защитным подноском, а также сигнальный жилет при работе в зоне движения транспорта.",
-        en: "A) Safety shoes (S3) with puncture-resistant sole and toe cap, and high-visibility vest when working in traffic areas."
+        fa: "الف) کفش‌های ایمنی با زیره مقاوم در برابر نفوذ و سرپنجه محافظ، همراه با جلیقه شبرنگ برای کار در محدوده ترافیکی.",
+        ar: "أ) أحذية السلامة المهنية المزودة بنعل مقاوم للاختراق ومقدمة واقية للأصابع، وسترة عاكسة للعمل في مناطق حركة السير.",
+        ru: "A) Защитная спецобувь с защитой от проколов и защитным подноском, а также сигнальный жилет при работе в зоне движения транспорта.",
+        en: "A) Safety shoes with puncture-resistant sole and toe cap, and high-visibility vest when working in traffic areas."
       },
       "1": {
         fa: "ب) جلیقه‌های ضد ضربه/چاقو یا جلیقه‌های ضدگلوله در ماموریت‌های پرخطر (مانند حمل پول یا نگهبانی درهای ورودی).",
         ar: "ب) سترات الحماية من الطعنات أو السترات البالستية الواقية من الرصاص في المهام المحفوفة بالمخاطر (مثل نقل الأموال، وحراسة بوابات النوادي).",
         ru: "B) Жилеты для защиты от ножевых ударов или баллистические бронежилеты при опасных заданиях (инкассация, фейсконтроль).",
-        en: "B) Stab-proof or ballistic protective vests in hazardous deployments (e.g. cash-in-transit, door security)."
+        en: "B) Stab-proof or ballistic protective vests in hazardous deployments."
       },
       "2": {
         fa: "ج) عینک‌های آفتابی لوکس و سفارشی از برندهای معروف.",
@@ -739,7 +739,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
       fa: "تجهیزات فنی امنیت (دزدگیر، اعلام حریق، دوربین) وظیفه کشف و هشدار را بر عهده دارند؛ اما ارزیابی، تصمیم‌گیری و اقدام نیازمند انسان است.",
       ar: "تقنيات الأمان (أجهزة الإنذار، الكاميرات) مخصصة للكشف والتبليغ؛ بينما يتطلب التقييم واتخاذ القرار والتدخل كادراً أمنياً مؤهلاً.",
       ru: "Системы безопасности служат для обнаружения и передачи сигнала; оценка ситуации и реагирование требуют обученного персонала.",
-      en: "Security technology (burglar alarms, fire alarms, CCTV) serves detection and reporting; assessment and intervention require qualified personnel."
+      en: "Security technology serves detection and reporting; assessment and intervention require qualified personnel."
     },
     optionen: {
       "0": {
@@ -772,29 +772,29 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 79: ihk-technik-2
   "ihk-technik-2": {
     frage: {
-      fa: "کدام اجزا به طور معمول متعلق به یک سیستم اعلام سرقت (EMA) هستند؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي المكونات التي تنتمي عادةً إلى نظام إنذار السرقة والاقتحام (EMA)؟ (اختر إجابتين صحيحتين)",
-      ru: "Какие компоненты обычно входят в систему охранной сигнализации (EMA)? (Выберите два правильных ответа)",
-      en: "Which components typically belong to an intruder alarm system (EMA)? (Choose two correct answers)"
+      fa: "کدام اجزا به طور معمول متعلق به یک سیستم اعلام سرقت هستند؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي المكونات التي تنتمي عادةً إلى نظام إنذار السرقة والاقتحام؟ (اختر إجابتين صحيحتين)",
+      ru: "Какие компоненты обычно входят в систему охранной сигнализации? (Выберите два правильных ответа)",
+      en: "Which components typically belong to an intruder alarm system?"
     },
     loesung: {
-      fa: "سیستم اعلام سرقت شامل: حسگرها و آشکارسازها، مرکز پردازش، آژیر/فلاشر هشدار و دستگاه مخابره پیام هشدار به مرکز خدمات و امداد (NSL) است.",
-      ar: "يتكون نظام إنذار الاقتحام من: الحساسات (الكواشف)، لوحة التحكم المركزية، أجهزة التنبيه (الصافرة والضوء)، وجهاز الإرسال لغرفة العمليات (NSL).",
-      ru: "Система охранной сигнализации состоит из извещателей, панели управления, оповещателей (сирена/вспышка) и устройства передачи на пульт (NSL).",
-      en: "An intruder alarm system consists of detectors (sensors), a control panel, signaling devices (sirens/strobes), and transmission equipment to the monitoring center (NSL)."
+      fa: "سیستم اعلام سرقت شامل: حسگرها و آشکارسازها، مرکز پردازش، آژیر/فلاشر هشدار و دستگاه مخابره پیام هشدار به مرکز خدمات و امداد است.",
+      ar: "يتكون نظام إنذار الاقتحام من: الحساسات (الكواشف)، لوحة التحكم المركزية، أجهزة التنبيه (الصافرة والضوء)، وجهاز الإرسال لغرفة العمليات.",
+      ru: "Система охранной сигнализации состоит из извещателей, панели управления, оповещателей (сирена/вспышка) и устройства передачи на пульт.",
+      en: "An intruder alarm system consists of detectors, a control panel, signaling devices, and transmission equipment to the monitoring center."
     },
     optionen: {
       "0": {
         fa: "الف) آشکارسازها و حسگرها (مانند سنسور حرکت، کنتاکت مگنت، حسگر شکست شیشه) و تابلوی مرکزی کنترل.",
         ar: "أ) الكواشف والحساسات (مثل كواشف الحركة، الحساسات المغناطيسية، كواشف كسر الزجاج) ولوحة التحكم المركزية.",
         ru: "A) Извещатели (датчики движения, магнитные контакты, датчики разбития стекла) и контрольная панель.",
-        en: "A) Detectors (e.g. motion detectors, magnetic contacts, glass break detectors) and control unit."
+        en: "A) Detectors and control unit."
       },
       "1": {
-        fa: "ب) تجهیزات هشداردهنده (نوری/صوتی) و دستگاه انتقال پیام هشدار به مرکز پیام و خدمات (NSL).",
-        ar: "ب) أجهزة التنبيه وإطلاق الإشارة (بصرية/صوتية) ومعدات نقل الإشارة إلى غرفة العمليات وخدمات الطوارئ (NSL).",
-        ru: "B) Оповещатели (оптические/звуковые) и устройство передачи извещений на пульт централизованного наблюдения (NSL).",
-        en: "B) Signaling devices (optical/acoustic) and transmission equipment to the emergency monitoring center (NSL)."
+        fa: "ب) تجهیزات هشداردهنده (نوری/صوتی) و دستگاه انتقال پیام هشدار به مرکز پیام و خدمات.",
+        ar: "ب) أجهزة التنبيه وإطلاق الإشارة (بصرية/صوتية) ومعدات نقل الإشارة إلى غرفة العمليات وخدمات الطوارئ.",
+        ru: "B) Оповещатели (оптические/звуковые) и устройство передачи извещений на пульт централизованного наблюдения.",
+        en: "B) Signaling devices and transmission equipment to the emergency monitoring center."
       },
       "2": {
         fa: "ج) سیستم آب‌پاش اسپرینکلر برای پر کردن سالن از آب.",
@@ -814,10 +814,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 80: ihk-technik-3
   "ihk-technik-3": {
     frage: {
-      fa: "سنسور مادون قرمز غیرفعال (PIR-Melder) چیست و چگونه عمل می‌کند؟",
-      ar: "ما هو كاشف الأشعة تحت الحمراء السلبي (PIR-Melder) وكيف يعمل؟",
-      ru: "Что такое пассивный инфракрасный извещатель (PIR-Melder)?",
-      en: "What is a passive infrared detector (PIR detector)?"
+      fa: "سنسور مادون قرمز غیرفعال چیست و چگونه عمل می‌کند؟",
+      ar: "ما هو كاشف الأشعة تحت الحمراء السلبي وكيف يعمل؟",
+      ru: "Что такое пассивный инфракрасный извещатель?",
+      en: "What is a passive infrared detector?"
     },
     loesung: {
       fa: "سنسورهای PIR تابش گرمایی مادون قرمز ساطع‌شده از بدن افراد در حال حرکت در محدوده تحت پوشش خود را به صورت غیرفعال دریافت می‌کنند.",
@@ -830,7 +830,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "الف) یک سنسور حرکتی که به تغییرات دما و تابش گرمایی ساطع از بدن افراد در محدوده پوشش خود واکنش نشان می‌دهد.",
         ar: "أ) كاشف حركة يتفاعل مع التغيرات في درجات الحرارة (الإشعاع الحراري الصادر من الأجسام) في منطقة المراقبة.",
         ru: "A) Датчик движения, реагирующий на изменения температуры (тепловое излучение тел) в зоне обнаружения.",
-        en: "A) A motion detector that reacts to temperature changes (thermal radiation from bodies) in the detection zone."
+        en: "A) A motion detector that reacts to temperature changes in the detection zone."
       },
       "1": {
         fa: "ب) سنسوری که مانند رادار فعالانه امواج مایکروویو ارسال می‌کند.",
@@ -856,10 +856,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 81: ihk-technik-4
   "ihk-technik-4": {
     frage: {
-      fa: "کدام انواع آشکارسازهای حریق در سیستم‌های اعلام حریق (BMA) استفاده می‌شوند؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما هي أنواع كواشف الحريق المستخدمة في أنظمة إنذار الحريق (BMA)؟ (اختر إجابتين صحيحتين)",
-      ru: "Какие типы пожарных извещателей используются в системах пожарной сигнализации (BMA)? (Выберите два правильных ответа)",
-      en: "Which types of fire detectors are used in fire alarm systems (BMA)? (Choose two correct answers)"
+      fa: "کدام انواع آشکارسازهای حریق در سیستم‌های اعلام حریق استفاده می‌شوند؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما هي أنواع كواشف الحريق المستخدمة في أنظمة إنذار الحريق؟ (اختر إجابتين صحيحتين)",
+      ru: "Какие типы пожарных извещателей используются в системах пожарной сигнализации? (Выберите два правильных ответа)",
+      en: "Which types of fire detectors are used in fire alarm systems?"
     },
     loesung: {
       fa: "انواع دتکتور حریق: دتکتورهای نوری دود، دتکتورهای حرارتی، دتکتورهای شعله، دتکتورهای ترکیبی و شستی‌های دستی اعلام حریق.",
@@ -872,13 +872,13 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
         fa: "الف) آشکارسازهای نوری دود (دتکتورهای پراکندگی نور) برای تشخیص دود قابل مشاهده.",
         ar: "أ) كواشف الدخان البصرية (كواشف تشتت الضوء) للتعرف على الدخان المرئي.",
         ru: "A) Оптические дымовые извещатели для обнаружения видимого дыма.",
-        en: "A) Optical smoke detectors (scattered light detectors) for detecting visible smoke."
+        en: "A) Optical smoke detectors for detecting visible smoke."
       },
       "1": {
         fa: "ب) دتکتورهای حرارتی (ترمو) که به افزایش سریع دما یا رسیدن به حداکثر دمای مجاز واکنش نشان می‌دهند.",
         ar: "ب) الكواشف الحرارية التي تتفاعل مع الارتفاع المفاجئ في درجات الحرارة أو بلوغ الحد الأقصى للحرارة.",
         ru: "B) Тепловые извещатели, реагирующие на повышение температуры или достижение максимальной температуры.",
-        en: "B) Heat detectors (thermal detectors) that respond to temperature rise or maximum temperature thresholds."
+        en: "B) Heat detectors that respond to temperature rise or maximum temperature thresholds."
       },
       "2": {
         fa: "ج) کنتاکت‌های مگنتی نصب‌شده روی پنجره‌ها.",
@@ -898,10 +898,10 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
   // Frage 82: ihk-technik-5
   "ihk-technik-5": {
     frage: {
-      fa: "منظور از اصل «قطعیت و ناگزیری» (Zwangsläufigkeit) در سیستم‌های اعلام سرقت طبق دستورالعمل‌های VdS چیست؟",
-      ar: "ماذا يعني مبدأ 'الحتمية والترابط الإجباري' (Zwangsläufigkeit) في أنظمة إنذار السرقة وفق معايير VdS؟",
-      ru: "Что означает «принцип неизбежности/принудительности» (Zwangsläufigkeit) в охранной сигнализации по нормам VdS?",
-      en: "What does 'inevitability/interlocking' (Zwangsläufigkeit) mean in an intruder alarm system under VdS guidelines?"
+      fa: "منظور از اصل «قطعیت و ناگزیری» در سیستم‌های اعلام سرقت طبق دستورالعمل‌های VdS چیست؟",
+      ar: "ماذا يعني مبدأ 'الحتمية والترابط الإجباري' في أنظمة إنذار السرقة وفق معايير VdS؟",
+      ru: "Что означает «принцип неизбежности/принудительности» в охранной сигнализации по нормам VdS?",
+      en: "What does 'inevitability/interlocking' mean in an intruder alarm system under VdS guidelines?"
     },
     loesung: {
       fa: "اصل Zwangsläufigkeit مانع از آلارم‌های کاذب می‌شود: مسلح کردن سیستم تنها زمانی مقدور است که همه درها و پنجره‌ها بسته، قفل و حسگرها در وضعیت آماده‌باش باشند.",
@@ -911,7 +911,7 @@ export const TRANSLATIONS_PART_10: Record<string, TranslationBlockItem> = {
     },
     optionen: {
       "0": {
-        fa: "الف) سیستم تنها زمانی می‌تواند فعال و مسلح (Scharf) شود که تمامی پنجره‌ها و درهای تحت نظارت بسته و قفل باشند و همه دتکتورها در وضعیت نرمال قرار داشته باشند.",
+        fa: "الف) سیستم تنها زمانی می‌تواند فعال و مسلح شود که تمامی پنجره‌ها و درهای تحت نظارت بسته و قفل باشند و همه دتکتورها در وضعیت نرمال قرار داشته باشند.",
         ar: "أ) لا يمكن تفعيل النظام ووضعه في حالة التأهب التام إلا إذا كانت جميع النوافذ والأبواب المراقبة مغلقة ومحكمة وكافة الكواشف في حالة سكون.",
         ru: "A) Система может быть поставлена на охрану только тогда, когда все контролируемые окна и двери закрыты, а извещатели находятся в состоянии покоя.",
         en: "A) The system can only be armed when all monitored windows and doors are closed and all detectors are in a resting state."

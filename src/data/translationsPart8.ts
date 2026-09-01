@@ -16,10 +16,10 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
   // Frage 1: ihk-oeff-1
   "ihk-oeff-1": {
     frage: {
-      fa: "امنیت عمومی (Öffentliche Sicherheit) طبق حقوق انتظامی شامل چه مواردی می‌شود؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "ما الذي تشمله «السلامة العامة» (Öffentliche Sicherheit) بموجب قانون الشرطة والنظام العام؟ (اختر إجابتين صحيحتين)",
+      fa: "امنیت عمومی طبق حقوق انتظامی شامل چه مواردی می‌شود؟ (دو پاسخ صحیح را انتخاب کنید)",
+      ar: "ما الذي تشمله «السلامة العامة» بموجب قانون الشرطة والنظام العام؟ (اختر إجابتين صحيحتين)",
       ru: "Что включает в себя понятие «общественная безопасность» по административно-полицейскому праву? (Выберите два правильных ответа)",
-      en: "What is included in 'Public Safety' (Öffentliche Sicherheit) under administrative law? (Choose two correct answers)"
+      en: "What is included in 'Public Safety' under administrative law?"
     },
     loesung: {
       fa: "امنیت عمومی شامل سه بخش است: ۱. نقض‌ناپذیری نظام حقوقی، ۲. حفاظت از اموال و حقوق فردی و ۳. حفاظت از نهادهای دولتی.",
@@ -32,13 +32,13 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
         fa: "الف) حفاظت از نقض‌ناپذیری نظام حقوقی (تمام قوانین و مقررات).",
         ar: "أ) حماية حرمة وعدم المساس بالنظام القانوني (كافة القوانين واللوائح).",
         ru: "A) Защита неприкосновенности правопорядка (всех законов и норм).",
-        en: "A) Protection of the inviolability of the legal order (all laws and regulations)."
+        en: "A) Protection of the inviolability of the legal order."
       },
       "1": {
         fa: "ب) حفاظت از حقوق و منافع فردی اشخاص (جان، سلامت، آزادی، مالکیت).",
         ar: "ب) حماية الحقوق والمصالح الفردية للأشخاص (الحياة، الصحة، الحرية، والملكية).",
         ru: "B) Защита прав и свобод личности (жизнь, здоровье, свобода, собственность).",
-        en: "B) Protection of individual legal assets (life, health, liberty, property)."
+        en: "B) Protection of individual legal assets."
       },
       "2": {
         fa: "ج) رعایت قواعد اخلاقی نانوشته و آداب معاشرت اجتماعی.",
@@ -58,10 +58,10 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
   // Frage 2: ihk-oeff-2
   "ihk-oeff-2": {
     frage: {
-      fa: "«نظم عمومی» (Öffentliche Ordnung) چگونه تعریف می‌شود؟",
-      ar: "كيف يُعرّف مفهوم «النظام العام» (Öffentliche Ordnung)؟",
-      ru: "Как определяется понятие «общественный порядок» (Öffentliche Ordnung)?",
-      en: "How is 'Public Order' (Öffentliche Ordnung) defined?"
+      fa: "«نظم عمومی» چگونه تعریف می‌شود؟",
+      ar: "كيف يُعرّف مفهوم «النظام العام»؟",
+      ru: "Как определяется понятие «общественный порядок»?",
+      en: "How is 'Public Order' defined?"
     },
     loesung: {
       fa: "نظم عمومی یعنی مجموع هنجارها و قواعد نانوشته اخلاقی، عرفی و رفتاری که طبق نظر جامعه شرط همزیستی مسالمت‌آمیز است.",
@@ -100,16 +100,16 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
   // Frage 3: ihk-oeff-3
   "ihk-oeff-3": {
     frage: {
-      fa: "اصل «انحصار قوه قهریه توسط دولت» (Gewaltmonopol des Staates) بیانگر چیست؟",
-      ar: "ما الذي ينص عليه مبدأ «احتكار الدولة لاستخدام القوة الجبرية» (Gewaltmonopol)؟",
-      ru: "Что означает принцип «монополии государства на применение силы» (Gewaltmonopol)?",
+      fa: "اصل «انحصار قوه قهریه توسط دولت» بیانگر چیست؟",
+      ar: "ما الذي ينص عليه مبدأ «احتكار الدولة لاستخدام القوة الجبرية»؟",
+      ru: "Что означает принцип «монополии государства на применение силы»?",
       en: "What does the principle of the 'state monopoly on the use of force' mean?"
     },
     loesung: {
       fa: "تنها دولت حق استفاده از زور برای اجرای قوانین را دارد. اشخاص خصوصی فقط در چارچوب حقوق اضطراری (دفاع مشروع و اضطرار) مجازند.",
       ar: "الدولة وحدها هي المخولة قانوناً باستخدام القوة الجبرية، والاستثناء للأفراد ينحصر فقط في حقوق الطوارئ كالدفاع الشرعي.",
       ru: "Только государство вправе применять силу для защиты правопорядка; исключение для частных лиц — только права самообороны и крайней необходимости.",
-      en: "Only the state is authorized to use physical force; private individuals are only permitted in emergencies (self-defense/necessity)."
+      en: "Only the state is authorized to use physical force; private individuals are only permitted in emergencies."
     },
     optionen: {
       "0": {
@@ -145,26 +145,26 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
       fa: "یک نیروی حراست خصوصی در مقایسه با افسر پلیس چه اختیاراتی دارد؟ (دو پاسخ صحیح را انتخاب کنید)",
       ar: "ما هي الصلاحيات التي يتمتع بها موظف الأمن الخاص مقارنة بضابط الشرطة؟ (اختر إجابتين صحيحتين)",
       ru: "Какими полномочиями обладает частный охранник по сравнению с полицейским? (Выберите два правильных ответа)",
-      en: "What powers does a private security employee have compared to a police officer? (Choose two correct answers)"
+      en: "What powers does a private security employee have compared to a police officer?"
     },
     loesung: {
-      fa: "نگهبانان خصوصی اختیارات حاکمیتی ندارند؛ اختیارات آنان همان اختیارات عامه (Jedermannsrechte) و اختیارات واگذار شده از سوی کارفرما است.",
+      fa: "نگهبانان خصوصی اختیارات حاکمیتی ندارند؛ اختیارات آنان همان اختیارات عامه و اختیارات واگذار شده از سوی کارفرما است.",
       ar: "لا يملك موظفو الأمن صلاحيات سيادية؛ صلاحياتهم هي حقوق الكافة العامة والحقوق المنقولة إليهم من صاحب العمل مثل حق صاحب المكان.",
-      ru: "У частной охраны нет властных полномочий; они обладают правами каждого гражданина (Jedermannsrechte) и переданными правами владельца.",
-      en: "Private security guards have no sovereign powers; they possess citizen's rights and rights delegated by the client (e.g. domiciliary rights)."
+      ru: "У частной охраны нет властных полномочий; они обладают правами каждого гражданина и переданными правами владельца.",
+      en: "Private security guards have no sovereign powers; they possess citizen's rights and rights delegated by the client."
     },
     optionen: {
       "0": {
-        fa: "الف) او اختیارات حاکمیتی پلیس را ندارد و فقط دارای حقوق همگانی (Jedermannsrechte) است.",
+        fa: "الف) او اختیارات حاکمیتی پلیس را ندارد و فقط دارای حقوق همگانی است.",
         ar: "أ) لا يتمتع بصلاحيات سيادية، بل تنطبق عليه حقوق الكافة العامة المتاحة لكل مواطن.",
-        ru: "A) Он не имеет властных полномочий и действует на основе общих прав каждого гражданина (Jedermannsrechte).",
-        en: "A) He has no sovereign powers and relies on citizen's rights (Jedermannsrechte)."
+        ru: "A) Он не имеет властных полномочий и действует на основе общих прав каждого гражданина.",
+        en: "A) He has no sovereign powers and relies on citizen's rights."
       },
       "1": {
         fa: "ب) او می‌تواند حقوق واگذار شده توسط کارفرما (مانند حق مالکیت بر مکان / Hausrecht) را اعمال کند.",
         ar: "ب) يمكنه ممارسة الصلاحيات المنقولة إليه من صاحب العمل (مثل حق صاحب المكان في المنشأة).",
         ru: "B) Он может осуществлять права, переданные ему заказчиком (напр. права владельца территории / Hausrecht).",
-        en: "B) He can exercise rights transferred by the client (e.g. domiciliary rights / Hausrecht)."
+        en: "B) He can exercise rights transferred by the client."
       },
       "2": {
         fa: "ج) او مجاز است در اماکن عمومی خودروها را متوقف و جریمه کند.",
@@ -184,9 +184,9 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
   // Frage 5: ihk-oeff-5
   "ihk-oeff-5": {
     frage: {
-      fa: "«فرعی بودن» (Subsidiarität) خدمات امنیتی خصوصی نسبت به پلیس به چه معناست؟",
-      ar: "ماذا يعني مبدأ «التبعية والصفة الفرعية» (Subsidiarität) لخدمات الأمن الخاص تجاه الشرطة؟",
-      ru: "Что означает принцип «субсидиарности» (Subsidiarität) частной охраны по отношению к полиции?",
+      fa: "«فرعی بودن» خدمات امنیتی خصوصی نسبت به پلیس به چه معناست؟",
+      ar: "ماذا يعني مبدأ «التبعية والصفة الفرعية» لخدمات الأمن الخاص تجاه الشرطة؟",
+      ru: "Что означает принцип «субсидиарности» частной охраны по отношению к полиции?",
       en: "What does the principle of 'subsidiarity' of private security services to the police mean?"
     },
     loesung: {
@@ -226,27 +226,27 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
   // Frage 6: ihk-oeff-6
   "ihk-oeff-6": {
     frage: {
-      fa: "چه پیش‌نیازهایی طبق ماده 34a قانون پیشه‌وران (GewO) برای اشتغال در نگهبانی الزامی است؟ (دو پاسخ صحیح را انتخاب کنید)",
+      fa: "چه پیش‌نیازهایی طبق ماده 34a قانون پیشه‌وران برای اشتغال در نگهبانی الزامی است؟ (دو پاسخ صحیح را انتخاب کنید)",
       ar: "ما هي الشروط القانونية الواجب توفرها وفق المادة § 34a GewO للعمل في الحراسة والأمن؟ (اختر إجابتين صحيحتين)",
       ru: "Какие требования установлены по § 34a GewO для работы в сфере охраны? (Выберите два правильных ответа)",
-      en: "Which legal requirements must be met under § 34a GewO to work in the guarding trade? (Choose two correct answers)"
+      en: "Which legal requirements must be met under § 34a GewO to work in the guarding trade?"
     },
     loesung: {
       fa: "طبق بند ۳۴a قانون تجارت: اثبات صلاحیت (آموزش یا آزمون تخصصی) و احراز صلاحیت امنیتی و عدم سوءپیشینه از اداره نظارت.",
       ar: "بموجب المادة § 34a GewO: إثبات الكفاءة (التدريب أو اجتياز الامتحان التخصصي) والتحقق من الموثوقية الأمنية من قبل السلطات.",
       ru: "По § 34a GewO: подтверждение квалификации (инструктаж или экзамен) и подтверждение благонадежности (отсутствие судимостей).",
-      en: "Under § 34a GewO: Proof of qualification (instruction or Sachkunde exam) and verified reliability (no criminal record)."
+      en: "Under § 34a GewO: Proof of qualification and verified reliability."
     },
     optionen: {
       "0": {
-        fa: "الف) احراز صلاحیت و پاکی سابقه از سوی اداره نظارت بر پیشه‌وران (Zuverlässigkeit).",
-        ar: "أ) التحقق من الأهلية والموثوقية الأمنية (Zuverlässigkeit) من قبل السلطات المختصة.",
-        ru: "A) Проверка благонадежности и отсутствия судимостей (Zuverlässigkeit) уполномоченным органом.",
-        en: "A) Proof of personal reliability (Zuverlässigkeit) verified by regulatory authorities."
+        fa: "الف) احراز صلاحیت و پاکی سابقه از سوی اداره نظارت بر پیشه‌وران.",
+        ar: "أ) التحقق من الأهلية والموثوقية الأمنية من قبل السلطات المختصة.",
+        ru: "A) Проверка благонадежности и отсутствия судимостей уполномоченным органом.",
+        en: "A) Proof of personal reliability verified by regulatory authorities."
       },
       "1": {
-        fa: "ب) داشتن گواهی آموزش یا قبولی در آزمون صلاحیت تخصصی اتاق بازرگانی (IHK-Sachkundeprüfung).",
-        ar: "ب) الحصول على شهادة التأهيل أو اجتياز اختبار الكفاءة التخصصية في غرفة التجارة (IHK).",
+        fa: "ب) داشتن گواهی آموزش یا قبولی در آزمون صلاحیت تخصصی اتاق بازرگانی.",
+        ar: "ب) الحصول على شهادة التأهيل أو اجتياز اختبار الكفاءة التخصصية في غرفة التجارة.",
         ru: "B) Свидетельство об инструктаже или успешной сдаче экзамена на квалификацию IHK.",
         en: "B) Certificate of instruction or successful passing of the IHK Sachkunde examination."
       },
@@ -269,9 +269,9 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
   "ihk-oeff-7": {
     frage: {
       fa: "برای کدام فعالیت‌های زیر قبولی در «آزمون تخصص ماده ۳۴a اتاق بازرگانی» الزامی است؟ (دو پاسخ صحیح را انتخاب کنید)",
-      ar: "لأي من الأنشطة الأمنية التالية يُشترط حصراً اجتياز اختبار الكفاءة التخصصية (Sachkundeprüfung)؟ (اختر إجابتين صحيحتين)",
-      ru: "Для каких видов деятельности обязательно требуется сдача экзамена на квалификацию (§ 34a Sachkunde)? (Выберите два правильных ответа)",
-      en: "For which of the following security duties is passing the § 34a IHK Sachkunde exam strictly required? (Choose two correct answers)"
+      ar: "لأي من الأنشطة الأمنية التالية يُشترط حصراً اجتياز اختبار الكفاءة التخصصية؟ (اختر إجابتين صحيحتين)",
+      ru: "Для каких видов деятельности обязательно требуется сдача экзамена на квалификацию? (Выберите два правильных ответа)",
+      en: "For which of the following security duties is passing the § 34a IHK Sachkunde exam strictly required?"
     },
     loesung: {
       fa: "آزمون تخصصی الزامی است برای: ۱. گشت‌زنی در اماکن عمومی، ۲. کارآگاهی فروشگاه و ۳. حراست درب ورودی دیسکوها و کلوپ‌ها.",
@@ -281,14 +281,14 @@ export const TRANSLATIONS_PART_8: Record<string, TranslationBlockItem> = {
     },
     optionen: {
       "0": {
-        fa: "الف) گشت‌زنی و کنترل در معابر عمومی یا محوطه‌های دارای تردد عمومی (Citystreife).",
-        ar: "أ) تسيير الدوريات في الأماكن والشوارع العامة المفتوحة للجمهور (Citystreife).",
-        ru: "A) Патрулирование в общественных местах или общедоступных зонах (Citystreife).",
-        en: "A) Patrols in public traffic areas or spaces with actual public access (Citystreife)."
+        fa: "الف) گشت‌زنی و کنترل در معابر عمومی یا محوطه‌های دارای تردد عمومی.",
+        ar: "أ) تسيير الدوريات في الأماكن والشوارع العامة المفتوحة للجمهور.",
+        ru: "A) Патрулирование в общественных местах или общедоступных зонах.",
+        en: "A) Patrols in public traffic areas or spaces with actual public access."
       },
       "1": {
-        fa: "ب) کارآگاه فروشگاه جهت پیشگیری و کشف سرقت در فروشگاه‌ها (Laden-Detektiv).",
-        ar: "ب) العمل كمحقق في المتاجر لكشف وضبط السرقات التجارية (Laden-Detektiv).",
+        fa: "ب) کارآگاه فروشگاه جهت پیشگیری و کشف سرقت در فروشگاه‌ها.",
+        ar: "ب) العمل كمحقق في المتاجر لكشف وضبط السرقات التجارية.",
         ru: "B) Работа магазинным детективом для предотвращения и выявления краж.",
         en: "B) Working as a store detective detecting shoplifters."
       },

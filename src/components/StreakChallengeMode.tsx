@@ -29,21 +29,21 @@ interface StreakChallengeModeProps {
   onRecordHistory?: (item: { typ?: string; mode?: string; anzahl: number; richtig: number; falsch: number; quote?: number }) => void;
 }
 
-interface RawStreakQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correct: string;
-  category: string;
-}
+import { STREAK_QUESTIONS, StreakQuestion, StreakQuestionOption } from '../data/streakQuestions.ts';
 
 interface ShuffledStreakQuestion {
   id: string;
   question: string;
-  options: string[];
+  options: StreakQuestionOption[];
   correctIndex: number;
   correctAnswer: string;
   category: string;
+  translations: {
+    en: { question: string };
+    ru: { question: string };
+    ar: { question: string };
+    fa: { question: string };
+  };
 }
 
 interface StudentLeaderboardEntry {
@@ -52,150 +52,6 @@ interface StudentLeaderboardEntry {
   nachname?: string;
   max_streak: number;
 }
-
-// 1. DIE 20 EXKLUSIVEN, KURZEN STREAK-FRAGEN (DIHK-Optimiert)
-const STREAK_QUESTIONS: RawStreakQuestion[] = [
-  {
-    id: "streak_1",
-    question: "Was besitzen private Sicherheitskräfte im öffentlichen Raum?",
-    options: ["Jedermannsrechte", "Hoheitsrechte", "Polizeibefugnisse", "Richterliche Gewalt"],
-    correct: "Jedermannsrechte",
-    category: "Recht der öffentlichen Sicherheit"
-  },
-  {
-    id: "streak_2",
-    question: "Für welche Tätigkeit ist die Sachkundeprüfung § 34a zwingend vorgeschrieben?",
-    options: ["Citystreife im Park", "Einfacher Pförtnerdienst", "Reine Baustellenbewachung", "Alarminstallation"],
-    correct: "Citystreife im Park",
-    category: "Gewerberecht"
-  },
-  {
-    id: "streak_3",
-    question: "Welche Bescheinigung muss das Wachpersonal im Dienst immer mitführen?",
-    options: ["Dienstausweis", "Gewerbeanmeldung", "Arbeitsvertrag", "Führungszeugnis"],
-    correct: "Dienstausweis",
-    category: "Gewerberecht"
-  },
-  {
-    id: "streak_4",
-    question: "Darf ein Wachdienst personenbezogene Daten unbegrenzt speichern?",
-    options: ["Nein, niemals", "Ja, immer", "Nur mit Chef-Erlaubnis", "Nur bei Kunden"],
-    correct: "Nein, niemals",
-    category: "Datenschutzrecht"
-  },
-  {
-    id: "streak_5",
-    question: "Was muss bei einer Videoüberwachung im öffentlichen Raum zwingend vorhanden sein?",
-    options: ["Hinweisschild", "Polizeifreigabe", "Sirene", "Blaulicht"],
-    correct: "Hinweisschild",
-    category: "Datenschutzrecht"
-  },
-  {
-    id: "streak_6",
-    question: "Wer hat die rechtliche Herrschaft über eine Sache?",
-    options: ["Der Eigentümer", "Der Besitzdiener", "Der Entleiher", "Der Finder"],
-    correct: "Der Eigentümer",
-    category: "Bürgerliches Gesetzbuch"
-  },
-  {
-    id: "streak_7",
-    question: "Wer ist der Sicherheitsmitarbeiter rechtlich an der Einlasskontrolle?",
-    options: ["Besitzdiener", "Eigentümer", "Amtsträger", "Behördenvertreter"],
-    correct: "Besitzdiener",
-    category: "Bürgerliches Gesetzbuch"
-  },
-  {
-    id: "streak_8",
-    question: "Welches Recht erlaubt das sofortige Abnehmen von Diebesgut auf frischer Tat?",
-    options: ["Besitzkehr", "Besitzwehr", "Hausrecht", "Notstand"],
-    correct: "Besitzkehr",
-    category: "Bürgerliches Gesetzbuch"
-  },
-  {
-    id: "streak_9",
-    question: "Gegen welche Angriffe darf Notwehr ausgeübt werden?",
-    options: ["Gegenwärtige & rechtswidrige", "Vergangene Taten", "Zukünftig drohende Taten", "Rechtmäßige Maßnahmen"],
-    correct: "Gegenwärtige & rechtswidrige",
-    category: "Strafrecht"
-  },
-  {
-    id: "streak_10",
-    question: "Wer darf eine Person nach § 127 Abs. 1 StPO vorläufig festnehmen?",
-    options: ["Jedermann", "Nur die Polizei", "Nur Detektive", "Nur der Richter"],
-    correct: "Jedermann",
-    category: "Strafverfahrensrecht"
-  },
-  {
-    id: "streak_11",
-    question: "Welcher Tatbestand liegt vor, wenn ein Hausverbot missachtet wird?",
-    options: ["Hausfriedensbruch", "Nötigung", "Unterschlagung", "Raub"],
-    correct: "Hausfriedensbruch",
-    category: "Strafrecht"
-  },
-  {
-    id: "streak_12",
-    question: "Wann darf Schusswaffengebrauch im Wachdienst als Notwehr erfolgen?",
-    options: ["Als absolut letztes Mittel", "Bei jeder Sachbeschädigung", "Zur Fluchtvereitelung", "Auf mündlichen Befehl"],
-    correct: "Als absolut letztes Mittel",
-    category: "Waffenrecht"
-  },
-  {
-    id: "streak_13",
-    question: "Welcher Schein ist zum Führen von Pfefferspray mit Tierabwehr-Kennzeichnung nötig?",
-    options: ["Kein Waffenschein nötig", "Kleiner Waffenschein", "Großer Waffenschein", "Waffenbesitzkarte"],
-    correct: "Kein Waffenschein nötig",
-    category: "Waffenrecht"
-  },
-  {
-    id: "streak_14",
-    question: "Welche Unfallverhütungsvorschrift regelt Wach- und Sicherungsdienste?",
-    options: ["DGUV Vorschrift 23", "DGUV Vorschrift 1", "StVO § 1", "GewO § 34a"],
-    correct: "DGUV Vorschrift 23",
-    category: "Unfallverhütung"
-  },
-  {
-    id: "streak_15",
-    question: "Welcher Grundsatz gilt bei eigener Lebensgefahr im Sicherheitsdienst immer?",
-    options: ["Eigensicherung geht vor", "Schutz der Sache geht vor", "Immer einschreiten", "Auftrag ohne Rücksicht"],
-    correct: "Eigensicherung geht vor",
-    category: "Unfallverhütung"
-  },
-  {
-    id: "streak_16",
-    question: "Was gehört zur passiven Sicherheitstechnik eines Objekts?",
-    options: ["Zäune und Gitter", "Wachhund", "Polizeistreife", "Sicherheitskraft"],
-    correct: "Zäune und Gitter",
-    category: "Sicherheitstechnik"
-  },
-  {
-    id: "streak_17",
-    question: "Welche Brandklasse umfasst brennbare Flüssigkeiten wie Benzin?",
-    options: ["Brandklasse B", "Brandklasse A", "Brandklasse C", "Brandklasse F"],
-    correct: "Brandklasse B",
-    category: "Sicherheitstechnik"
-  },
-  {
-    id: "streak_18",
-    question: "Wie verhält man sich bei aggressiven Personen zur Deeskalation richtig?",
-    options: ["Ruhig & bestimmt bleiben", "Sofort anschreien", "Körperlich bedrängen", "Ins Gesicht fassen"],
-    correct: "Ruhig & bestimmt bleiben",
-    category: "Umgang mit Menschen"
-  },
-  {
-    id: "streak_19",
-    question: "Welche Distanz sollte man im Konfliktfall als Sicherheitsabstand mindestens einhalten?",
-    options: ["Armlänge (ca. 1,5–2 m)", "10 Zentimeter", "5 Meter", "Direkter Körperkontakt"],
-    correct: "Armlänge (ca. 1,5–2 m)",
-    category: "Umgang mit Menschen"
-  },
-  {
-    id: "streak_20",
-    question: "Was beschreibt Vorurteile gegenüber Menschen anderer Herkunft?",
-    options: ["Stereotypen / Vorurteile", "Aktives Zuhören", "Garantenpflicht", "Verhältnismäßigkeit"],
-    correct: "Stereotypen / Vorurteile",
-    category: "Umgang mit Menschen"
-  }
-];
 
 // 2. ECHTER FISHER-YATES SHUFFLE ALGORITHMUS
 function shuffleArray<T>(array: T[]): T[] {
@@ -257,15 +113,16 @@ export default function StreakChallengeMode({
 
     return shuffledRaw.map(q => {
       const randomizedOptions = shuffleArray(q.options);
-      const newCorrectIndex = randomizedOptions.indexOf(q.correct);
+      const newCorrectIndex = randomizedOptions.findIndex(o => o.text === q.correctAnswerText);
 
       return {
         id: q.id,
         question: q.question,
         options: randomizedOptions,
         correctIndex: newCorrectIndex >= 0 ? newCorrectIndex : 0,
-        correctAnswer: q.correct,
-        category: q.category
+        correctAnswer: q.correctAnswerText,
+        category: q.category,
+        translations: q.translations
       };
     });
   };
@@ -594,7 +451,7 @@ export default function StreakChallengeMode({
 
                 {/* 4 ANSWER BUTTONS */}
                 <div className="space-y-2.5 pt-1">
-                  {currentQuestion.options.map((option, idx) => {
+                  {currentQuestion.options.map((optionObj, idx) => {
                     const letter = String.fromCharCode(65 + idx); // A, B, C, D
                     const isSelected = selectedOptionIndex === idx;
                     const isCorrect = idx === currentQuestion.correctIndex;
@@ -615,7 +472,7 @@ export default function StreakChallengeMode({
 
                     return (
                       <button
-                        key={idx}
+                        key={optionObj.id || idx}
                         onClick={() => handleOptionClick(idx)}
                         disabled={gameState !== 'playing'}
                         className={`w-full p-3.5 rounded-xl border transition-all text-left flex items-center justify-between gap-3 group active:scale-[0.99] cursor-pointer ${buttonClasses}`}
@@ -633,13 +490,13 @@ export default function StreakChallengeMode({
 
                           <div className="min-w-0 flex-1">
                             <span className="font-semibold text-xs sm:text-sm font-sans leading-snug block">
-                              {option}
+                              {optionObj.text}
                             </span>
                             {translationLang !== 'deaktiviert' && (
                               <TranslationView
                                 variant="compact"
-                                text={option}
-                                questionId={`${currentQuestion.id}-opt-${idx}`}
+                                text={optionObj.text}
+                                questionId={`${currentQuestion.id}-opt-${optionObj.id}`}
                                 targetLanguage={translationLang}
                                 type="antwort"
                               />

@@ -28,8 +28,8 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 61 (q-mensch-1)
   "q-mensch-1": {
     frage: {
-      fa: "چرا تسلط بر تکنیک‌های تنش‌زدایی و آرام‌سازی (Deeskalation) برای یک نیروی امنیتی حیاتی است؟",
-      ar: "لماذا يعتبر إتقان أساليب وتقنيات نزع فتيل التوتر والتهدئة (Deeskalation) أمراً أساسياً وحيوياً لرجل الأمن؟",
+      fa: "چرا تسلط بر تکنیک‌های تنش‌زدایی و آرام‌سازی برای یک نیروی امنیتی حیاتی است؟",
+      ar: "لماذا يعتبر إتقان أساليب وتقنيات نزع فتيل التوتر والتهدئة أمراً أساسياً وحيوياً لرجل الأمن؟",
       ru: "Почему владение техниками деэскалации конфликтов имеет решающее значение для сотрудника службы безопасности?",
       en: "Why is mastering de-escalation techniques essential for a security officer?"
     },
@@ -47,21 +47,21 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "زبان بدن (ارتباط غیرکلامی) چه نقشی در وضعیت‌های درگیری و تعارض ایفا می‌کند؟",
       ar: "ما هو الدور الذي تلعبه لغة الجسد (التواصل غير اللفظي) في حالات النزاع؟",
       ru: "Какую роль играет язык тела (невербальная коммуникация) в конфликтной ситуации?",
-      en: "What role does body language (non-verbal communication) play in a conflict?"
+      en: "What role does body language play in a conflict?"
     },
     loesung: {
       fa: "بیش از ۸۰ درصد ارتباطات را تشکیل می‌دهد. وضعیت بدنی تهاجمی (دست‌به‌سینه بودن، مشت‌های گره‌کرده) تنش را تشدید می‌کند؛ در حالی که وضعیت بدنی باز، استوار و با دستان قابل رؤیت اثر تنش‌زدا داشته و هم‌زمان از شما محافظت می‌کند.",
       ar: "تمثل أكثر من 80% من عملية التواصل. فالوضعية العدوانية (عقد الذراعين، إطباق القبضات) تؤدي إلى تصعيد التوتر؛ في حين أن الوضعية المنفتحة والمستقرة مع إبقاء اليدين مرئيتين تسهم في التهدئة وتوفر الحماية في نفس الوقت.",
       ru: "Она составляет более 80% всей коммуникации. Агрессивная поза (скрещенные руки, сжатые кулаки) обостряет конфликт; открытая, устойчивая поза с видимыми ладонями действует успокаивающе и одновременно защищает.",
-      en: "It accounts for over 80% of communication. An aggressive posture (crossed arms, clenched fists) escalates conflict; an open, stable stance with visible hands acts de-escalating while simultaneously providing protection."
+      en: "It accounts for over 80% of communication. An aggressive posture escalates conflict; an open, stable stance with visible hands acts de-escalating while simultaneously providing protection."
     }
   },
 
   // Frage 63 (q-mensch-3)
   "q-mensch-3": {
     frage: {
-      fa: "منظور از «گوش دادن فعال (Aktives Zuhören)» چیست؟",
-      ar: "ماذا يُقصد بمفهوم «الاستماع والإنصات الفعّال (Aktives Zuhören)»؟",
+      fa: "منظور از «گوش دادن فعال» چیست؟",
+      ar: "ماذا يُقصد بمفهوم «الاستماع والإنصات الفعّال»؟",
       ru: "Что понимается под «активным слушанием»?",
       en: "What is understood by 'active listening'?"
     },
@@ -85,15 +85,15 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "آرام و قاطع صحبت کردن، استفاده از جملات کوتاه و ساده، حفظ فاصله ایمنی کافی (به دلیل رفتارهای غیرقابل پیش‌بینی) و پرهیز از ورود به بحث‌های روشنفکرانه و استدلالی پیچیده.",
       ar: "التحدث بهدوء وحزم، استخدام جمل قصيرة وبسيطة، الحفاظ على مسافة أمان كافية (بسبب ردود الفعل غير المتوقعة)، وتجنب الدخول في نقاشات فكرية أو جدلية معقدة.",
       ru: "Говорить спокойно и уверенно, использовать простые и короткие фразы, соблюдать достаточную безопасную дистанцию (из-за непредсказуемости реакций) и не вступать в интеллектуальные дискуссии.",
-      en: "Speak calmly and firmly, use simple and short sentences, maintain sufficient safety distance (due to unpredictable reactions), and do not engage in complex intellectual arguments."
+      en: "Speak calmly and firmly, use simple and short sentences, maintain sufficient safety distance, and do not engage in complex intellectual arguments."
     }
   },
 
   // Frage 65 (q-mensch-5)
   "q-mensch-5": {
     frage: {
-      fa: "«پیش‌داوری (Vorurteil)» چیست و چه تأثیری بر کار شما دارد؟",
-      ar: "ما هو «الحكم المسبق / التعصب (Vorurteil)» وكيف يؤثر سلباً على عملك؟",
+      fa: "«پیش‌داوری» چیست و چه تأثیری بر کار شما دارد؟",
+      ar: "ما هو «الحكم المسبق / التعصب» وكيف يؤثر سلباً على عملك؟",
       ru: "Что такое «предрассудок» и как он влияет на вашу работу?",
       en: "What is a 'prejudice' and how does it affect your work?"
     },
@@ -108,9 +108,9 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 66 (q-mensch-6)
   "q-mensch-6": {
     frage: {
-      fa: "«مدل فرستنده-گیرنده (Sender-Empfänger-Modell)» چه چیزی را توصیف می‌کند؟",
-      ar: "ماذا يصف «نموذج المرسل والمستقبل (Sender-Empfänger-Modell)» في التواصل؟",
-      ru: "Что описывает «модель отправителя и получателя (Sender-Empfänger-Modell)»?",
+      fa: "«مدل فرستنده-گیرنده» چه چیزی را توصیف می‌کند؟",
+      ar: "ماذا يصف «نموذج المرسل والمستقبل» في التواصل؟",
+      ru: "Что описывает «модель отправителя и получателя»?",
       en: "What does the 'Sender-Receiver Model' describe?"
     },
     loesung: {
@@ -124,8 +124,8 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 67 (q-mensch-7)
   "q-mensch-7": {
     frage: {
-      fa: "منظور از اصطلاح «نظریه ناکامی-پرخاشگری (Frustrations-Aggressions-Theorie)» چیست؟",
-      ar: "ماذا يُقصد بمفهوم «نظرية الإحباط والعدوان (Frustrations-Aggressions-Theorie)»؟",
+      fa: "منظور از اصطلاح «نظریه ناکامی-پرخاشگری» چیست؟",
+      ar: "ماذا يُقصد بمفهوم «نظرية الإحباط والعدوان»؟",
       ru: "Что понимается под «теорией фрустрации-агрессии»?",
       en: "What is understood by the 'Frustration-Aggression Theory'?"
     },
@@ -133,15 +133,15 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "ناکامی و سرخوردگی (ناامیدی از برخورد با مانع یا نرسیدن به یک هدف) اغلب منجر به خشم و پرخاشگری می‌شود. هنگامی که از ورود فردی جلوگیری می‌شود، این خشم و ناکامی بر سر نیروی امنیتی خالی می‌شود.",
       ar: "الإحباط (خيبة الأمل الناتجة عن وجود عائق أو عدم تحقيق الهدف المنشود) غالباً ما يولد السلوك العدواني. فعند منع شخص من الدخول، يتفرغ هذا الإحباط والتوتر في وجه حارس الأمن.",
       ru: "Фрустрация (разочарование из-за препятствия или недостижения цели) часто ведет к агрессии. При отказе во входе это раздражение выплескивается на охранника.",
-      en: "Frustration (disappointment over an obstacle or failure to achieve a goal) frequently leads to aggression. When access is denied, this frustration is often directed at the security officer."
+      en: "Frustration frequently leads to aggression. When access is denied, this frustration is often directed at the security officer."
     }
   },
 
   // Frage 68 (q-mensch-8)
   "q-mensch-8": {
     frage: {
-      fa: "در زمان وقوع هراس جمعی (Massenpanik) در یک رویداد بزرگ چگونه عمل می‌کنید؟",
-      ar: "كيف تتصرف وتستجيب عند حدوث حالة ذعر جماعي (Massenpanik) أثناء فعالية كبرى؟",
+      fa: "در زمان وقوع هراس جمعی در یک رویداد بزرگ چگونه عمل می‌کنید؟",
+      ar: "كيف تتصرف وتستجيب عند حدوث حالة ذعر جماعي أثناء فعالية كبرى؟",
       ru: "Как вы будете действовать при возникновении массовой паники во время крупного мероприятия?",
       en: "How do you react in the event of mass panic during a major event?"
     },
@@ -156,14 +156,14 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 69 (q-mensch-9)
   "q-mensch-9": {
     frage: {
-      fa: "چرا در حین خدمت همیشه باید افراد پرخاشگر را با ضمیر محترمانه «شما (Sie)» خطاب کنید؟",
-      ar: "لماذا يجب عليك دائماً أثناء الخدمة مخاطبة الأشخاص العدوانيين بصيغة الاحترام والجمع «حضرتك / أنتم (Sie)»؟",
-      ru: "Почему на службе следует всегда обращаться к агрессивным лицам на «Вы (Sie)»?",
-      en: "Why should you always address aggressive individuals with the formal 'You (Sie)' on duty?"
+      fa: "چرا در حین خدمت همیشه باید افراد پرخاشگر را با ضمیر محترمانه «شما» خطاب کنید؟",
+      ar: "لماذا يجب عليك دائماً أثناء الخدمة مخاطبة الأشخاص العدوانيين بصيغة الاحترام والجمع «حضرتك / أنتم»؟",
+      ru: "Почему на службе следует всегда обращаться к агрессивным лицам на «Вы»?",
+      en: "Why should you always address aggressive individuals with the formal 'You' on duty?"
     },
     loesung: {
       fa: "استفاده از «شما» فاصله روانی ایجاد می‌کند، نشان‌دهنده احترام است و معمولاً اثر تنش‌زدا دارد. استفاده از ضمیر صمیمانه «تو» غالباً به عنوان بی‌احترامی یا تحریک تلقی می‌شود.",
-      ar: "لأن صيغة الاحترام «حضرتك (Sie)» تخلق مسافة نفسية، وتعبر عن الاحترام وتسهم عادة في تهدئة التوتر. بينما تُفهم صيغة «أنت (Du)» غالباً على أنها قلة احترام أو استفزاز مباشر.",
+      ar: "لأن صيغة الاحترام «حضرتك» تخلق مسافة نفسية، وتعبر عن الاحترام وتسهم عادة في تهدئة التوتر. بينما تُفهم صيغة «أنت» غالباً على أنها قلة احترام أو استفزاز مباشر.",
       ru: "Обращение на «Вы» создает психологическую дистанцию, выражает уважение и обычно способствует деэскалации. Обращение на «ты» часто воспринимается как неуважение или провокация.",
       en: "The formal 'You' establishes psychological distance, expresses respect, and generally has a de-escalating effect. The informal 'You' is often perceived as disrespect or provocation."
     }
@@ -172,8 +172,8 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 70 (q-mensch-10)
   "q-mensch-10": {
     frage: {
-      fa: "منظور از «حریم فاصله اجتماعی (Soziale Distanzzone)» چیست؟",
-      ar: "ماذا يُقصد بمفهوم «منطقة المسافة الاجتماعية (Soziale Distanzzone)»؟",
+      fa: "منظور از «حریم فاصله اجتماعی» چیست؟",
+      ar: "ماذا يُقصد بمفهوم «منطقة المسافة الاجتماعية»؟",
       ru: "Что понимается под «зоной социальной дистанции»?",
       en: "What is understood by the 'social distance zone'?"
     },
@@ -204,8 +204,8 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 72 (q-mensch-12)
   "q-mensch-12": {
     frage: {
-      fa: "«رفتار مشتری‌مدارانه (Kundenorientiertes Verhalten)» در خدمات امنیتی به چه معناست؟",
-      ar: "ما هو «السلوك الموجه لخدمة العملاء (Kundenorientiertes Verhalten)» في قطاع الأمن؟",
+      fa: "«رفتار مشتری‌مدارانه» در خدمات امنیتی به چه معناست؟",
+      ar: "ما هو «السلوك الموجه لخدمة العملاء» في قطاع الأمن؟",
       ru: "Что такое «клиентоориентированное поведение» в охранной службе?",
       en: "What is 'customer-oriented behavior' in the security service?"
     },
@@ -221,7 +221,7 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   "q-mensch-13": {
     frage: {
       fa: "سه نشانه بارز و متداول استرس در حین خدمت را نام ببرید.",
-      ar: "اذكر ثلاثة من الأعراض النمطية والشائعة للتوتر والضغط النفسي (Stress) أثناء الخدمة.",
+      ar: "اذكر ثلاثة من الأعراض النمطية والشائعة للتوتر والضغط النفسي أثناء الخدمة.",
       ru: "Назовите три типичных симптома стресса во время несения службы.",
       en: "Name three typical stress symptoms during duty."
     },
@@ -236,8 +236,8 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 74 (q-mensch-14)
   "q-mensch-14": {
     frage: {
-      fa: "چگونه در شرایط بحرانی از ایجاد «دید تونلی (Tunnelblick)» جلوگیری می‌کنید؟",
-      ar: "كيف تمنع حدوث «الرؤية النفقية (Tunnelblick)» في الحالات الطارئة والحرجة؟",
+      fa: "چگونه در شرایط بحرانی از ایجاد «دید تونلی» جلوگیری می‌کنید؟",
+      ar: "كيف تمنع حدوث «الرؤية النفقية» في الحالات الطارئة والحرجة؟",
       ru: "Как предотвратить возникновение «туннельного зрения» в критической ситуации?",
       en: "How do you prevent 'tunnel vision' in an emergency?"
     },
@@ -245,7 +245,7 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "از طریق تنفس آگاهانه و عمیق (کنترل تنفس) و حرکت هدفمند سر برای زیر نظر داشتن کل محیط اطراف (آگاهی موقعیتی / Situational Awareness).",
       ar: "من خلال التنفس العميق والواعي (التحكم في التنفس) والتحريك الواعي للرأس لمراقبة المحيط بالكامل (الوعي بالموقف / Situational Awareness).",
       ru: "С помощью осознанного глубокого дыхания (контроль дыхания) и целенаправленного вращения головой, чтобы держать под контролем всю обстановку (ситуационная осведомленность).",
-      en: "Through deliberate, deep breathing (breath control) and targeted head movement to maintain awareness of the entire environment (situational awareness)."
+      en: "Through deliberate, deep breathing and targeted head movement to maintain awareness of the entire environment."
     }
   },
 
@@ -272,32 +272,32 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 76 (q-uvv-1)
   "q-uvv-1": {
     frage: {
-      fa: "چه نهادی مقررات پیشگیری از حوادث (UVV) را وضع و صادر می‌کند؟",
-      ar: "من هي الجهة المسؤولة عن إصدار لوائح الوقاية من الحوادث (UVV)؟",
-      ru: "Кто издает правила техники безопасности и предотвращения несчастных случаев (UVV)?",
-      en: "Who issues the accident prevention regulations (UVV)?"
+      fa: "چه نهادی مقررات پیشگیری از حوادث را وضع و صادر می‌کند؟",
+      ar: "من هي الجهة المسؤولة عن إصدار لوائح الوقاية من الحوادث؟",
+      ru: "Кто издает правила техники безопасности и предотвращения несчастных случаев?",
+      en: "Who issues the accident prevention regulations?"
     },
     loesung: {
       fa: "اتحادیه‌های صنفی بیمه حوادث کار (Berufsgenossenschaften - نهادهای متولی بیمه قانونی حوادث، مانند VBG).",
       ar: "الجمعيات المهنية للتأمين ضد الحوادث (Berufsgenossenschaften - الهيئات المسؤولة عن التأمين القانوني ضد الحوادث، مثل VBG).",
       ru: "Отраслевые страховые союзы (Berufsgenossenschaften - органы обязательного страхования от несчастных случаев, например VBG).",
-      en: "The trade associations / employers' liability insurance associations (Berufsgenossenschaften, statutory accident insurance institutions, e.g., VBG)."
+      en: "The trade associations / employers' liability insurance associations."
     }
   },
 
   // Frage 77 (q-uvv-2)
   "q-uvv-2": {
     frage: {
-      fa: "کدام آیین‌نامه اختصاصی پیشگیری از حوادث (UVV) به طور ویژه و اصلی برای صنف نگهبانی و حراست اعمال می‌شود؟",
-      ar: "ما هي لائحة الوقاية من الحوادث (UVV) المحددة التي تسري أساساً على مهنة الحراسة والأمن؟",
+      fa: "کدام آیین‌نامه اختصاصی پیشگیری از حوادث به طور ویژه و اصلی برای صنف نگهبانی و حراست اعمال می‌شود؟",
+      ar: "ما هي لائحة الوقاية من الحوادث المحددة التي تسري أساساً على مهنة الحراسة والأمن؟",
       ru: "Какое специальное правило UVV в первую очередь применяется к охранной деятельности?",
       en: "Which specific accident prevention regulation applies primarily to the guarding and security industry?"
     },
     loesung: {
-      fa: "مقررات DGUV شماره ۲۳ (با عنوان سابق BGV C7) تحت نام «خدمات نگهبانی و حراست (Wach- und Sicherungsdienste)»",
+      fa: "مقررات DGUV شماره ۲۳ (با عنوان سابق BGV C7) تحت نام «خدمات نگهبانی و حراست»",
       ar: "اللائحة DGUV Vorschrift 23 (المعروفة سابقاً باسم BGV C7) تحت عنوان «خدمات الحراسة والأمن».",
       ru: "Правило DGUV Vorschrift 23 (ранее BGV C7) «Охранно-сторожевые службы».",
-      en: "DGUV Regulation 23 (formerly BGV C7) 'Guard and Security Services'."
+      en: "DGUV Regulation 23 'Guard and Security Services'."
     }
   },
 
@@ -310,10 +310,10 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       en: "What duties does a security guard have regarding their own safety before starting duty?"
     },
     loesung: {
-      fa: "بررسی تجهیزات حفاظت فردی (PSA) و ابزارهای عملیاتی از نظر کارکرد و سلامت، و همچنین الزام به حضور در خدمت در وضعیت کاملاً آماده‌به‌خدمت و هوشیار (عدم مصرف الکل و مواد مخدر).",
-      ar: "فحص معدات الحماية الشخصية (PSA) وأدوات ومعدات الخدمة للتأكد من سلامتها وجاهزيتها، والالتزام ببدء العمل في حالة صحية وجاهزية تامة (دون كحول أو مخدرات).",
+      fa: "بررسی تجهیزات حفاظت فردی و ابزارهای عملیاتی از نظر کارکرد و سلامت، و همچنین الزام به حضور در خدمت در وضعیت کاملاً آماده‌به‌خدمت و هوشیار (عدم مصرف الکل و مواد مخدر).",
+      ar: "فحص معدات الحماية الشخصية وأدوات ومعدات الخدمة للتأكد من سلامتها وجاهزيتها، والالتزام ببدء العمل في حالة صحية وجاهزية تامة (دون كحول أو مخدرات).",
       ru: "Проверка исправности средств индивидуальной защиты (СИЗ) и служебного снаряжения, а также обязанность явиться на службу в дееспособном и готовом состоянии (без алкоголя/наркотиков).",
-      en: "Checking personal protective equipment (PPE) and operational equipment for functionality, as well as the duty to report for work fit for duty and unimpaired (no alcohol/drugs)."
+      en: "Checking personal protective equipment and operational equipment for functionality, as well as the duty to report for work fit for duty and unimpaired."
     }
   },
 
@@ -336,8 +336,8 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 80 (q-uvv-5)
   "q-uvv-5": {
     frage: {
-      fa: "منظور از اصل «حفاظت و ایمنی خود بر حفاظت از دیگران مقدم است (Eigenschutz geht vor Fremdschutz)» چیست؟",
-      ar: "ماذا يُقصد بمبدأ «حماية النفس مقدمة على حماية الغير (Eigenschutz geht vor Fremdschutz)»؟",
+      fa: "منظور از اصل «حفاظت و ایمنی خود بر حفاظت از دیگران مقدم است» چیست؟",
+      ar: "ماذا يُقصد بمبدأ «حماية النفس مقدمة على حماية الغير»؟",
       ru: "Что означает принцип «собственная безопасность превыше защиты других»?",
       en: "What is understood by 'self-protection comes before protecting others'?"
     },
@@ -352,7 +352,7 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   // Frage 81 (q-uvv-6)
   "q-uvv-6": {
     frage: {
-      fa: "یک نگهبان چه زمانی موظف است جلیقه شب‌رنگ و هشداردهنده (Warnweste) به تن کند؟",
+      fa: "یک نگهبان چه زمانی موظف است جلیقه شب‌رنگ و هشداردهنده به تن کند؟",
       ar: "متى يكون حارس الأمن ملزماً بارتداء سترة السلامة العاكسة والتحذيرية؟",
       ru: "Когда охранник обязан носить сигнальный жилет со светоотражающими элементами?",
       en: "When is a security guard obliged to wear a high-visibility warning vest?"
@@ -361,7 +361,7 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "هنگام فعالیت در محیط‌های ترافیکی (مانند خیابان‌ها، پارکینگ‌ها، محوطه کارخانه‌ها با تردد لیفتراک) و همچنین در تاریکی و شرایط دید ضعیف جهت دیده شدن بهتر.",
       ar: "عند أداء المهام في مناطق حركة المرور (مثل الشوارع، مواقف السيارات، مناطق المصانع التي تشهد حركة رافعات شوكية)، وكذلك في الظلام وضعف الرؤية لتسهيل رؤيته.",
       ru: "При работе в зонах движения транспорта (на дорогах, парковках, территории предприятий с погрузчиками), а также в темноте и при плохой видимости для улучшения видимости.",
-      en: "During activities in traffic areas (e.g., roads, parking lots, plant grounds with forklift traffic) as well as in darkness and poor visibility for enhanced recognition."
+      en: "During activities in traffic areas as well as in darkness and poor visibility for enhanced recognition."
     }
   },
 
@@ -371,10 +371,10 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "چنانچه در یکی از تجهیزات خدمت (مانند چراغ‌قوه معیوب یا آنتن رادیویی شکسته) نقصی مشاهده کنید چه باید بکنید؟",
       ar: "ماذا يجب عليك فعله إذا لاحظت عطلاً أو عيباً في إحدى معدات الخدمة (مثل مصباح يدوي معطل أو هوائي لاسلكي مكسور)؟",
       ru: "Что вы должны сделать, если обнаружили дефект в служебном снаряжении (например, неисправный фонарь или сломанную антенну рации)?",
-      en: "What must you do if you notice a defect in a piece of equipment (e.g., a defective flashlight or a broken radio antenna)?"
+      en: "What must you do if you notice a defect in a piece of equipment?"
     },
     loesung: {
-      fa: "نقص را فوراً به مافوق یا مرکز کنترل گزارش دهید، وسیله را تعویض کنید و نقص را در دفتر وقایع نگهبانی (Wachbuch) ثبت نمایید.",
+      fa: "نقص را فوراً به مافوق یا مرکز کنترل گزارش دهید، وسیله را تعویض کنید و نقص را در دفتر وقایع نگهبانی ثبت نمایید.",
       ar: "إبلاغ المسؤول المباشر أو غرفة العمليات بالعطل فوراً، استبدال الأداة المعطلة، وتوثيق العيب في سجل الحراسة اليومي.",
       ru: "Немедленно доложить о дефекте руководителю или диспетчерской, заменить предмет и зафиксировать неисправность в журнале службы.",
       en: "Report the defect immediately to the supervisor or control center, exchange the item, and record the defect in the guard logbook."
@@ -385,25 +385,25 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
   "q-uvv-8": {
     frage: {
       fa: "مقررات UVV در مورد کار انفرادی (گشت تک‌نفره) در اماکن پرخطر چه تمهیداتی را الزام می‌کند؟",
-      ar: "ما الذي تنص عليه لوائح الوقاية من الحوادث (UVV) عند العمل الفردي (الدوريات الفردية) في المنشآت المعرضة للخطر؟",
+      ar: "ما الذي تنص عليه لوائح الوقاية من الحوادث عند العمل الفردي (الدوريات الفردية) في المنشآت المعرضة للخطر؟",
       ru: "Что предписывают правила UVV при работе в одиночку (одиночный патруль) на опасных объектах?",
-      en: "What do accident prevention regulations prescribe for solo work (single patrol) in hazardous properties?"
+      en: "What do accident prevention regulations prescribe for solo work in hazardous properties?"
     },
     loesung: {
-      fa: "باید ایمن‌سازی از طریق تجهیزات فنی انجام شود؛ مانند سامانه اعلام خطر انفرادی (Personen-Notsignal-Anlage - PNA) یا تماس‌های کنترلی منظم (زمان‌های اعلام حضور) با مرکز کنترل.",
-      ar: "يجب تأمين الحارس من خلال تجهيزات تقنية، مثل نظام إشارات الطوارئ الشخصي (PNA) أو إجراء اتصالات تفقدية منتظمة (مواعيد إبلاغ محددة) مع غرفة العمليات.",
-      ru: "Должна быть обеспечена техническая защита, например персональная система аварийной сигнализации (PNA) или регулярные контрольные вызовы (интервалы докладов) в диспетчерскую.",
-      en: "Securing via technical systems must be provided, such as a personal emergency signal system (PNA / lone worker alarm) or regular check-in calls to the control center."
+      fa: "باید ایمن‌سازی از طریق تجهیزات فنی انجام شود؛ مانند سامانه اعلام خطر انفرادی یا تماس‌های کنترلی منظم (زمان‌های اعلام حضور) با مرکز کنترل.",
+      ar: "يجب تأمين الحارس من خلال تجهيزات تقنية، مثل نظام إشارات الطوارئ الشخصي أو إجراء اتصالات تفقدية منتظمة (مواعيد إبلاغ محددة) مع غرفة العمليات.",
+      ru: "Должна быть обеспечена техническая защита, например персональная система аварийной сигнализации или регулярные контрольные вызовы (интервалы докладов) в диспетчерскую.",
+      en: "Securing via technical systems must be provided, such as a personal emergency signal system or regular check-in calls to the control center."
     }
   },
 
   // Frage 84 (q-uvv-9)
   "q-uvv-9": {
     frage: {
-      fa: "چه کسی مسئول وضعیت و سلامت تجهیزات حفاظت فردی (PSA) است؟",
-      ar: "من هو المسؤول عن توفير وحالة معدات الحماية الشخصية (PSA)؟",
+      fa: "چه کسی مسئول وضعیت و سلامت تجهیزات حفاظت فردی است؟",
+      ar: "من هو المسؤول عن توفير وحالة معدات الحماية الشخصية؟",
       ru: "Кто несет ответственность за состояние средств индивидуальной защиты (СИЗ)?",
-      en: "Who is responsible for the condition of personal protective equipment (PPE)?"
+      en: "Who is responsible for the condition of personal protective equipment?"
     },
     loesung: {
       fa: "کارفرما موظف است آن‌ها را به رایگان در اختیار بگذارد؛ کارمند موظف است آن‌ها را طبق دستورالعمل بپوشد و با دقت نگهداری کند.",
@@ -441,7 +441,7 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "با علامت صلیب سفید بر روی زمینه سبز مربعی شکل (علامت نجات و امداد).",
       ar: "بواسطة صليب أبيض على خلفية مربعة خضراء (علامة إنقاذ وإسعاف).",
       ru: "Белым крестом на квадратном зеленом фоне (знак спасения и безопасности).",
-      en: "By a white cross on a square green background (rescue sign)."
+      en: "By a white cross on a square green background."
     }
   },
 
@@ -454,20 +454,20 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       en: "What duty does a security guard have after an occupational accident?"
     },
     loesung: {
-      fa: "ارائه کمک‌های اولیه، تماس با اورژانس و فوریت‌های پزشکی، گزارش فوری حادثه به مافوق و ثبت کامل رویداد در دفتر حوادث و پانسمان (Verbandbuch) جهت حفظ حقوق بیمه‌ای.",
+      fa: "ارائه کمک‌های اولیه، تماس با اورژانس و فوریت‌های پزشکی، گزارش فوری حادثه به مافوق و ثبت کامل رویداد در دفتر حوادث و پانسمان جهت حفظ حقوق بیمه‌ای.",
       ar: "تقديم الإسعافات الأولية، استدعاء خدمات الطوارئ، إبلاغ المسؤول المباشر بالحادث فوراً، وتوثيق الواقعة في سجل الإصابات والضمادات للضمان القانوني.",
-      ru: "Оказать первую помощь, вызвать скорую помощь, немедленно сообщить руководителю и зафиксировать случай в журнале учета травм (Verbandbuch).",
-      en: "Render first aid, call emergency services, immediately report the accident to the supervisor, and enter the incident into the first-aid logbook (Verbandbuch)."
+      ru: "Оказать первую помощь, вызвать скорую помощь, немедленно сообщить руководителю и зафиксировать случай в журнале учета травм.",
+      en: "Render first aid, call emergency services, immediately report the accident to the supervisor, and enter the incident into the first-aid logbook."
     }
   },
 
   // Frage 88 (q-uvv-13)
   "q-uvv-13": {
     frage: {
-      fa: "«ارزیابی خطرات محیط کار (Gefährdungsbeurteilung)» چیست؟",
-      ar: "ما هو «تقييم المخاطر المهنية في بيئة العمل (Gefährdungsbeurteilung)»؟",
-      ru: "Что такое «оценка профессиональных рисков (Gefährdungsbeurteilung)»?",
-      en: "What is a 'risk assessment (Gefährdungsbeurteilung)'?"
+      fa: "«ارزیابی خطرات محیط کار» چیست؟",
+      ar: "ما هو «تقييم المخاطر المهنية في بيئة العمل»؟",
+      ru: "Что такое «оценка профессиональных рисков»?",
+      en: "What is a 'risk assessment'?"
     },
     loesung: {
       fa: "یک تحلیل و بررسی قانونی و اجباری از محل کار توسط کارفرما برای شناسایی منابع بالقوه خطر برای کارکنان و تعیین اقدامات حفاظتی لازم.",
@@ -489,7 +489,7 @@ export const TRANSLATIONS_PART_3: Record<string, TranslationBlockItem> = {
       fa: "مقررات عمومی ایمنی کار UVV (مقررات ۱ DGUV / آیین‌نامه فضاهای کار). تردد روی سقف‌ها تنها در مسیرهای مجاز تعیین‌شده و با تجهیزات جلوگیری از سقوط مجاز است.",
       ar: "لوائح الوقاية العامة من الحوادث وسلامة العمل (DGUV Vorschrift 1 / لائحة أماكن العمل). ولا يجوز المشي على الأسطح إلا في المسارات المعتمدة مع توفير وسائل منع السقوط.",
       ru: "Общие правила техники безопасности UVV (DGUV Vorschrift 1 / Положение о рабочих местах). Находиться на крыше разрешено только по выделенным путям со страховкой от падения.",
-      en: "General UVV for occupational safety (DGUV Regulation 1 / Workplace Ordinance). Roofs may only be walked upon on approved traffic walkways and with fall protection."
+      en: "General UVV for occupational safety. Roofs may only be walked upon on approved traffic walkways and with fall protection."
     }
   },
 

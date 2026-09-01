@@ -46,26 +46,26 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       en: "What is the primary goal of mechanical security technology?"
     },
     loesung: {
-      fa: "افزایش زمان نفوذ (Zeitüberwindungswert): دشوار ساختن ورود غیرمجاز و به تأخیر انداختن مجرم تا زمان رسیدن نیروهای واکنش سریع و پلیس.",
-      ar: "زيادة زمن اختراق العقبات (Zeitüberwindungswert): تصعيب عملية الاقتحام وتأخير الجاني قدر الإمكان حتى وصول قوات التدخل السريع أو الشرطة.",
-      ru: "Увеличение времени преодоления препятствий (Zeitüberwindungswert): затруднить проникновение и задержать злоумышленника до прибытия группы быстрого реагирования.",
-      en: "Increasing resistance time (Zeitüberwindungswert): making intrusion difficult and delaying the perpetrator until intervention forces arrive."
+      fa: "افزایش زمان نفوذ: دشوار ساختن ورود غیرمجاز و به تأخیر انداختن مجرم تا زمان رسیدن نیروهای واکنش سریع و پلیس.",
+      ar: "زيادة زمن اختراق العقبات: تصعيب عملية الاقتحام وتأخير الجاني قدر الإمكان حتى وصول قوات التدخل السريع أو الشرطة.",
+      ru: "Увеличение времени преодоления препятствий: затруднить проникновение и задержать злоумышленника до прибытия группы быстрого реагирования.",
+      en: "Increasing resistance time: making intrusion difficult and delaying the perpetrator until intervention forces arrive."
     }
   },
 
   // Frage 93 (q-tech-3)
   "q-tech-3": {
     frage: {
-      fa: "سیستم اعلام سرقت (EMA) چیست و چه وظایفی بر عهده دارد؟",
-      ar: "ما هو نظام إنذار الاقتحام (EMA) وما هي مهامه؟",
-      ru: "Что такое охранная сигнализация (EMA) и каковы ее функции?",
-      en: "What is an intruder alarm system (EMA) and what are its tasks?"
+      fa: "سیستم اعلام سرقت چیست و چه وظایفی بر عهده دارد؟",
+      ar: "ما هو نظام إنذار الاقتحام وما هي مهامه؟",
+      ru: "Что такое охранная сигнализация и каковы ее функции?",
+      en: "What is an intruder alarm system and what are its tasks?"
     },
     loesung: {
       fa: "سیستم اعلام سرقت و نفوذ: ایجاد بازدارندگی، تشخیص زودهنگام نفوذ و اعلام هشدار و اعزام نیروهای واکنش سریع (پلیس یا مرکز مانیتورینگ).",
       ar: "نظام إنذار الاقتحام والسرقة: الردع، والكشف المبكر عن محاولات التسلل، وإطلاق الإنذار لتنبيه قوات التدخل (الشرطة أو أمن المنشأة).",
       ru: "Охранная сигнализация: отпугивание, раннее обнаружение проникновения и передача тревоги силам реагирования (полиции или охране).",
-      en: "Intruder alarm system: deterrence, early detection of intrusions, and alarming intervention forces (police or security service)."
+      en: "Intruder alarm system: deterrence, early detection of intrusions, and alarming intervention forces."
     }
   },
 
@@ -78,34 +78,34 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       en: "Name three types of detectors of an intruder alarm system."
     },
     loesung: {
-      fa: "سنسورهای حرکتی (مادون قرمز/راداری)، کنتاکت‌های مگنتی (برای درها و پنجره‌ها)، دتکتورهای شکست شیشه، سنسورهای زبانه قفل (Riegelkontakte).",
+      fa: "سنسورهای حرکتی (مادون قرمز/راداری)، کنتاکت‌های مگنتی (برای درها و پنجره‌ها)، دتکتورهای شکست شیشه، سنسورهای زبانه قفل.",
       ar: "كواشف الحركة (الأشعة تحت الحمراء/الرادار)، الحساسات المغناطيسية (للأبواب والنوافذ)، كواشف كسر الزجاج، حساسات قفل الأبواب.",
       ru: "Датчики движения (инфракрасные/радарные), магнитные контакты (на окна/двери), датчики разбития стекла, ригельные контакты.",
-      en: "Motion detectors (infrared/radar), magnetic contacts (for doors/windows), glass break detectors, bolt contacts."
+      en: "Motion detectors, magnetic contacts, glass break detectors, bolt contacts."
     }
   },
 
   // Frage 95 (q-tech-5)
   "q-tech-5": {
     frage: {
-      fa: "منظور از «سیستم کنترل دسترسی» (ZKA) چیست؟",
-      ar: "ما المقصود بـ «نظام التحكم في الدخول» (ZKA)؟",
+      fa: "منظور از «سیستم کنترل دسترسی» چیست؟",
+      ar: "ما المقصود بـ «نظام التحكم في الدخول»؟",
       ru: "Что понимается под «системой контроля и управления доступом» (СКУД / ZKA)?",
-      en: "What is understood by an 'Access Control System' (ZKA)?"
+      en: "What is understood by an 'Access Control System'?"
     },
     loesung: {
       fa: "سیستمی که هویت افراد را از طریق مشخصات شناسایی (مانند کارت RFID، رمز PIN، اثر انگشت) بررسی کرده و ورود به بخش‌های مشخص را مجاز یا ممنوع می‌سازد.",
       ar: "نظام يتحقق من هوية الأشخاص عبر سمات معينة (مثل بطاقات RFID، الرمز السري PIN، بصمة الإصبع) ويسمح بالدخول أو يمنعه في مناطق محددة.",
       ru: "Система, проверяющая личность людей по идентификационным признакам (RFID-карты, PIN-коды, отпечатки пальцев) и разрешающая или запрещающая доступ.",
-      en: "A system that verifies persons based on credentials (RFID card, PIN, fingerprint) and grants or denies access to defined areas."
+      en: "A system that verifies persons based on credentials and grants or denies access to defined areas."
     }
   },
 
   // Frage 96 (q-tech-6)
   "q-tech-6": {
     frage: {
-      fa: "تفاوت بین کنتاکت هشدار نفوذ و کنتاکت خرابکاری (Sabotagekontakt) چیست؟",
-      ar: "ما الفرق بين حساس الإنذار وحساس التخريب (Sabotagekontakt)؟",
+      fa: "تفاوت بین کنتاکت هشدار نفوذ و کنتاکت خرابکاری چیست؟",
+      ar: "ما الفرق بين حساس الإنذار وحساس التخريب؟",
       ru: "В чем разница между контактом тревоги и контактом саботажа?",
       en: "What is the difference between an alarm contact and a sabotage contact?"
     },
@@ -113,39 +113,39 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       fa: "کنتاکت هشدار در زمان نفوذ فعال می‌شود (مثلاً باز شدن در). کنتاکت خرابکاری بلافاصله با باز شدن یا دستکاری بدنه حسگر یا کابل‌ها فعال می‌گردد، حتی اگر کل سیستم خاموش باشد.",
       ar: "حساس الإنذار يعمل عند وقوع محاولة اقتحام (فتح الباب مثلاً). أما حساس التخريب فينطلق فوراً عند محاولة فتح غطاء الكاشف أو قطع الأسلاك حتى لو كان النظام غير مفعل.",
       ru: "Контакт тревоги срабатывает при попытке взлома (открытие двери). Контакт саботажа срабатывает немедленно при вскрытии корпуса или повреждении проводов, даже если система снята с охраны.",
-      en: "An alarm contact triggers when an intrusion occurs (e.g. door opened). A sabotage contact triggers immediately when someone tampers with housing or cables, even when disarmed."
+      en: "An alarm contact triggers when an intrusion occurs. A sabotage contact triggers immediately when someone tampers with housing or cables, even when disarmed."
     }
   },
 
   // Frage 97 (q-tech-7)
   "q-tech-7": {
     frage: {
-      fa: "سیستم اعلام حریق (BMA) چیست و آلارم‌ها را معمولاً به کجا ارسال می‌کند؟",
-      ar: "ما المقصود بنظام إنذار الحريق (BMA) وإلى أين يتم توجيه الإنذارات عادة؟",
-      ru: "Что такое система пожарной сигнализации (BMA) и куда она передает сигналы тревоги?",
-      en: "What is a fire alarm system (BMA) and where does it usually transmit alarms?"
+      fa: "سیستم اعلام حریق چیست و آلارم‌ها را معمولاً به کجا ارسال می‌کند؟",
+      ar: "ما المقصود بنظام إنذار الحريق وإلى أين يتم توجيه الإنذارات عادة؟",
+      ru: "Что такое система пожарной сигнализации и куда она передает сигналы тревоги?",
+      en: "What is a fire alarm system and where does it usually transmit alarms?"
     },
     loesung: {
       fa: "سیستم اعلام حریق: این سیستم وقوع آتش‌سوزی را از طریق دتکتورهای دود، حرارت یا شعله تشخیص داده و پیام را مستقیماً به مرکز کنترل آتش‌نشانی یا اتاق مانیتورینگ هدایت می‌کند.",
       ar: "نظام إنذار الحريق: يرصد الحرائق عبر كواشف الدخان والحرارة واللهب، ويرسل إشارات الإنذار مباشرة إلى غرفة عمليات الإطفاء أو مركز المراقبة المستمر.",
       ru: "Система пожарной сигнализации: распознает возгорания через дымовые, тепловые или пламенные датчики и передает сигнал напрямую в пожарную службу или на пульт охраны.",
-      en: "Fire alarm system: detects fire outbreaks (via smoke, heat, or flame detectors) and transmits alarms directly to the fire department or monitoring center."
+      en: "Fire alarm system: detects fire outbreaks and transmits alarms directly to the fire department or monitoring center."
     }
   },
 
   // Frage 98 (q-tech-8)
   "q-tech-8": {
     frage: {
-      fa: "«آلارم خاموش» (Stiller Alarm) چیست؟",
-      ar: "ما هو «الإنذار الصامت» (Stiller Alarm)؟",
-      ru: "Что такое «тихая тревога» (Stiller Alarm)?",
+      fa: "«آلارم خاموش» چیست؟",
+      ar: "ما هو «الإنذار الصامت»؟",
+      ru: "Что такое «тихая тревога»?",
       en: "What is a 'Silent Alarm'?"
     },
     loesung: {
       fa: "هشداری که در محل حادثه برای مجرم قابل مشاهده و شنیدن نیست (بدون آژیر و چراغ)، اما بلافاصله به پلیس یا مرکز کنترل ارسال می‌شود (مثلاً در سرقت‌های مسلحانه بانک).",
       ar: "إنذار لا يشعر به الجاني في مسرح الجريمة (بدون صفارات أو أضواء)، ولكنه يُرسل فوراً إلى الشرطة أو مركز الأمن (كما في حالات السطو على البنوك).",
       ru: "Тревога, незаметная для злоумышленника на месте (без сирены и стробоскопа), но мгновенно передаваемая в полицию или охрану (например, при ограблении банка).",
-      en: "An alarm that remains unnoticeable to the perpetrator on site (no siren/strobe), but is sent directly to police or security (e.g. bank robberies)."
+      en: "An alarm that remains unnoticeable to the perpetrator on site, but is sent directly to police or security."
     }
   },
 
@@ -158,10 +158,10 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       en: "What does the abbreviation 'CCTV' stand for?"
     },
     loesung: {
-      fa: "سیستم نظارت تصویری مداربسته (Closed Circuit Television).",
+      fa: "سیستم نظارت تصویری مداربسته.",
       ar: "الدائرة التلفزيونية المغلقة (نظام المراقبة بالكاميرات).",
       ru: "Система замкнутого телевизионного вещания (система видеонаблюдения).",
-      en: "Closed Circuit Television (video surveillance system)."
+      en: "Closed Circuit Television."
     }
   },
 
@@ -184,48 +184,48 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
   // Frage 101 (q-tech-11)
   "q-tech-11": {
     frage: {
-      fa: "«کلید اعلام خطر اضطراری / پدال سرقت» (Überfallmelder) چیست؟",
-      ar: "ما هو «زر إنذار السطو اليدوي» (Überfallmelder)؟",
-      ru: "Что такое «кнопка тревожной сигнализации при нападении» (Überfallmelder)?",
-      en: "What is a 'Holdup / Panic Alarm' (Überfallmelder)?"
+      fa: "«کلید اعلام خطر اضطراری / پدال سرقت» چیست؟",
+      ar: "ما هو «زر إنذار السطو اليدوي»؟",
+      ru: "Что такое «кнопка тревожной сигнализации при нападении»?",
+      en: "What is a 'Holdup / Panic Alarm'?"
     },
     loesung: {
       fa: "حسگری با تحریک دستی (مانند پدال پایی زیر پیشخوان یا شستی مخفی) که فرد در معرض خطر می‌تواند با فشردن آن بی سر و صدا کمک فوری بطلبد.",
       ar: "زر تشغيل يدوي (مثل دواسة بالقدم تحت الطاولة أو زر يدوي سري) يمكن للموظف المهدد استخدامه لطلب المساعدة فوراً.",
       ru: "Датчик ручного запуска (ножная педаль под стойкой или кнопка), с помощью которого человек под угрозой может вызвать помощь.",
-      en: "A manually triggered detector (e.g. foot pedal or under-counter switch) enabling threatened staff to immediately summon help."
+      en: "A manually triggered detector enabling threatened staff to immediately summon help."
     }
   },
 
   // Frage 102 (q-tech-12)
   "q-tech-12": {
     frage: {
-      fa: "چرا منبع تغذیه اضطراری (UPS / USV) برای سیستم‌های امنیتی ضروری است؟",
-      ar: "لماذا يُعتبر مزود الطاقة غير المنقطعة (USV) ضرورياً لتقنيات الأمان؟",
+      fa: "چرا منبع تغذیه اضطراری برای سیستم‌های امنیتی ضروری است؟",
+      ar: "لماذا يُعتبر مزود الطاقة غير المنقطعة ضرورياً لتقنيات الأمان؟",
       ru: "Почему для систем безопасности необходим источник бесперебойного питания (ИБП / USV)?",
-      en: "Why is an Uninterruptible Power Supply (UPS / USV) necessary for security systems?"
+      en: "Why is an Uninterruptible Power Supply necessary for security systems?"
     },
     loesung: {
       fa: "تا در صورت قطع برق عمومی یا قطع عمدی کابل‌ها توسط سارقان، سیستم‌های نظارتی و هشدار برای مدت معین (معمولاً ۱۲ تا ۲۴ ساعت) به کار خود ادامه دهند.",
       ar: "لكي تستمر أنظمة الإنذار والمراقبة في العمل عند انقطاع التيار الكهربائي أو تعرض الأسلاك للتخريب المتعمد لفترة محددة (غالباً 12-24 ساعة).",
       ru: "Чтобы системы наблюдения и сигнализации продолжали работать при отключении электроэнергии или саботаже электросети (обычно 12–24 часа).",
-      en: "To ensure that monitoring and alarm systems continue to operate during power outages or intentional sabotage for a defined period (usually 12–24 hours)."
+      en: "To ensure that monitoring and alarm systems continue to operate during power outages or intentional sabotage for a defined period."
     }
   },
 
   // Frage 103 (q-tech-13)
   "q-tech-13": {
     frage: {
-      fa: "اصل «حفاظت از پوسته خارجی» (Außenhautüberwachung) در ساختمان را توضیح دهید.",
-      ar: "اشرح مبدأ «مراقبة الغلاف الخارجي للمبنى» (Außenhautüberwachung).",
-      ru: "Объясните принцип «охраны внешнего периметра/оболочки здания» (Außenhautüberwachung).",
-      en: "Explain the principle of 'Perimeter / Outer Shell Surveillance' (Außenhautüberwachung)."
+      fa: "اصل «حفاظت از پوسته خارجی» در ساختمان را توضیح دهید.",
+      ar: "اشرح مبدأ «مراقبة الغلاف الخارجي للمبنى».",
+      ru: "Объясните принцип «охраны внешнего периметра/оболочки здания».",
+      en: "Explain the principle of 'Perimeter / Outer Shell Surveillance'."
     },
     loesung: {
       fa: "نظارت بر تمامی ورودی‌ها و روزنه‌های خارجی یک ساختمان که مجرم می‌تواند از طریق آن‌ها نفوذ کند (درها، پنجره‌ها، دریچه‌های سقف، پنجره‌های زیرزمین).",
       ar: "مراقبة كافة الفتحات والمنافذ الخارجية للمبنى التي يمكن للجاني التسلل منها (الأبواب، النوافذ، فتحات السقف، ونوافذ الأقبية).",
       ru: "Охрана всех проемов и конструкций здания, через которые может проникнуть нарушитель (двери, окна, люки на крыше, окна подвалов).",
-      en: "Surveillance of all external openings through which an intruder could enter a building (doors, windows, skylights, basement windows)."
+      en: "Surveillance of all external openings through which an intruder could enter a building."
     }
   },
 
@@ -248,13 +248,13 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
   // Frage 105 (q-tech-15)
   "q-tech-15": {
     frage: {
-      fa: "منظور از اصل «انطباق اجباری / قطعیت» (Zwangsläufigkeit) در سیستم‌های دزدگیر چیست؟",
-      ar: "ما المقصود بمبدأ «الترابط الإجباري الحتمي» (Zwangsläufigkeit) في نظام إنذار السرقة؟",
-      ru: "Что означает принцип «принудительности/неизбежности» (Zwangsläufigkeit) в охранной сигнализации?",
-      en: "What is understood by 'inevitability/interlocking' (Zwangsläufigkeit) in an intruder alarm system?"
+      fa: "منظور از اصل «انطباق اجباری / قطعیت» در سیستم‌های دزدگیر چیست؟",
+      ar: "ما المقصود بمبدأ «الترابط الإجباري الحتمي» في نظام إنذار السرقة؟",
+      ru: "Что означает принцип «принудительности/неизбежности» в охранной сигнализации?",
+      en: "What is understood by 'inevitability/interlocking' in an intruder alarm system?"
     },
     loesung: {
-      fa: "سیستم دزدگیر فقط زمانی فعال و مسلح (Scharf) می‌شود که تمام پنجره‌ها و درهای تحت پوشش کاملاً بسته و قفل باشند؛ این امر از آلارم کاذب جلوگیری می‌کند.",
+      fa: "سیستم دزدگیر فقط زمانی فعال و مسلح می‌شود که تمام پنجره‌ها و درهای تحت پوشش کاملاً بسته و قفل باشند؛ این امر از آلارم کاذب جلوگیری می‌کند.",
       ar: "المبدأ الذي يمنع تفعيل النظام وتشغيله إلا بعد التأكد من إغلاق كافة الأبواب والنوافذ المراقبة بإحكام لتفادي الإنذارات الكاذبة.",
       ru: "Принцип, по которому система ставится на охрану только тогда, когда все окна и двери закрыты, что исключает ложные тревоги.",
       en: "The principle that an alarm system can only be armed once all monitored windows and doors are firmly shut, preventing accidental false alarms."
@@ -274,26 +274,26 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       en: "Which law forms the main legal basis for data protection in Germany?"
     },
     loesung: {
-      fa: "مقررات عمومی حفاظت از داده‌های اتحادیه اروپا (DSGVO / GDPR) و قانون فدرال حفاظت از داده‌ها (BDSG).",
-      ar: "اللائحة العامة لحماية البيانات للاتحاد الأوروبي (DSGVO) والقانون الاتحادي لحماية البيانات (BDSG).",
-      ru: "Общий регламент по защите данных ЕС (DSGVO/GDPR) и Федеральный закон о защите данных Германии (BDSG).",
-      en: "The General Data Protection Regulation (GDPR / DSGVO) of the EU and the Federal Data Protection Act (BDSG)."
+      fa: "مقررات عمومی حفاظت از داده‌های اتحادیه اروپا و قانون فدرال حفاظت از داده‌ها.",
+      ar: "اللائحة العامة لحماية البيانات للاتحاد الأوروبي والقانون الاتحادي لحماية البيانات.",
+      ru: "Общий регламент по защите данных ЕС и Федеральный закон о защите данных Германии.",
+      en: "The General Data Protection Regulation of the EU and the Federal Data Protection Act."
     }
   },
 
   // Frage 107 (q-dat-2)
   "q-dat-2": {
     frage: {
-      fa: "«داده‌های شخصی» (Personenbezogene Daten) چه هستند؟",
-      ar: "ما هي «البيانات الشخصية» (Personenbezogene Daten)؟",
-      ru: "Что такое «персональные данные» (Personenbezogene Daten)?",
-      en: "What are 'personal data' (Personenbezogene Daten)?"
+      fa: "«داده‌های شخصی» چه هستند؟",
+      ar: "ما هي «البيانات الشخصية»؟",
+      ru: "Что такое «персональные данные»?",
+      en: "What are 'personal data'?"
     },
     loesung: {
       fa: "هرگونه اطلاعات مربوط به یک شخص حقیقی شناسایی‌شده یا قابل شناسایی (مانند نام، آدرس، شماره تلفن، پلاک خودرو، آدرس IP و تصاویر ویدیویی افراد).",
       ar: "كافة المعلومات المتعلقة بشخص طبيعي محدد أو يمكن تحديده (مثل الاسم، العنوان، رقم الهاتف، لوحة السيارة، عنوان IP، وتصوير الفيديو).",
       ru: "Любая информация, относящаяся к идентифицированному или идентифицируемому физическому лицу (имя, адрес, телефон, номер авто, IP, видеозаписи).",
-      en: "Any information relating to an identified or identifiable natural person (e.g. name, address, phone number, license plate, IP address, video footage)."
+      en: "Any information relating to an identified or identifiable natural person."
     }
   },
 
@@ -309,7 +309,7 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       fa: "تنها زمانی که مجوز قانونی وجود داشته باشد (مانند اجرای قرارداد یا الزام قانونی) یا رضایت صریح و آگاهانه فرد اخذ شده باشد (اصل ممنوعیت با حق استثنا).",
       ar: "فقط عند وجود مسوغ قانوني (مثل تنفيذ عقد أو التزام قانوني) أو بموافقة صريحة من صاحب البيانات (مبدأ الحظر ما لم يوجد إذن).",
       ru: "Только при наличии законного основания (напр. исполнение договора, правовая обязанность) или прямого согласия лица (запрет с оговоркой разрешения).",
-      en: "Only when a legal basis exists (e.g. contract fulfillment, legal duty) or the data subject has given explicit consent."
+      en: "Only when a legal basis exists or the data subject has given explicit consent."
     }
   },
 
@@ -325,7 +325,7 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       fa: "نظارت باید قانونی (منافع مشروع کارفرما) و ضروری باشد و باید با تابلوهای راهنمای کاملاً خوانا (شامل مشخصات مسئول و مسئول حفاظت داده‌ها) اطلاع‌رسانی شود.",
       ar: "يجب أن تكون المراقبة قانونية (مصلحة مشروعة)، وضرورية، ومُعلنة بوضوح عبر لوحات إرشادية تتضمن بيانات المسؤول ومسؤول حماية البيانات.",
       ru: "Видеонаблюдение должно быть законным (законный интерес), необходимым и обозначенным четкими табличками с контактами ответственного лица.",
-      en: "It must be lawful (legitimate interest), necessary, and clearly indicated by visible signs including controller and DPO contact details."
+      en: "It must be lawful, necessary, and clearly indicated by visible signs including controller and DPO contact details."
     }
   },
 
@@ -341,7 +341,7 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       fa: "خیر، این اقدام نقض شدید قانون حفاظت از داده‌ها و قرارداد کاری بوده و پیامدهای انضباطی (اخراج فوری) و کیفری در پی دارد.",
       ar: "كلا، هذا انتهاك جسيم للائحة حماية البيانات وعقد العمل، ويترتب عليه عواقب جنائية وإنهاء فوري للخدمة.",
       ru: "Нет, это грубейшее нарушение DSGVO и трудового договора, влекущее уголовную ответственность и немедленное увольнение.",
-      en: "No, this is a serious breach of GDPR and employment contract, resulting in criminal and labor consequences (termination)."
+      en: "No, this is a serious breach of GDPR and employment contract, resulting in criminal and labor consequences."
     }
   },
 
@@ -354,7 +354,7 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       en: "Who is responsible for data protection in a security company?"
     },
     loesung: {
-      fa: "مدیرعامل شرکت. در صورت اشتغال حداقل ۲۰ نفر در پردازش خودکار داده‌ها، تعیین یک مسئول حفاظت از داده‌ها (Datenschutzbeauftragter) الزامی است.",
+      fa: "مدیرعامل شرکت. در صورت اشتغال حداقل ۲۰ نفر در پردازش خودکار داده‌ها، تعیین یک مسئول حفاظت از داده‌ها الزامی است.",
       ar: "المدير التنفيذي والممثل القانوني. وبدءاً من 20 موظفاً يتعاملون مع معالجة البيانات، يجب تعيين مسؤول رسمي لحماية البيانات.",
       ru: "Руководство компании. При штате от 20 сотрудников, занятых обработкой данных, обязательно назначается уполномоченный по защите данных.",
       en: "The company management. From 20+ employees involved in automated data processing, a Data Protection Officer must be appointed."
@@ -364,10 +364,10 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
   // Frage 112 (q-dat-7)
   "q-dat-7": {
     frage: {
-      fa: "منظور از «محرمانگی داده‌ها» (Datengeheimnis) چیست؟",
-      ar: "ما المقصود بمبدأ «سرية البيانات» (Datengeheimnis)؟",
-      ru: "Что понимается под «тайной персональных данных» (Datengeheimnis)?",
-      en: "What is meant by 'data confidentiality' (Datengeheimnis)?"
+      fa: "منظور از «محرمانگی داده‌ها» چیست؟",
+      ar: "ما المقصود بمبدأ «سرية البيانات»؟",
+      ru: "Что понимается под «тайной персональных данных»?",
+      en: "What is meant by 'data confidentiality'?"
     },
     loesung: {
       fa: "تعهد کارکنان به حفظ محرمانگی کلیه داده‌های شخصی که در حین کار از آن‌ها آگاه می‌شوند و عدم افشای آن‌ها، که حتی پس از پایان قرارداد کاری نیز باقی می‌ماند.",
@@ -386,26 +386,26 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       en: "A plainclothes police officer demands access to the visitor log without a warrant. How do you respond?"
     },
     loesung: {
-      fa: "محترمانه او را به مدیر شیفت یا مسئول حفاظت از داده‌ها ارجاع دهید. بدون مبنای قانونی شفاف یا خطر فوری (Gefahr im Verzug)، ارائه داده‌ها مجاز نیست.",
+      fa: "محترمانه او را به مدیر شیفت یا مسئول حفاظت از داده‌ها ارجاع دهید. بدون مبنای قانونی شفاف یا خطر فوری، ارائه داده‌ها مجاز نیست.",
       ar: "قم بإحالته بلباقة إلى قائد المناوبة أو مسؤول حماية البيانات؛ فلا يجوز تسليم البيانات دون مسوغ قانوني واضح أو خطر داهم مبرر.",
       ru: "Вежливо направьте его к руководству или уполномоченному по защите данных. Без правового основания или неотложной угрозы выдавать данные запрещено.",
-      en: "Politely refer the officer to site management or the DPO. Without legal basis (imminent danger / warrant), data cannot simply be handed over."
+      en: "Politely refer the officer to site management or the DPO. Without legal basis, data cannot simply be handed over."
     }
   },
 
   // Frage 114 (q-dat-9)
   "q-dat-9": {
     frage: {
-      fa: "منظور از اصل «به حداقل رساندن داده‌ها» (Datenminimierung) چیست؟",
-      ar: "ما المقصود بمبدأ «تقليل البيانات والحد الأدنى» (Datenminimierung)؟",
-      ru: "Что понимается под принципом «минимизации данных» (Datenminimierung)?",
-      en: "What is meant by the principle of 'data minimization' (Datenminimierung)?"
+      fa: "منظور از اصل «به حداقل رساندن داده‌ها» چیست؟",
+      ar: "ما المقصود بمبدأ «تقليل البيانات والحد الأدنى»؟",
+      ru: "Что понимается под принципом «минимизации данных»?",
+      en: "What is meant by the principle of 'data minimization'?"
     },
     loesung: {
       fa: "تنها داده‌هایی باید جمع‌آوری و ذخیره شوند که برای هدف مشخص کاملاً ضروری هستند (مثلاً در دفتر مراجعین فقط نام و شرکت، نه تاریخ تولد).",
       ar: "جمع وحفظ القدر الضروري فقط من البيانات لتحقيق الهدف المحدد (مثل تسجيل الاسم والشركة في دفتر الزوار دون طلب تاريخ الميلاد).",
       ru: "Сбор и хранение только того объема данных, который строго необходим для цели (в журнале: имя и фирма, но не дата рождения).",
-      en: "Only collecting and storing as much personal data as strictly necessary for the purpose (e.g. name and company in visitor log, not date of birth)."
+      en: "Only collecting and storing as much personal data as strictly necessary for the purpose."
     }
   },
 
@@ -428,13 +428,13 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
   // Frage 116 (q-dat-11)
   "q-dat-11": {
     frage: {
-      fa: "سه مورد از حقوق اشخاص طبق قانون حفاظت از داده‌ها (DSGVO) را نام ببرید.",
-      ar: "اذكر ثلاثة حقوق للأشخاص بموجب لائحة حماية البيانات (DSGVO).",
+      fa: "سه مورد از حقوق اشخاص طبق قانون حفاظت از داده‌ها را نام ببرید.",
+      ar: "اذكر ثلاثة حقوق للأشخاص بموجب لائحة حماية البيانات.",
       ru: "Назовите три права субъектов данных по DSGVO.",
-      en: "Name three rights of data subjects under GDPR (DSGVO)."
+      en: "Name three rights of data subjects under GDPR."
     },
     loesung: {
-      fa: "حق دسترسی و اطلاع (Auskunft)، حق تصحیح اطلاعات، حق حذف اطلاعات («حق فراموش شدن») و حق محدود کردن پردازش.",
+      fa: "حق دسترسی و اطلاع، حق تصحیح اطلاعات، حق حذف اطلاعات («حق فراموش شدن») و حق محدود کردن پردازش.",
       ar: "حق الحصول على المعلومات، وحق التصحيح، وحق الحذف («الحق في النسيان»)، وحق تقييد المعالجة.",
       ru: "Право на получение информации, право на исправление, право на удаление («право на забвение») и ограничение обработки.",
       en: "Right of access, right to rectification, right to erasure ('right to be forgotten'), and right to restriction of processing."
@@ -453,33 +453,33 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       fa: "در محلی قفل‌شده و دور از دید اشخاص متفرقه (مانند کمد قفل‌دار یا فایل دارای رمز عبور). نباید آزادانه روی پیشخوان قرار گیرند.",
       ar: "في مكان مغلق ومحمي من أنظار المتطفلين (مثل خزانة مقفلة أو ملف محمي بكلمة سر) وتجنب تركها مكشوفة على الكاونتر.",
       ru: "В запертом месте, защищенном от посторонних глаз (запираемый шкаф, файл с паролем); запрещено оставлять их открытыми на стойке.",
-      en: "Locked away and protected from unauthorized view (e.g. in a locked cabinet or password-protected file), never open on the counter."
+      en: "Locked away and protected from unauthorized view, never open on the counter."
     }
   },
 
   // Frage 118 (q-dat-13)
   "q-dat-13": {
     frage: {
-      fa: "«ارزیابی اثرات حفاظت از داده‌ها» (DSFA) چیست؟",
-      ar: "ما هو «تقييم أثر حماية البيانات» (DSFA)؟",
-      ru: "Что такое «оценка воздействия на защиту данных» (DSFA / DPIA)?",
-      en: "What is a 'Data Protection Impact Assessment' (DSFA / DPIA)?"
+      fa: "«ارزیابی اثرات حفاظت از داده‌ها» چیست؟",
+      ar: "ما هو «تقييم أثر حماية البيانات»؟",
+      ru: "Что такое «оценка воздействия на защиту данных»?",
+      en: "What is a 'Data Protection Impact Assessment'?"
     },
     loesung: {
       fa: "بررسی نظام‌مند خطرات یک فرآیند پردازش داده (مانند استفاده گسترده از دوربین‌های هوشمند تشخیص چهره) برای حقوق و آزادی‌های افراد.",
       ar: "تقييم منهجي للمخاطر التي قد تنجم عن معالجة جديدة للبيانات (مثل استخدام كاميرات ذكية للتعرف على الوجوه) على حقوق وحريات الأفراد.",
       ru: "Систематическая оценка рисков планируемой обработки данных (напр., видеонаблюдение с распознаванием лиц) для прав и свобод граждан.",
-      en: "A systematic assessment of risks of planned data processing (e.g. intelligent CCTV with facial recognition) to individual rights and freedoms."
+      en: "A systematic assessment of risks of planned data processing to individual rights and freedoms."
     }
   },
 
   // Frage 119 (q-dat-14)
   "q-dat-14": {
     frage: {
-      fa: "پیامدهای نقض قوانین حفاظت از داده‌ها (DSGVO) چیست؟",
-      ar: "ما هي عواقب مخالفة أحكام لائحة حماية البيانات (DSGVO)؟",
-      ru: "Каковы последствия нарушений Общего регламента по защите данных (DSGVO)?",
-      en: "What are the consequences of GDPR (DSGVO) violations?"
+      fa: "پیامدهای نقض قوانین حفاظت از داده‌ها چیست؟",
+      ar: "ما هي عواقب مخالفة أحكام لائحة حماية البيانات؟",
+      ru: "Каковы последствия нарушений Общего регламента по защите данных?",
+      en: "What are the consequences of GDPR violations?"
     },
     loesung: {
       fa: "جریمه‌های مالی سنگین از سوی مراجع نظارتی (تا ۲۰ میلیون یورو یا ۴٪ از کل فروش جهانی شرکت) و پرداخت خسارت به افراد متضرر.",
@@ -501,7 +501,7 @@ export const TRANSLATIONS_PART_4: Record<string, TranslationBlockItem> = {
       fa: "بله، به محض اینکه یادداشت‌های دست‌نویس به صورت ساختاریافته (مثلاً طبق تاریخ/ساعت) ثبت شوند و حاوی اطلاعات شخصی باشند، مشمول قانون هستند.",
       ar: "نعم، بمجرد تنظيم الملاحظات اليدوية بشكل منهجي (حسب التاريخ والوقت) واحتوائها على بيانات شخصية، تخضع لأحكام القانون.",
       ru: "Да. Как только рукописные заметки систематизируются (по дате/времени) и содержат персональные данные, они подпадают под действие DSGVO.",
-      en: "Yes. As soon as handwritten notes are structured systematically (e.g. by date/time) and contain personal data, GDPR applies."
+      en: "Yes. As soon as handwritten notes are structured systematically and contain personal data, GDPR applies."
     }
   }
 };

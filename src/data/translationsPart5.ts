@@ -26,10 +26,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "What significance does federalism have for security and public order law?"
     },
     loesung: {
-      fa: "ایالت‌ها مسئول دفع خطر و پلیس هستند (هر ایالت قانون پلیس خاص خود را دارد). دولت فدرال مسئول حقوق جزا (StGB)، آیین دادرسی (StPO) و قانون تجارت (GewO) است. مقررات ماده 34a GewO در سراسر کشور یکپارچه‌اند.",
-      ar: "الولايات مسؤولة عن درء المخاطر وقانون الشرطة (لكل ولاية قانون شرطة خاص). وتتولى الحكومة الفيدرالية القانون الجنائي (StGB) والإجراءات (StPO) وقانون التجارة (GewO). أحكام § 34a GewO موحدة اتحادياً.",
-      ru: "Земли отвечают за предотвращение опасности и полицейское право (у каждой земли свой закон о полиции). Федерация отвечает за уголовное право (StGB), УПК (StPO) и закон о промысле (GewO). Нормы § 34a GewO едины по всей стране.",
-      en: "The federal states are responsible for hazard prevention and police law. The federation is responsible for criminal law (StGB), criminal procedure (StPO), and trade law (GewO). § 34a GewO is federally uniform."
+      fa: "ایالت‌ها مسئول دفع خطر و پلیس هستند (هر ایالت قانون پلیس خاص خود را دارد). دولت فدرال مسئول حقوق جزا، آیین دادرسی و قانون تجارت است. مقررات ماده 34a GewO در سراسر کشور یکپارچه‌اند.",
+      ar: "الولايات مسؤولة عن درء المخاطر وقانون الشرطة (لكل ولاية قانون شرطة خاص). وتتولى الحكومة الفيدرالية القانون الجنائي والإجراءات وقانون التجارة. أحكام § 34a GewO موحدة اتحادياً.",
+      ru: "Земли отвечают за предотвращение опасности и полицейское право (у каждой земли свой закон о полиции). Федерация отвечает за уголовное право, УПК и закон о промысле. Нормы § 34a GewO едины по всей стране.",
+      en: "The federal states are responsible for hazard prevention and police law. The federation is responsible for criminal law, criminal procedure, and trade law. § 34a GewO is federally uniform."
     }
   },
 
@@ -43,9 +43,9 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
     },
     loesung: {
       fa: "حقوق عمومی رابطه فرادست و فرودست دولت و شهروند را تنظیم می‌کند. حقوق خصوصی برابری میان شهروندان را تنظیم می‌نماید. نیروهای حراست صرفاً در حقوق خصوصی فعالیت می‌کنند و حقوق حاکمیتی ندارند.",
-      ar: "ينظم القانون العام علاقة التبعية والسيادة بين الدولة والمواطن. بينما ينظم القانون الخاص العلاقة المتكافئة بين الأفراد (BGB). يعمل موظفو الأمن في نطاق القانون الخاص ولا يملكون صلاحيات سيادية.",
+      ar: "ينظم القانون العام علاقة التبعية والسيادة بين الدولة والمواطن. بينما ينظم القانون الخاص العلاقة المتكافئة بين الأفراد. يعمل موظفو الأمن في نطاق القانون الخاص ولا يملكون صلاحيات سيادية.",
       ru: "Публичное право регулирует отношения власти и подчинения между государством и гражданином. Частное право регулирует отношения равенства между гражданами. Охрана действует в рамках частного права без властных полномочий.",
-      en: "Public law governs the relationship of superiority and subordination between state and citizen. Private law governs relationships among equals (BGB). Security personnel act purely in private law without sovereign powers."
+      en: "Public law governs the relationship of superiority and subordination between state and citizen. Private law governs relationships among equals. Security personnel act purely in private law without sovereign powers."
     }
   },
 
@@ -61,7 +61,7 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       fa: "حقوق بنیادین متوجه دولت است اما اثر غیرمستقیم بر اشخاص دارد. حقوق بشر برای همگان است (اصل ۱ و ۲). حقوق شهروندی فقط برای اتباع آلمان است (اصل ۸ و ۱۲). اصل ۱: کرامت انسانی، اصل ۲: آزادی و سلامت، اصل ۱۳: مصونیت مسکن.",
       ar: "تلزم الحقوق الأساسية الدولة في المقام الأول، ولها أثر غير مباشر بين الأفراد. حقوق الإنسان للجميع (المادة 1 و2). حقوق المواطن للألمان فقط (المادة 8 و12). المادة 1: كرامة الإنسان، المادة 2: السلامة والحرية، المادة 13: حرمة المسكن.",
       ru: "Основные права связывают государство и имеют косвенное действие в частном праве. Права человека принадлежат всем (ст. 1, 2). Права гражданина — только гражданам ФРГ (ст. 8, 12). Ст. 1: достоинство, ст. 2: неприкосновенность, ст. 13: жилище.",
-      en: "Fundamental rights bind the state and have indirect horizontal effect. Human rights apply to everyone (Art. 1, 2). Civil rights apply only to Germans (Art. 8, 12). Art. 1: human dignity, Art. 2: life/liberty, Art. 13: home."
+      en: "Fundamental rights bind the state and have indirect horizontal effect. Human rights apply to everyone. Civil rights apply only to Germans. Art. 1: human dignity, Art. 2: life/liberty, Art. 13: home."
     }
   },
 
@@ -75,7 +75,7 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
     },
     loesung: {
       fa: "استفاده از زور تنها در انحصار دولت است. پلیس دارای اختیارات حاکمیتی (بازرسی بدنی، اخراج از محل) است. نیروهای حراست خصوصی هیچ اختیاری بیش از شهروندان عادی ندارند (دفاع مشروع، بازداشت موقت مشروط).",
-      ar: "استخدام القوة كإجراء جبري محصور بالدولة. تملك الشرطة صلاحيات سيادية (تفتيش قسري، طرد). ولا يملك حراس الأمن سوى حقوق الكافة (Jedermannsrechte) وحق صاحب المكان المفوض.",
+      ar: "استخدام القوة كإجراء جبري محصور بالدولة. تملك الشرطة صلاحيات سيادية (تفتيش قسري، طرد). ولا يملك حراس الأمن سوى حقوق الكافة وحق صاحب المكان المفوض.",
       ru: "Применение силы закреплено исключительно за государством. Полиция обладает властными полномочиями (обыск, выдворение). Охрана использует только права каждого гражданина и делегированные права владельца.",
       en: "The use of physical force as coercion is reserved for the state. Police have sovereign powers. Private security guards possess only citizen's rights and transferred domiciliary rights."
     }
@@ -84,16 +84,16 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
   // Frage 125 (q-neu-5)
   "q-neu-5": {
     frage: {
-      fa: "مشارکت عمومی-خصوصی (PPP) در حوزه امنیت چیست؟",
-      ar: "ما المقصود بالشراكة بين القطاعين العام والخاص (PPP) في المجال الأمني؟",
-      ru: "Что понимается под государственно-частным партнерством (PPP) в сфере безопасности?",
-      en: "What is understood by Public-Private-Partnership (PPP) in security?"
+      fa: "مشارکت عمومی-خصوصی در حوزه امنیت چیست؟",
+      ar: "ما المقصود بالشراكة بين القطاعين العام والخاص في المجال الأمني؟",
+      ru: "Что понимается под государственно-частным партнерством в сфере безопасности?",
+      en: "What is understood by Public-Private-Partnership in security?"
     },
     loesung: {
-      fa: "همکاری قراردادی بین نهادهای امنیتی دولتی و شرکت‌های خصوصی. واگذاری وظایف حاکمیتی قانوناً ممنوع است مگر به عنوان مأمور تفویض‌شده خاص (Beliehener مانند مأمور امنیت پرواز) یا کمک‌یار اداری (Verwaltungshelfer).",
+      fa: "همکاری قراردادی بین نهادهای امنیتی دولتی و شرکت‌های خصوصی. واگذاری وظایف حاکمیتی قانوناً ممنوع است مگر به عنوان مأمور تفویض‌شده خاص (Beliehener مانند مأمور امنیت پرواز) یا کمک‌یار اداری.",
       ar: "التعاون التعاقدي بين الأجهزة الأمنية الرسمية والشركات الخاصة. نقل المهام السيادية محظور دستورياً إلا كشخص مفوض بنص القانون (Beliehener مثل أمن الطيران) أو مساعد إداري.",
-      ru: "Договорное сотрудничество госорганов и частных служб. Передача властных функций запрещена, за исключением делегированных полномочий по закону (Beliehener, напр. авиабезопасность) или помощников (Verwaltungshelfer).",
-      en: "Contractual cooperation between state security agencies and private providers. Transfer of core sovereign tasks is constitutionally prohibited, except for specially authorized agents (Beliehene) or administrative helpers."
+      ru: "Договорное сотрудничество госорганов и частных служб. Передача властных функций запрещена, за исключением делегированных полномочий по закону (Beliehener, напр. авиабезопасность) или помощников.",
+      en: "Contractual cooperation between state security agencies and private providers. Transfer of core sovereign tasks is constitutionally prohibited, except for specially authorized agents or administrative helpers."
     }
   },
 
@@ -101,31 +101,31 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
   "q-neu-6": {
     frage: {
       fa: "شرایط صدور مجوز تاسیس شرکت نگهبانی طبق ماده 34a بند 1 GewO چیست؟",
-      ar: "ما هي شروط منح ترخيص مزاولة نشاط الحراسة وفق المادة § 34a الفقرة 1 من قانون التجارة (GewO)؟",
+      ar: "ما هي شروط منح ترخيص مزاولة نشاط الحراسة وفق المادة § 34a الفقرة 1 من قانون التجارة؟",
       ru: "Каковы условия получения разрешения на охранную деятельность по § 34a ч. 1 GewO?",
-      en: "What requirements apply for granting a guarding license under § 34a (1) GewO?"
+      en: "What requirements apply for granting a guarding license under § 34a GewO?"
     },
     loesung: {
-      fa: "صلاحیت فردی و عدم سوءپیشینه، تمکن مالی منظم برای حداقل ۶ ماه، قبولی در آزمون تخصص (Sachkundeprüfung)، بیمه مسئولیت مدنی معتبر و حداقل سن ۱۸ سال تمام.",
-      ar: "الموثوقية والأهلية الجنائية، الملاءة المالية المنتظمة لستة أشهر على الأقل، اجتياز امتحان الكفاءة (Sachkundeprüfung)، توفر تأمين المسؤولية المهنية، وبلوغ 18 عاماً.",
+      fa: "صلاحیت فردی و عدم سوءپیشینه، تمکن مالی منظم برای حداقل ۶ ماه، قبولی در آزمون تخصص، بیمه مسئولیت مدنی معتبر و حداقل سن ۱۸ سال تمام.",
+      ar: "الموثوقية والأهلية الجنائية، الملاءة المالية المنتظمة لستة أشهر على الأقل، اجتياز امتحان الكفاءة، توفر تأمين المسؤولية المهنية، وبلوغ 18 عاماً.",
       ru: "Благонадежность (отсутствие судимостей), подтверждение финансовых средств (на первые 6 месяцев), сдача экзамена Sachkunde, страхование ответственности и возраст от 18 лет.",
-      en: "Reliability (no relevant criminal records), financial stability for at least 6 months, passed Sachkunde exam, business liability insurance, and minimum age of 18."
+      en: "Reliability, financial stability for at least 6 months, passed Sachkunde exam, business liability insurance, and minimum age of 18."
     }
   },
 
   // Frage 127 (q-neu-7)
   "q-neu-7": {
     frage: {
-      fa: "تفاوت دوره آموزشی ساده (Unterrichtung) و آزمون تخصص (Sachkundeprüfung) چیست؟",
-      ar: "ما الفرق بين إجراء التدريب التوجيهي (Unterrichtung) واختبار الكفاءة (Sachkundeprüfung)؟",
-      ru: "В чем различие между процедурой инструктажа (Unterrichtung) и экзаменом на квалификацию (Sachkundeprüfung)?",
-      en: "How do the instruction procedure (Unterrichtung) and the Sachkunde exam differ?"
+      fa: "تفاوت دوره آموزشی ساده و آزمون تخصص چیست؟",
+      ar: "ما الفرق بين إجراء التدريب التوجيهي واختبار الكفاءة؟",
+      ru: "В чем различие между процедурой инструктажа и экзаменом на квалификацию?",
+      en: "How do the instruction procedure and the Sachkunde exam differ?"
     },
     loesung: {
       fa: "آموزش ساده (۴۰ ساعت بدون آزمون نهایی) برای وظایف معمولی مانند دربان کافی است. آزمون تخصصی (کتبی و شفاهی) برای مشاغل پرخطر الزامی است: گشت شهری، کارآگاه فروشگاه، نگهبان ورودی دیسکو، مدیریت کمپ پناهندگان.",
       ar: "التدريب التوجيهي (40 ساعة بلا امتحان) يكفي للمهام البسيطة مثل حراسة المنشآت. أما اختبار الكفاءة (تحريري وشفهي) فإلزامي لـ: دوريات الشوارع، محقق المتاجر، حراس بوابات النوادي، وإدارة مراكز اللاجئين.",
       ru: "Инструктаж (40 часов без экзамена) достаточен для простых задач (охрана объектов). Экзамен Sachkunde обязателен для: Citystreife, детективов магазинов, фейсконтроля в клубах, руководителей в центрах беженцев.",
-      en: "Instruction (40 units, no formal exam) suffices for basic guard tasks. The Sachkunde exam (written & oral) is mandatory for: city patrols, store detectives, bouncers, leading roles in refugee shelters/events."
+      en: "Instruction suffices for basic guard tasks. The Sachkunde exam (written & oral) is mandatory for: city patrols, store detectives, bouncers, leading roles in refugee shelters/events."
     }
   },
 
@@ -138,26 +138,26 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "What rules apply to deploying personnel, interns, and minors?"
     },
     loesung: {
-      fa: "ثبت در سامانه BWR، تایید صلاحیت، سن قانونی. افراد زیر ۱۸ سال مجاز به نگهبانی مستقل نیستند. کارآموزان فقط زیر نظر مستقیم فعالیت می‌کنند و مشمول قانون حمایت از کار نوجوانان (JArbSchG) هستند.",
-      ar: "التسجيل في سجل الحراس (BWR)، والموافقة الرسمية، وبلوغ سن الرشد. يُمنع القاصرون من الحراسة المستقلة. يعمل المتدربون تحت إشراف مستمر ويخضعون لقانون حماية عمل اليافعين.",
-      ru: "Регистрация в реестре BWR, проверка благонадежности, совершеннолетие. Несовершеннолетние не могут нести охрану самостоятельно. Стажеры работают только под надзором (JArbSchG).",
-      en: "Must be registered in Guard Register (BWR), approved by authority, reliable and of age. Minors cannot perform independent guarding. Interns/apprentices only under supervision subject to Youth Labor Act."
+      fa: "ثبت در سامانه BWR، تایید صلاحیت، سن قانونی. افراد زیر ۱۸ سال مجاز به نگهبانی مستقل نیستند. کارآموزان فقط زیر نظر مستقیم فعالیت می‌کنند و مشمول قانون حمایت از کار نوجوانان هستند.",
+      ar: "التسجيل في سجل الحراس، والموافقة الرسمية، وبلوغ سن الرشد. يُمنع القاصرون من الحراسة المستقلة. يعمل المتدربون تحت إشراف مستمر ويخضعون لقانون حماية عمل اليافعين.",
+      ru: "Регистрация в реестре BWR, проверка благонадежности, совершеннолетие. Несовершеннолетние не могут нести охрану самостоятельно. Стажеры работают только под надзором.",
+      en: "Must be registered in Guard Register, approved by authority, reliable and of age. Minors cannot perform independent guarding. Interns/apprentices only under supervision subject to Youth Labor Act."
     }
   },
 
   // Frage 129 (q-neu-9)
   "q-neu-9": {
     frage: {
-      fa: "آیین‌نامه نگهبانی (BewachV) چه وظایفی را بر عهده کارفرما می‌گذارد؟",
-      ar: "ما هي الواجبات التي تفرضها لائحة الحراسة (BewachV) على صاحب العمل؟",
-      ru: "Какие обязанности возлагает Положение об охране (BewachV) на предпринимателя?",
-      en: "What duties does the Guarding Ordinance (BewachV) impose on the entrepreneur?"
+      fa: "آیین‌نامه نگهبانی چه وظایفی را بر عهده کارفرما می‌گذارد؟",
+      ar: "ما هي الواجبات التي تفرضها لائحة الحراسة على صاحب العمل؟",
+      ru: "Какие обязанности возлагает Положение об охране на предпринимателя?",
+      en: "What duties does the Guarding Ordinance impose on the entrepreneur?"
     },
     loesung: {
       fa: "بیمه مسئولیت (حداقل ۱ میلیون یورو خسارت جانی، ۲۵۰ هزار یورو مالی)، تدوین دستورالعمل خدمت کتبی، لباس کار متمایز از پلیس و نظامیان، کارت شناسایی و نشان سینه با نام/کد.",
       ar: "تأمين المسؤولية (مليون يورو للأضرار الجسدية، 250 ألف للأضرار المادية)، تسليم تعليمات الخدمة كتابياً، زي رسمي لا يشبه الشرطة/الجيش، وحمل بطاقة العمل وشارة الاسم/الرقم.",
       ru: "Страхование ответственности (1 млн евро за вред здоровью, 250 тыс. за имущество), письменная инструкция, форма без сходства с полицией, удостоверение и бейдж.",
-      en: "Liability insurance (1M EUR personal, 250k EUR property), written service instructions, uniform distinguishable from police/military, ID card and visible name/ID badge."
+      en: "Liability insurance, written service instructions, uniform distinguishable from police/military, ID card and visible name/ID badge."
     }
   },
 
@@ -173,23 +173,23 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       fa: "سلاح باید پس از خدمت فوراً پس داده شده و در گاوصندوق استاندارد نگهداری شود. هرگونه شلیک یا استفاده از اسپری باید بلافاصله به پلیس و اداره نظارت گزارش شود. نگهداری سوابق قراردادها به مدت ۵ سال الزامی است.",
       ar: "إعادة الأسلحة فور انتهاء المناوبة وحفظها في خزائن معتمدة. الإبلاغ الفوري للشرطة والبلدية عند استخدام السلاح (أو رذاذ الفلفل). والاحتفاظ بسجلات العقود والموظفين لمدة 5 سنوات.",
       ru: "Сдача оружия после смены и хранение в сертифицированном сейфе. Немедленный доклад в полицию и ведомство при любом применении оружия. Хранение договоров не менее 5 лет.",
-      en: "Secure return of weapons after duty in certified safes. Immediate reporting of any weapon use (including pepper spray) to authorities/police. Record retention for at least 5 years."
+      en: "Secure return of weapons after duty in certified safes. Immediate reporting of any weapon use to authorities/police. Record retention for at least 5 years."
     }
   },
 
   // Frage 131 (q-neu-11)
   "q-neu-11": {
     frage: {
-      fa: "قانون حفاظت از اسرار تجاری (GeschGehG) چه مقرراتی برای پرسنل حراست دارد؟",
-      ar: "ما الذي ينص عليه قانون حماية الأسرار التجارية (GeschGehG) لموظفي الأمن؟",
-      ru: "Что регулирует Закон о защите коммерческой тайны (GeschGehG) для охраны?",
-      en: "What does the Trade Secrets Act (GeschGehG) govern for security personnel?"
+      fa: "قانون حفاظت از اسرار تجاری چه مقرراتی برای پرسنل حراست دارد؟",
+      ar: "ما الذي ينص عليه قانون حماية الأسرار التجارية لموظفي الأمن؟",
+      ru: "Что регулирует Закон о защите коммерческой тайны для охраны?",
+      en: "What does the Trade Secrets Act govern for security personnel?"
     },
     loesung: {
       fa: "حفظ محرمانگی اسرار مشتریان (نقشه‌ها، کدهای آلارم). این تعهد مادام‌العمر است و نقض عمدی آن تا ۳ سال (یا تا ۵ سال در موارد خاص) مجازات حبس یا جریمه دارد.",
       ar: "حظر إفشاء أسرار العمل والمواقع (رموز الإنذار والخطط). التزام السرية مستمر حتى بعد ترك العمل، وتصل عقوبة الانتهاك للسجن حتى 3 أو 5 سنوات أو الغرامة.",
       ru: "Соблюдение конфиденциальности коммерческих тайн (коды сигнализации, планы). Обязанность сохраняется после увольнения. Наказание — до 3 (до 5) лет тюрьмы или штраф.",
-      en: "Confidentiality regarding trade secrets (alarm codes, schedules). Obligation continues after leaving employment. Unlawful disclosure carries up to 3 (or 5) years imprisonment or fine."
+      en: "Confidentiality regarding trade secrets. Obligation continues after leaving employment. Unlawful disclosure carries up to 3 years imprisonment or fine."
     }
   },
 
@@ -202,9 +202,9 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "What inspection powers do authorities have, and what sanctions apply for violations?"
     },
     loesung: {
-      fa: "حق ورود و بازرسی اماکن در ساعات اداری و بررسی اسناد. ممنوعیت کار برای پرسنل نامطمئن، جریمه تا ۵۰ هزار یورو برای تخلفات صنفی و در صورت تکرار، لغو کامل پروانه کسب (§ 35 GewO).",
+      fa: "حق ورود و بازرسی اماکن در ساعات اداری و بررسی اسناد. ممنوعیت کار برای پرسنل نامطمئن، جریمه تا ۵۰ هزار یورو برای تخلفات صنفی و در صورت تکرار، لغو کامل پروانه کسب.",
       ar: "حق دخول وتفتيش مقرات العمل وفحص المستندات أثناء الدوام. حظر عمل الحراس غير المؤهلين، وغرامات مالية تصل إلى 50,000 يورو، وإلغاء ترخيص النشاط عند استمرار المخالفات.",
-      ru: "Право доступа в помещения в рабочее время и проверка документов. Запрет на работу для неблагонадежных, штрафы до 50 000 евро и запрет деятельности (§ 35 GewO).",
+      ru: "Право доступа в помещения в рабочее время и проверка документов. Запрет на работу для неблагонадежных, штрафы до 50 000 евро и запрет деятельности.",
       en: "Right of access to business premises during hours and inspection of documents. Employment bans for unreliable staff, administrative fines up to 50,000 EUR, or revocation of trade license."
     }
   },
@@ -215,10 +215,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       fa: "چارچوب قانونی حفاظت از داده‌ها و دامنه کاربرد DSGVO چیست؟",
       ar: "ما هو الإطار القانوني لحماية البيانات ونطاق تطبيق لائحة DSGVO؟",
       ru: "Каковы правовые рамки защиты данных и сфера применения DSGVO?",
-      en: "What is the legal framework for data protection, and what is the scope of GDPR (DSGVO)?"
+      en: "What is the legal framework for data protection, and what is the scope of GDPR?"
     },
     loesung: {
-      fa: "شامل مقررات عمومی حفاظت از داده‌ها (DSGVO)، قانون فدرال (BDSG) و قوانین ایالتی. پردازش تمام یا بخشی از داده‌های شخصی را در بر می‌گیرد. استثنای مصارف خانگی فقط برای امور خصوصی است و دوربین رو به خیابان مشمول قانون است.",
+      fa: "شامل مقررات عمومی حفاظت از داده‌ها، قانون فدرال و قوانین ایالتی. پردازش تمام یا بخشی از داده‌های شخصی را در بر می‌گیرد. استثنای مصارف خانگی فقط برای امور خصوصی است و دوربین رو به خیابان مشمول قانون است.",
       ar: "يشمل لائحة DSGVO وقانون BDSG وقوانين الولايات. يسري على المعالجة الآلية للبيانات الشخصية. والاستثناء المنزلي ينطبق فقط على النطاق العائلي الخاص؛ فإذا شمل التصوير الشارع العام تسري اللائحة.",
       ru: "Включает DSGVO, BDSG, законы земель. Применяется к автоматизированной обработке персональных данных. Бытовое исключение касается только семейных дел; съемка улицы подпадает под DSGVO.",
       en: "Governed by GDPR, BDSG, state laws. Applies to automated processing of personal data. Household exemption applies strictly to private family use; filming public areas triggers GDPR."
@@ -244,16 +244,16 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
   // Frage 135 (q-neu-15)
   "q-neu-15": {
     frage: {
-      fa: "اقدامات فنی و سازمانی (TOMs) و مقررات برون‌سپاری پردازش داده‌ها چیست؟",
-      ar: "ما هي التدابير الفنية والتنظيمية (TOMs) وما الذي يسري عند معالجة البيانات بالوكالة؟",
-      ru: "Что такое технические и организационные меры (TOMs) и правила обработки по поручению?",
-      en: "What are Technical and Organizational Measures (TOMs), and what applies to commissioned processing?"
+      fa: "اقدامات فنی و سازمانی و مقررات برون‌سپاری پردازش داده‌ها چیست؟",
+      ar: "ما هي التدابير الفنية والتنظيمية وما الذي يسري عند معالجة البيانات بالوكالة؟",
+      ru: "Что такое технические и организационные меры и правила обработки по поручению?",
+      en: "What are Technical and Organizational Measures, and what applies to commissioned processing?"
     },
     loesung: {
-      fa: "اقدامات فنی: رمزگذاری، رمز عبور، کنترل فیزیکی دسترسی. اقدامات سازمانی: آموزش پرسنل، تفکیک دسترسی، نگهداری امن دفاتر. در برون‌سپاری نیاز به قرارداد کتبی پردازش (AVV) است.",
-      ar: "التدابير الفنية: التشفير، كلمات المرور، أجهزة الدخول. التدابير التنظيمية: تدريب الموظفين، إدارة الصلاحيات، حفظ السجلات. ومعالجة البيانات لصالح العميل تتطلب عقداً كتابياً (AVV).",
-      ru: "Технические: шифрование, пароли, СКУД. Организационные: обучение персонала, разграничение прав, запирание журналов. Обработка по поручению требует договора (AVV).",
-      en: "TOMs include encryption, passwords, access control (technical), and staff training, permissions, secure log storage (organizational). Commissioned processing requires a written AVV contract."
+      fa: "اقدامات فنی: رمزگذاری، رمز عبور، کنترل فیزیکی دسترسی. اقدامات سازمانی: آموزش پرسنل، تفکیک دسترسی، نگهداری امن دفاتر. در برون‌سپاری نیاز به قرارداد کتبی پردازش است.",
+      ar: "التدابير الفنية: التشفير، كلمات المرور، أجهزة الدخول. التدابير التنظيمية: تدريب الموظفين، إدارة الصلاحيات، حفظ السجلات. ومعالجة البيانات لصالح العميل تتطلب عقداً كتابياً.",
+      ru: "Технические: шифрование, пароли, СКУД. Организационные: обучение персонала, разграничение прав, запирание журналов. Обработка по поручению требует договора.",
+      en: "TOMs include encryption, passwords, access control, and staff training, permissions, secure log storage. Commissioned processing requires a written AVV contract."
     }
   },
 
@@ -269,23 +269,23 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       fa: "حقوق: دسترسی، تصحیح، حذف («فراموشی»)، محدودسازی، اعتراض. نشت داده‌ها باید ظرف حداکثر ۷۲ ساعت به سازمان نظارت و در صورت خطر شدید به خود شخص اطلاع داده شود.",
       ar: "الحقوق: الاستعلام، التصحيح، الحذف («حق النسيان»)، التقييد، الاعتراض. يجب الإبلاغ عن تسريب البيانات لهيئة الرقابة خلال 72 ساعة وللمتضررين فوراً عند وجود خطر جسيم.",
       ru: "Права: доступ, исправление, удаление («право на забвение»), ограничение, возражение. Утечка данных должна быть заявлена в надзорный орган в течение 72 часов.",
-      en: "Rights: access, rectification, erasure ('forgotten'), restriction, objection. Data breaches must be reported to the supervisory authority within 72 hours (and to subjects if high risk)."
+      en: "Rights: access, rectification, erasure ('forgotten'), restriction, objection. Data breaches must be reported to the supervisory authority within 72 hours."
     }
   },
 
   // Frage 137 (q-neu-17)
   "q-neu-17": {
     frage: {
-      fa: "شرایط مجاز بودن دوربین‌های مداربسته در فضاهای عمومی چیست (§ 4 BDSG)؟",
-      ar: "ما هي شروط مشروعية المراقبة بالكاميرات في الأماكن العامة المفتوحة (§ 4 BDSG)؟",
-      ru: "При каких условиях разрешено видеонаблюдение в общедоступных местах (§ 4 BDSG)?",
-      en: "Under what conditions is video surveillance of publicly accessible premises permitted (§ 4 BDSG)?"
+      fa: "شرایط مجاز بودن دوربین‌های مداربسته در فضاهای عمومی چیست؟",
+      ar: "ما هي شروط مشروعية المراقبة بالكاميرات في الأماكن العامة المفتوحة؟",
+      ru: "При каких условиях разрешено видеонаблюдение в общедоступных местах?",
+      en: "Under what conditions is video surveillance of publicly accessible premises permitted?"
     },
     loesung: {
       fa: "هدف مشخص (حفاظت از اموال و جان)، توازن منافع، نصب تابلوی هشدار با مشخصات کامل مسئول قبل از ورود، مدت نگهداری حداکثر ۲۴ تا ۷۲ ساعت و ارزیابی اثرات حفاظتی در صورت وسعت بالا.",
-      ar: "الهدف (حماية الملكية/الحياة)، موازنة المصالح، وضع لوحة تحذيرية واضحة تتضمن بيانات المسؤول قبل الدخول، مدة الحفظ 24-72 ساعة كحد أقصى، وتقييم الأثر (DSFA) عند المراقبة الواسعة.",
-      ru: "Цель (защита имущества/жизни), баланс интересов, видимая табличка с контактами до входа, срок хранения 24–72 часа, оценка последствий (DSFA) при масштабной съемке.",
-      en: "Purpose (protecting property/life), balancing of interests, visible warning signs before entering, storage duration 24-72 hours, and DPIA for large-scale surveillance."
+      ar: "الهدف (حماية الملكية/الحياة)، موازنة المصالح، وضع لوحة تحذيرية واضحة تتضمن بيانات المسؤول قبل الدخول، مدة الحفظ 24-72 ساعة كحد أقصى، وتقييم الأثر عند المراقبة الواسعة.",
+      ru: "Цель (защита имущества/жизни), баланс интересов, видимая табличка с контактами до входа, срок хранения 24–72 часа, оценка последствий при масштабной съемке.",
+      en: "Purpose, balancing of interests, visible warning signs before entering, storage duration 24-72 hours, and DPIA for large-scale surveillance."
     }
   },
 
@@ -308,16 +308,16 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
   // Frage 139 (q-neu-19)
   "q-neu-19": {
     frage: {
-      fa: "علل موجهه حقوقی در قانون مدنی (BGB) کدامند؟",
-      ar: "ما هي أسباب الإباحة والتبرير في القانون المدني (BGB)؟",
-      ru: "Какие основания правомерности предусмотрены Гражданским кодексом (BGB)?",
+      fa: "علل موجهه حقوقی در قانون مدنی کدامند؟",
+      ar: "ما هي أسباب الإباحة والتبرير في القانون المدني؟",
+      ru: "Какие основания правомерности предусмотрены Гражданским кодексом?",
       en: "Which civil law grounds of justification are governed by the BGB?"
     },
     loesung: {
-      fa: "دفاع مشروع/کمک به دیگران (§ 227)، اضطرار دفاعی در برابر شیء خطرناک (§ 228)، اضطرار تهاجمی به شیء بی‌طرف (§ 904)، احقاق حق شخصی عمومی (§ 229) و دفاع از تصرف خود در برابر غصب (§ 859).",
-      ar: "الدفاع الشرعي ومساعدة الغير (§ 227)، حالة الضرورة الدفاعية ضد شيء مهدد (§ 228)، حالة الضرورة الهجومية على شيء محايد (§ 904)، الدفاع الذاتي العام (§ 229)، وحماية الحيازة (§ 859).",
-      ru: "Необходимая оборона (§ 227), защитная крайняя необходимость (§ 228), атакующая крайняя необходимость (§ 904), общая самопомощь (§ 229) и защита владения (§ 859).",
-      en: "Self-defense (§ 227), defensive necessity (§ 228), aggressive necessity (§ 904), general self-help (§ 229), and possessor's self-help (§ 859)."
+      fa: "دفاع مشروع/کمک به دیگران، اضطرار دفاعی در برابر شیء خطرناک، اضطرار تهاجمی به شیء بی‌طرف، احقاق حق شخصی عمومی و دفاع از تصرف خود در برابر غصب.",
+      ar: "الدفاع الشرعي ومساعدة الغير، حالة الضرورة الدفاعية ضد شيء مهدد، حالة الضرورة الهجومية على شيء محايد، الدفاع الذاتي العام، وحماية الحيازة.",
+      ru: "Необходимая оборона, защитная крайняя необходимость, атакующая крайняя необходимость, общая самопомощь и защита владения.",
+      en: "Self-defense, defensive necessity, aggressive necessity, general self-help, and possessor's self-help."
     }
   },
 
@@ -330,7 +330,7 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "How do justifications in BGB, StGB, and § 127 StPO differ from each other?"
     },
     loesung: {
-      fa: "قانون مدنی (BGB) مانع از مسئولیت پرداخت خسارت مالی می‌شود. قانون جزا (StGB) مانع از مجازات کیفری است. ماده ۱۲۷ StPO تنها مجوز سلب موقت آزادی برای معرفی مجرم به پلیس است و تخریب یا ضرب را توجیه نمی‌کند.",
+      fa: "قانون مدنی مانع از مسئولیت پرداخت خسارت مالی می‌شود. قانون جزا مانع از مجازات کیفری است. ماده ۱۲۷ StPO تنها مجوز سلب موقت آزادی برای معرفی مجرم به پلیس است و تخریب یا ضرب را توجیه نمی‌کند.",
       ar: "مواد BGB تمنع المسؤولية المدنية والتعويض. مواد StGB تمنع العقوبة الجنائية. أما المادة § 127 StPO فتجيز فقط حرمان الحرية المؤقت لتسليم الجاني للشرطة ولا تبرر الإتلاف أو الضرب.",
       ru: "BGB исключает гражданскую ответственность и возмещение ущерба. StGB исключает уголовную наказуемость. § 127 StPO оправдывает только временное лишение свободы для передачи полиции.",
       en: "BGB justifications preclude civil liability for damages. StGB justifications preclude criminal punishability. § 127 StPO justifies solely temporary deprivation of liberty, not assault or damage."
@@ -340,16 +340,16 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
   // Frage 141 (q-neu-21)
   "q-neu-21": {
     frage: {
-      fa: "خادم تصرف (Besitzdiener) کیست و حق مالکیت بر مکان چگونه اعمال می‌شود؟",
-      ar: "من هو تابع الحيازة (Besitzdiener) وكيف يُمارس حق صاحب المكان (Hausrecht)؟",
-      ru: "Кто такой слуга владения (Besitzdiener) и как осуществляется право владельца помещения?",
-      en: "What is a possessory servant (Besitzdiener), and how is domiciliary right exercised?"
+      fa: "خادم تصرف کیست و حق مالکیت بر مکان چگونه اعمال می‌شود؟",
+      ar: "من هو تابع الحيازة وكيف يُمارس حق صاحب المكان؟",
+      ru: "Кто такой слуга владения и как осуществляется право владельца помещения?",
+      en: "What is a possessory servant, and how is domiciliary right exercised?"
     },
     loesung: {
-      fa: "نیروی حراست که طبق دستور مالک بر اشیاء تسلط دارد، خادم تصرف (§ 855) است. او حق دارد مستقلاً از حقوق دفاع از تصرف (§ 859/860) و حق اخراج افراد با نیروی متناسب استفاده کند. سوءاستفاده از حق ممنوع است (§ 226).",
-      ar: "موظف الأمن الذي يمارس السيطرة المادية بتوجيه من المالك هو تابع الحيازة (§ 855). يحق له ممارسة حقوق حماية الحيازة (§ 860) وإخراج المعتدين بالقوة المناسبة، مع حظر التعسف (§ 226).",
-      ru: "Охранник, осуществляющий фактическое господство по указанию владельца, является слугой владения (§ 855). Он может самостоятельно применять самопомощь (§ 860) без злоупотребления правом (§ 226).",
-      en: "A security guard exercising physical control under the master's direction is a Besitzdiener (§ 855) authorized to execute self-help rights (§ 860) without malicious chicane (§ 226)."
+      fa: "نیروی حراست که طبق دستور مالک بر اشیاء تسلط دارد، خادم تصرف است. او حق دارد مستقلاً از حقوق دفاع از تصرف و حق اخراج افراد با نیروی متناسب استفاده کند. سوءاستفاده از حق ممنوع است.",
+      ar: "موظف الأمن الذي يمارس السيطرة المادية بتوجيه من المالك هو تابع الحيازة. يحق له ممارسة حقوق حماية الحيازة وإخراج المعتدين بالقوة المناسبة، مع حظر التعسف.",
+      ru: "Охранник, осуществляющий фактическое господство по указанию владельца, является слугой владения. Он может самостоятельно применять самопомощь без злоупотребления правом.",
+      en: "A security guard exercising physical control under the master's direction is a Besitzdiener authorized to execute self-help rights without malicious chicane."
     }
   },
 
@@ -362,10 +362,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "When does liability for damages arise, and what applies to service dogs?"
     },
     loesung: {
-      fa: "طبق ماده ۸۲۳ BGB هرگونه نقض عمدی یا ناشی از بی‌احتیاطی به جان یا مال دیگری موجب مسئولیت است. مسئولیت صاحب سگ مطلق است اما برای سگ‌های نگهبان آموزش‌دیده شغلی در صورت رعایت کامل احتیاط، معافیت وجود دارد (§ 833 S. 2).",
+      fa: "طبق ماده ۸۲۳ BGB هرگونه نقض عمدی یا ناشی از بی‌احتیاطی به جان یا مال دیگری موجب مسئولیت است. مسئولیت صاحب سگ مطلق است اما برای سگ‌های نگهبان آموزش‌دیده شغلی در صورت رعایت کامل احتیاط، معافیت وجود دارد.",
       ar: "وفق المادة § 823 BGB يلزم بالتعويض كل من ألحق ضرراً عمداً أو إهمالاً. وتكون مسؤولية حائز الحيوان مطلقة، ولكن تُعفى كلاب الحراسة المهنية إذا أثبت الحائز التزامه بكافة تدابير الحيطة والحذر.",
-      ru: "По § 823 BGB умышленный или неосторожный вред влечет возмещение ущерба. Владелец животного несет строгую ответственность, но для служебных собак есть привилегия при должной осмотрительности (§ 833).",
-      en: "Under § 823 BGB, intentional or negligent injury/damage creates liability. Keepers face strict liability for animals, but commercial service dogs enjoy a liability defense upon proof of due care (§ 833)."
+      ru: "По § 823 BGB умышленный или неосторожный вред влечет возмещение ущерба. Владелец животного несет строгую ответственность, но для служебных собак есть привилегия при должной осмотрительности.",
+      en: "Under § 823 BGB, intentional or negligent injury/damage creates liability. Keepers face strict liability for animals, but commercial service dogs enjoy a liability defense upon proof of due care."
     }
   },
 
@@ -378,10 +378,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "How does the BGB define object, animal, property, and possession, and what governs found items?"
     },
     loesung: {
-      fa: "شیء (§ 90): اجسام مادی. حیوانات (§ 90a) شیء نیستند اما احکام اشیاء بر آنها جاری است. تصرف (§ 854): تسلط فیزیکی. مالکیت (§ 903): تسلط حقوقی. اشیاء پیداشده در محل کار باید فوراً به کارفرما تحویل شوند و پاداش به نگهبان تعلق نمی‌گیرد.",
-      ar: "الشيء (§ 90): الأجسام المادية. والحيوانات (§ 90a) ليست أشياء لكن تُعامل مثلها. الحيازة (§ 854): السيطرة الفعلية. الملكية (§ 903): السلطة القانونية. الأشياء المعثور عليها في المنشأة تُسلّم فوراً لصاحب العمل دون مكافأة.",
-      ru: "Вещь (§ 90): телесные предметы. Животные (§ 90a) не вещи, но к ним применяются нормы о вещах. Владение (§ 854): фактическая власть. Собственность (§ 903): правовая власть. Находки на объекте сдаются заказчику.",
-      en: "Object (§ 90): physical item. Animals (§ 90a): not objects but treated as such. Possession (§ 854): actual physical control. Property (§ 903): legal title. Found property must be handed to client without finder's fee."
+      fa: "شیء: اجسام مادی. حیوانات شیء نیستند اما احکام اشیاء بر آنها جاری است. تصرف: تسلط فیزیکی. مالکیت: تسلط حقوقی. اشیاء پیداشده در محل کار باید فوراً به کارفرما تحویل شوند و پاداش به نگهبان تعلق نمی‌گیرد.",
+      ar: "الشيء: الأجسام المادية. والحيوانات ليست أشياء لكن تُعامل مثلها. الحيازة: السيطرة الفعلية. الملكية: السلطة القانونية. الأشياء المعثور عليها في المنشأة تُسلّم فوراً لصاحب العمل دون مكافأة.",
+      ru: "Вещь: телесные предметы. Животные не вещи, но к ним применяются нормы о вещах. Владение: фактическая власть. Собственность: правовая власть. Находки на объекте сдаются заказчику.",
+      en: "Object: physical item. Animals: not objects but treated as such. Possession: actual physical control. Property: legal title. Found property must be handed to client without finder's fee."
     }
   },
 
@@ -394,10 +394,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "What principles apply in criminal law, and how is the tripartite structure of a crime constructed?"
     },
     loesung: {
-      fa: "اصل قانونی بودن جرم و مجازات. ارکان جرم: ۱. تحقق عنصر قانونی و مادی/معنوی (Tatbestand)، ۲. غیرقانونی بودن (عدم وجود علل موجهه)، ۳. گناهکاری و انتساب مجرمانه (Schuld). کودکان زیر ۱۴ سال فاقد مسئولیت کیفری هستند.",
-      ar: "مبدأ لا جريمة ولا عقوبة إلا بنص قانوني. بنية الجريمة: 1. تحقق الركن المادي والمعنوي (Tatbestand)، 2. عدم مشروعية الفعل، 3. المسؤولية الجنائية والذنب (Schuld). الأطفال دون 14 عاماً غير مسؤولين جنائياً.",
+      fa: "اصل قانونی بودن جرم و مجازات. ارکان جرم: ۱. تحقق عنصر قانونی و مادی/معنوی، ۲. غیرقانونی بودن (عدم وجود علل موجهه)، ۳. گناهکاری و انتساب مجرمانه. کودکان زیر ۱۴ سال فاقد مسئولیت کیفری هستند.",
+      ar: "مبدأ لا جريمة ولا عقوبة إلا بنص قانوني. بنية الجريمة: 1. تحقق الركن المادي والمعنوي، 2. عدم مشروعية الفعل، 3. المسؤولية الجنائية والذنب. الأطفال دون 14 عاماً غير مسؤولين جنائياً.",
       ru: "Принцип «нет наказания без закона». Структура: 1. Состав деяния (объективный и субъективный), 2. Противоправность, 3. Вина (дети до 14 лет невиновны по ст. 19 StGB).",
-      en: "Principle of 'no punishment without law'. Structure of offense: 1. Statutory elements (objective & subjective), 2. Unlawfulness (absence of justifications), 3. Guilt (children under 14 lack guilt)."
+      en: "Principle of 'no punishment without law'. Structure of offense: 1. Statutory elements (objective & subjective), 2. Unlawfulness, 3. Guilt."
     }
   },
 
@@ -410,26 +410,26 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "How do felonies/misdemeanors, omission offenses, and perpetration/participation differ?"
     },
     loesung: {
-      fa: "جنایت (Verbrechen): حداقل ۱ سال حبس؛ شروع به آن همیشه جرم است. جنحه (Vergehen): کمتر از ۱ سال حبس یا جریمه. ترک فعل تنها در صورت داشتن موقعیت ضامن (Garantenstellung مانند نگهبان) مجازات دارد. شریک، معاون و آمر تفکیک می‌شوند.",
-      ar: "الجناية (Verbrechen): عقوبتها سنة سجن على الأقل والشروع فيها معاقب عليه دائماً. الجنحة (Vergehen): أقل من سنة أو غرامة. الامتناع يُعاقب عليه فقط لذي صفة الضامن (حارس الأمن). ويُميز بين الفاعل والمحرض والمساعد.",
-      ru: "Преступление (Verbrechen): минимум 1 год лишения свободы, покушение наказуемо всегда. Проступок (Vergehen): менее 1 года или штраф. Бездействие наказуемо при статусе гаранта. Различают исполнителя, подстрекателя и пособника.",
-      en: "Felony (Verbrechen): min. 1 year imprisonment, attempt always punishable. Misdemeanor (Vergehen): lesser penalty. Omission punishable only for guarantors (guards). Perpetrators, instigators, and aiders are distinguished."
+      fa: "جنایت: حداقل ۱ سال حبس؛ شروع به آن همیشه جرم است. جنحه: کمتر از ۱ سال حبس یا جریمه. ترک فعل تنها در صورت داشتن موقعیت ضامن (Garantenstellung مانند نگهبان) مجازات دارد. شریک، معاون و آمر تفکیک می‌شوند.",
+      ar: "الجناية: عقوبتها سنة سجن على الأقل والشروع فيها معاقب عليه دائماً. الجنحة: أقل من سنة أو غرامة. الامتناع يُعاقب عليه فقط لذي صفة الضامن (حارس الأمن). ويُميز بين الفاعل والمحرض والمساعد.",
+      ru: "Преступление: минимум 1 год лишения свободы, покушение наказуемо всегда. Проступок: менее 1 года или штраф. Бездействие наказуемо при статусе гаранта. Различают исполнителя, подстрекателя и пособника.",
+      en: "Felony: min. 1 year imprisonment, attempt always punishable. Misdemeanor: lesser penalty. Omission punishable only for guarantors. Perpetrators, instigators, and aiders are distinguished."
     }
   },
 
   // Frage 146 (q-neu-26)
   "q-neu-26": {
     frage: {
-      fa: "علل موجهه و رافع مسئولیت کیفری در قانون مجازات (StGB) کدامند؟",
-      ar: "ما هي أسباب الإباحة ورفع المسؤولية الجنائية في قانون العقوبات (StGB)؟",
+      fa: "علل موجهه و رافع مسئولیت کیفری در قانون مجازات کدامند؟",
+      ar: "ما هي أسباب الإباحة ورفع المسؤولية الجنائية في قانون العقوبات؟",
       ru: "Какие уголовные основания правомерности и извинения существуют в StGB?",
       en: "Which criminal grounds of justification and excuse exist in the StGB?"
     },
     loesung: {
-      fa: "دفاع مشروع (§ 32): دفع حمله فعلی غیرقانونی به خود یا دیگری. اضطرار موجه (§ 34): دفع خطر با حفظ منفعت باارزش‌تر (توازن منافع). اضطرار رافع مسئولیت (§ 35): رفع خطر مرگ برای خود یا بستگان که گناه را رفع می‌کند نه غیرقانونی بودن را.",
-      ar: "الدفاع الشرعي (§ 32): رد اعتداء حال غير مشروع. الضرورة المبررة (§ 34): درء خطر عبر التضحية بمصلحة أقل قيمة (موازنة المصالح). الضرورة المعفية (§ 35): دفع خطر الموت عن النفس أو الأقارب، يرفع الذنب فقط ولا يلغي عدم المشروعية.",
-      ru: "Необходимая оборона (§ 32): отражение наличного противоправного нападения. Оправдывающая крайняя необходимость (§ 34): спасение высшего блага. Извиняющая крайняя необходимость (§ 35): угроза жизни близким.",
-      en: "Self-defense (§ 32): averting current unlawful attack. Justifying necessity (§ 34): averting danger by protecting substantially overriding interest. Exculpating necessity (§ 35): threats to life of self/relatives."
+      fa: "دفاع مشروع: دفع حمله فعلی غیرقانونی به خود یا دیگری. اضطرار موجه: دفع خطر با حفظ منفعت باارزش‌تر (توازن منافع). اضطرار رافع مسئولیت: رفع خطر مرگ برای خود یا بستگان که گناه را رفع می‌کند نه غیرقانونی بودن را.",
+      ar: "الدفاع الشرعي: رد اعتداء حال غير مشروع. الضرورة المبررة: درء خطر عبر التضحية بمصلحة أقل قيمة (موازنة المصالح). الضرورة المعفية: دفع خطر الموت عن النفس أو الأقارب، يرفع الذنب فقط ولا يلغي عدم المشروعية.",
+      ru: "Необходимая оборона: отражение наличного противоправного нападения. Оправдывающая крайняя необходимость: спасение высшего блага. Извиняющая крайняя необходимость: угроза жизни близким.",
+      en: "Self-defense: averting current unlawful attack. Justifying necessity: averting danger by protecting substantially overriding interest. Exculpating necessity: threats to life of self/relatives."
     }
   },
 
@@ -442,10 +442,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "Which offenses against public order, administration of justice, and honor are practically relevant?"
     },
     loesung: {
-      fa: "ورود غیرقانونی به ملک (§ 123 - مشروط به شکایت)، غصب عناوین دولتی و تظاهر به مأمور بودن (§ 132)، پوشیدن غیرمجاز لباس رسمی (§ 132a)، شهادت دروغ (§ 153/154)، اتهام زدن بی‌اساس (§ 164) و توهین (§ 185).",
-      ar: "انتهاك حرمة المكان (§ 123 - يتطلب شكوى)، انتحال صفة رسمية (§ 132)، ارتداء زي رسمي دون حق (§ 132a)، شهادة الزور (§ 153/154)، الافتراء والبلاغ الكاذب (§ 164)، والإهانة (§ 185).",
-      ru: "Нарушение неприкосновенности жилища (§ 123), присвоение полномочий должностного лица (§ 132), незаконное ношение формы (§ 132a), ложные показания (§ 153/154), ложный донос (§ 164), оскорбление (§ 185).",
-      en: "Trespass (§ 123 - complaint offense), arrogation of authority (§ 132), wearing uniforms unauthorized (§ 132a), false unsworn testimony / perjury (§ 153/154), false suspicion (§ 164), insult (§ 185)."
+      fa: "ورود غیرقانونی به ملک (§ 123 - مشروط به شکایت)، غصب عناوین دولتی و تظاهر به مأمور بودن، پوشیدن غیرمجاز لباس رسمی، شهادت دروغ، اتهام زدن بی‌اساس و توهین.",
+      ar: "انتهاك حرمة المكان (§ 123 - يتطلب شكوى)، انتحال صفة رسمية، ارتداء زي رسمي دون حق، شهادة الزور، الافتراء والبلاغ الكاذب، والإهانة.",
+      ru: "Нарушение неприкосновенности жилища, присвоение полномочий должностного лица, незаконное ношение формы, ложные показания, ложный донос, оскорбление.",
+      en: "Trespass, arrogation of authority, wearing uniforms unauthorized, false unsworn testimony / perjury, false suspicion, insult."
     }
   },
 
@@ -458,10 +458,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "Which offenses against bodily integrity and personal liberty are important?"
     },
     loesung: {
-      fa: "ضرب و جرح ساده (§ 223)، ضرب و جرح خطرناک با سلاح/اسپری/سگ یا گروهی (§ 224 - حداقل ۶ ماه حبس)، آسیب شدید منجر به نقص عضو دائمی (§ 226)، سلب غیرقانونی آزادی (§ 239) و اکراه و اجبار غیرقانونی (§ 240).",
-      ar: "الإيذاء الجسدي البسيط (§ 223)، الإيذاء الخطير بواسطة سلاح/رذاذ/كلب أو جماعياً (§ 224 - عقوبته 6 أشهر على الأقل)، الإيذاء الجسيم المسبب لعاهة دائمة (§ 226)، حرمان الحرية (§ 239)، والإكراه (§ 240).",
-      ru: "Простые телесные повреждения (§ 223), опасные телесные повреждения с оружием/спреем/собакой (§ 224, мин. 6 мес.), тяжкие телесные (§ 226), лишение свободы (§ 239), принуждение (§ 240).",
-      en: "Simple assault (§ 223), dangerous assault with weapon/spray/dog or jointly (§ 224, min. 6 months), grievous bodily harm causing permanent loss (§ 226), deprivation of liberty (§ 239), coercion (§ 240)."
+      fa: "ضرب و جرح ساده، ضرب و جرح خطرناک با سلاح/اسپری/سگ یا گروهی (§ 224 - حداقل ۶ ماه حبس)، آسیب شدید منجر به نقص عضو دائمی، سلب غیرقانونی آزادی و اکراه و اجبار غیرقانونی.",
+      ar: "الإيذاء الجسدي البسيط، الإيذاء الخطير بواسطة سلاح/رذاذ/كلب أو جماعياً (§ 224 - عقوبته 6 أشهر على الأقل)، الإيذاء الجسيم المسبب لعاهة دائمة، حرمان الحرية، والإكراه.",
+      ru: "Простые телесные повреждения, опасные телесные повреждения с оружием/спреем/собакой (§ 224, мин. 6 мес.), тяжкие телесные, лишение свободы, принуждение.",
+      en: "Simple assault, dangerous assault with weapon/spray/dog or jointly, grievous bodily harm causing permanent loss, deprivation of liberty, coercion."
     }
   },
 
@@ -474,10 +474,10 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       en: "Which property, asset, and criminal damage offenses must be mastered?"
     },
     loesung: {
-      fa: "سرقت (§ 242)، سرقت مشدد (§ 243)، سرقت مسلحانه (§ 244)، تصاحب غیرقانونی (§ 246)، سرقت اموال کم‌ارزش زیر ۵۰ یورو (§ 248a)، سرقت به عنف و باج‌گیری (§ 249/252/253)، تخریب عمدی اموال (§ 303 - بی‌احتیاطی جرم نیست)، کلاهبرداری و جعل سند.",
-      ar: "السرقة (§ 242)، السرقة الموصوفة (§ 243)، السرقة بالسلاح (§ 244)، خيانة الأمانة (§ 246)، سرقة الأشياء قليلة القيمة (§ 248a)، السطو والابتزاز (§ 249-253)، إتلاف الممتلكات عمداً (§ 303)، والاحتيال والتزوير.",
-      ru: "Кража (§ 242), тяжкая кража (§ 243), вооруженная кража (§ 244), присвоение (§ 246), мелкая кража (§ 248a), разбой и вымогательство (§ 249-253), умышленное повреждение имущества (§ 303), мошенничество.",
-      en: "Theft (§ 242), aggravated theft (§ 243), armed theft (§ 244), embezzlement (§ 246), petty theft under 50 EUR (§ 248a), robbery/extortion (§ 249-253), damage to property (§ 303 - intent required), fraud."
+      fa: "سرقت، سرقت مشدد، سرقت مسلحانه، تصاحب غیرقانونی، سرقت اموال کم‌ارزش زیر ۵۰ یورو، سرقت به عنف و باج‌گیری، تخریب عمدی اموال (§ 303 - بی‌احتیاطی جرم نیست)، کلاهبرداری و جعل سند.",
+      ar: "السرقة، السرقة الموصوفة، السرقة بالسلاح، خيانة الأمانة، سرقة الأشياء قليلة القيمة، السطو والابتزاز، إتلاف الممتلكات عمداً، والاحتيال والتزوير.",
+      ru: "Кража, тяжкая кража, вооруженная кража, присвоение, мелкая кража, разбой и вымогательство, умышленное повреждение имущества, мошенничество.",
+      en: "Theft, aggravated theft, armed theft, embezzlement, petty theft under 50 EUR, robbery/extortion, damage to property, fraud."
     }
   },
 
@@ -487,7 +487,7 @@ export const TRANSLATIONS_PART_5: Record<string, TranslationBlockItem> = {
       fa: "شرایط بازداشت موقت افراد توسط هر شهروند طبق ماده 127 بند 1 StPO چیست؟",
       ar: "ما هي شروط التوقيف المؤقت للأشخاص المتاحة للكافة بموجب المادة § 127 الفقرة 1 StPO؟",
       ru: "При каких условиях разрешено предварительное задержание по § 127 ч. 1 StPO?",
-      en: "Under what conditions is provisional arrest by anyone permitted under § 127 (1) StPO?"
+      en: "Under what conditions is provisional arrest by anyone permitted under § 127 StPO?"
     },
     loesung: {
       fa: "۱. مشاهده در حین یا بلافاصله پس از ارتکاب جرم کیفری، ۲. ظن فرار یا عدم امکان احراز هویت فوری در محل. اعمال زور فقط در حد نگه‌داشتن متناسب تا رسیدن پلیس مجاز است و بازرسی بدنی اجباری اکیداً ممنوع است.",

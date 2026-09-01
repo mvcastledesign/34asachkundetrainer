@@ -13,164 +13,21 @@ import { useSpeech } from '../hooks/useSpeech.ts';
 import TranslationView from './TranslationView.tsx';
 import { logQuestionAttempt, logExamSession, InteractionTracker, generateSessionId } from '../lib/analytics.ts';
 
-interface RawRiddleItem {
-  id: number;
-  riddle: string;
-  options: string[];
-  correct: string;
-  explanation: string;
-}
+import { RIDDLE_QUESTIONS, RiddleQuestion, RiddleQuestionOption } from '../data/riddleQuestions.ts';
 
 interface ShuffledRiddleItem {
   id: number;
   riddle: string;
-  options: string[];
+  options: RiddleQuestionOption[];
   correct: string;
   explanation: string;
+  translations?: {
+    en: { question: string; explanation: string };
+    ru: { question: string; explanation: string };
+    ar: { question: string; explanation: string };
+    fa: { question: string; explanation: string };
+  };
 }
-
-const RAW_RIDDLE_QUESTIONS: RawRiddleItem[] = [
-  {
-    id: 1,
-    riddle: "Ich trete in Kraft, wenn ein gegenwärtiger, rechtswidriger Angriff auf dich oder einen anderen stattfindet. Du darfst das mildeste, aber sicher wirksame Mittel einsetzen, um den Angriff sofort zu beenden.",
-    options: ["Notwehr / Nothilfe", "Notstand", "Vorläufige Festnahme", "Selbsthilfe"],
-    correct: "Notwehr / Nothilfe",
-    explanation: "Notwehr rechtfertigt die erforderliche Verteidigung gegen einen gegenwärtigen, rechtswidrigen Angriff."
-  },
-  {
-    id: 2,
-    riddle: "Ich erlaube dir, eine fremde Sache zu beschädigen oder zu zerstören, wenn von dieser Sache selbst eine drohende Gefahr für ein Rechtsgut ausgeht – vorausgesetzt, der Schaden ist nicht unverhältnismäßig.",
-    options: ["Defensiver Notstand", "Aggressiver Notstand", "Notwehr", "Verbotene Eigenmacht"],
-    correct: "Defensiver Notstand",
-    explanation: "Beim Defensivnotstand geht die Gefahr von der Sache selbst aus, die beschädigt wird."
-  },
-  {
-    id: 3,
-    riddle: "Ich greife, wenn du jemanden auf frischer Tat bei einer Straftat erwischst und die Identität nicht sofort feststellbar ist oder Fluchtgefahr besteht. Du darfst die Person festhalten, bis die Polizei eintrifft.",
-    options: ["Vorläufige Festnahme", "Besitzkehr", "Notwehr", "Hausverbot"],
-    correct: "Vorläufige Festnahme",
-    explanation: "Das Jedermanns-Festnahmerecht sichert die Strafverfolgung bei frischer Tat und unklarer Identität."
-  },
-  {
-    id: 4,
-    riddle: "Ich beschreibe deinen rechtlichen Status an der Tür oder im Objekt: Du bist nicht der Eigentümer, übst aber die Weisungsgewalt und die tatsächliche Kontrolle für deinen Auftraggeber aus.",
-    options: ["Besitzdiener", "Unmittelbarer Besitzer", "Eigentümer", "Amtsträger"],
-    correct: "Besitzdiener",
-    explanation: "Als Sicherheitsmitarbeiter bist du Besitzdiener und setzt die Rechte des Besitzers weisungsgebunden durch."
-  },
-  {
-    id: 5,
-    riddle: "Ich bin das Recht des Eigentümers oder Besitzers, fremde Personen vom Grundstück zu verweisen oder ihnen den Zutritt von vornherein zu untersagen.",
-    options: ["Hausrecht", "Hausfriedensbruch", "Besitzwehr", "Garantenstellung"],
-    correct: "Hausrecht",
-    explanation: "Das Hausrecht beruht auf dem Hausrechtsinhaber-Status und schützt das Hausrecht aus BGB & StGB."
-  },
-  {
-    id: 6,
-    riddle: "Ich liege vor, wenn jemand unbefugt in das befriedete Besitztum eines anderen eindringt oder trotz Aufforderung des Hausrechtsinhabers den Raum nicht unverzüglich verlässt.",
-    options: ["Hausfriedensbruch", "Besitzstörung", "Landfriedensbruch", "Nötigung"],
-    correct: "Hausfriedensbruch",
-    explanation: "Hausfriedensbruch ist nach § 123 StGB eine Straftat gegen die Unverletzlichkeit der Wohnung/des Besitztums."
-  },
-  {
-    id: 7,
-    riddle: "Ich bin ein Rechtfertigungsgrund, bei dem du in die Rechte einer unbeteiligten dritten Person eingreifst, um eine gegenwärtige, nicht anders abwendbare Gefahr für Leib oder Leben abzuwehren.",
-    options: ["Aggressiver Notstand", "Defensiver Notstand", "Notwehr", "Selbsthilfe"],
-    correct: "Aggressiver Notstand",
-    explanation: "Beim Aggressivnotstand (§ 904 BGB) richtet sich die Einwirkung gegen Rechtsgüter Unbeteiligter."
-  },
-  {
-    id: 8,
-    riddle: "Ich bin das Recht des Besitzers oder Besitzdieners, sich einer verbotenen Eigenmacht auf frischer Tat mit Gewalt zu erwehren (Wegnahme oder Störung verhindern).",
-    options: ["Besitzwehr", "Besitzkehr", "Notwehr", "Selbsthilfe"],
-    correct: "Besitzwehr",
-    explanation: "Besitzwehr (§ 859 Abs. 1 BGB) erlaubt die aktive Abwehr verbotener Eigenmacht am Besitz."
-  },
-  {
-    id: 9,
-    riddle: "Ich erlaube dir, eine bewegliche Sache, die dir oder deinem Auftraggeber durch verbotene Eigenmacht entwendet wurde, dem Täter auf frischer Tat sofort wieder mit verhältnismäßiger Gewalt abzunehmen.",
-    options: ["Besitzkehr", "Besitzwehr", "Notstand", "Sicherstellung"],
-    correct: "Besitzkehr",
-    explanation: "Besitzkehr (§ 859 Abs. 2 BGB) gestattet die frische Nacheile und Wiedererlangung des Besitzes."
-  },
-  {
-    id: 10,
-    riddle: "Ich trete ein, wenn du durch Vertrag, Gesetz oder tatsächliche Übernahme die rechtliche Pflicht hast, dafür einzustehen, dass ein drohender Schaden von einer Person oder Sache abgewendet wird.",
-    options: ["Garantenstellung / Garantenpflicht", "Amtspflicht", "Sorgfaltspflicht", "Treuepflicht"],
-    correct: "Garantenstellung / Garantenpflicht",
-    explanation: "Sicherheitskräfte sind als Beschützergaranten vertraglich verpflichtet, Schäden vom Schutzobjekt abzuwenden."
-  },
-  {
-    id: 11,
-    riddle: "Ich liege vor, wenn du zur Durchsetzung eines zivilrechtlichen Anspruchs einen Schuldner festnimmst oder eine Sache beschlagnamst, weil obrigkeitliche Hilfe nicht rechtzeitig erreichbar ist und Gefahr im Verzug ist.",
-    options: ["Selbsthilfe", "Vorläufige Festnahme", "Notwehr", "Besitzkehr"],
-    correct: "Selbsthilfe",
-    explanation: "Die zivilrechtliche Selbsthilfe nach § 229 BGB sichert Ansprüche, wenn staatliche Hilfe zu spät käme."
-  },
-  {
-    id: 12,
-    riddle: "Ich beschreibe das Merkmal, dass eine Straftat genau in diesem Moment abläuft oder der Täter unmittelbar am Tatort bzw. auf der frischen Flucht verfolgt wird.",
-    options: ["Auf frischer Tat", "Gegenwärtiger Angriff", "Gefahr im Verzug", "Rechtswidrigkeit"],
-    correct: "Auf frischer Tat",
-    explanation: "Frische Tat bedeutet zeitliche und räumliche Unmittelbarkeit zum Tatgeschehen."
-  },
-  {
-    id: 13,
-    riddle: "Ich bin das rechtliche Verbot, ohne richterlichen Beschluss oder ausdrückliche Rechtsgrundlage fremde Personen oder deren mitgeführte Taschen gegen deren Willen zu durchsuchen.",
-    options: ["Verbot der Durchsuchung (Jedermann)", "Hausrecht", "Gefahrenabwehr", "Gewaltmonopol"],
-    correct: "Verbot der Durchsuchung (Jedermann)",
-    explanation: "Private Sicherheitskräfte dürfen Taschen nur mit freiwilliger Einwilligung der Person kontrollieren."
-  },
-  {
-    id: 14,
-    riddle: "Ich bin das Vorrecht des Staates, über Polizei und Justiz als einzige Instanz physische Zwangsgewalt zur Rechtsdurchsetzung auszuüben, außer bei Jedermannsrechten.",
-    options: ["Staatliches Gewaltmonopol", "Hoheitsrecht", "Amtsgewalt", "Rechtsstaatsprinzip"],
-    correct: "Staatliches Gewaltmonopol",
-    explanation: "Das staatliche Gewaltmonopol verbietet Selbstjustiz; Jedermannsrechte sind enge Ausnahmen."
-  },
-  {
-    id: 15,
-    riddle: "Ich bezeichne jede Handlung, durch die jemand dem Besitzer ohne dessen Willen den Besitz entzieht oder ihn im Besitz stört, ohne dass ein gesetzlicher Erlaubnisgrund vorliegt.",
-    options: ["Verbotene Eigenmacht", "Besitzentziehung", "Besitzstörung", "Diebstahl"],
-    correct: "Verbotene Eigenmacht",
-    explanation: "Verbotene Eigenmacht (§ 858 BGB) ist die widerrechtliche Beeinträchtigung der tatsächlichen Sachherrschaft."
-  },
-  {
-    id: 16,
-    riddle: "Ich erfülle den Straftatbestand, wenn du einen Menschen rechtswidrig mit Gewalt oder durch Drohung mit einem empfindlichen Übel zu einer Handlung, Duldung oder Unterlassung zwingst.",
-    options: ["Nötigung", "Freiheitsberaubung", "Körperverletzung", "Erpressung"],
-    correct: "Nötigung",
-    explanation: "Nötigung liegt vor, wenn der freie Wille einer Person durch Drohung oder Zwang gebeugt wird."
-  },
-  {
-    id: 17,
-    riddle: "Ich liege vor, wenn du jemanden widerrechtlich einsperrst oder auf andere Weise daran hinderst, seinen Aufenthaltsort nach eigenem Willen zu verlassen, ohne dass ein Festnahmerecht greift.",
-    options: ["Freiheitsberaubung", "Nötigung", "Hausfriedensbruch", "Verbotene Eigenmacht"],
-    correct: "Freiheitsberaubung",
-    explanation: "Freiheitsberaubung entzieht einer Person für eine gewisse Dauer unrechtmäßig die persönliche Bewegungsfreiheit."
-  },
-  {
-    id: 18,
-    riddle: "Ich bin ein rechtlicher Grundsatz, der verlangt, dass jede Maßnahme und Gewalteinwirkung geeignet, erforderlich und angemessen zum Erreichen des Ziels sein muss.",
-    options: ["Grundsatz der Verhältnismäßigkeit", "Garantenpflicht", "Hausrecht", "Bestimmtheitsgebot"],
-    correct: "Grundsatz der Verhältnismäßigkeit",
-    explanation: "Die Verhältnismäßigkeit prüft immer das mildeste, aber wirksame Mittel zur Zielerreichung."
-  },
-  {
-    id: 19,
-    riddle: "Ich bin eine Straftat, die begangen wird, wenn sich eine Person öffentlich als Polizist oder Behördenvertreter ausgibt und Handlungen vornimmt, die nur echten Staatsorganen zustehen.",
-    options: ["Amtsanmaßung", "Nötigung", "Urkundenfälschung", "Täuschung"],
-    correct: "Amtsanmaßung",
-    explanation: "Amtsanmaßung begeht, wer unbefugt hoheitliche Amtsbefugnisse vortäuscht oder ausübt."
-  },
-  {
-    id: 20,
-    riddle: "Ich liege vor, wenn du jemanden rechtswidrig körperlich misshandelst oder an der Gesundheit schädigst, ohne dass ein gesetzlicher Rechtfertigungsgrund wie Notwehr vorliegt.",
-    options: ["Körperverletzung", "Nötigung", "Beleidigung", "Notstand"],
-    correct: "Körperverletzung",
-    explanation: "Jede unbefugte Beeinträchtigung des körperlichen Wohlbefindens stellt eine Körperverletzung dar."
-  }
-];
 
 // FISHER-YATES SHUFFLE ALGORITHMUS
 function shuffleArray<T>(array: T[]): T[] {
@@ -212,7 +69,7 @@ export default function LegalConceptGuesser({
 
   // Erstelle bei jedem Start / Reset einen komplett frisch gemischten Rätsel-Pool
   const buildRandomizedRiddles = (): ShuffledRiddleItem[] => {
-    const shuffledQuestions = shuffleArray(RAW_RIDDLE_QUESTIONS);
+    const shuffledQuestions = shuffleArray(RIDDLE_QUESTIONS);
 
     return shuffledQuestions.map(r => ({
       ...r,
@@ -243,19 +100,19 @@ export default function LegalConceptGuesser({
   }, []);
 
   const currentRiddle = riddles[currentIndex] || riddles[0];
-  const totalQuestions = riddles.length > 0 ? riddles.length : RAW_RIDDLE_QUESTIONS.length;
+  const totalQuestions = riddles.length > 0 ? riddles.length : RIDDLE_QUESTIONS.length;
 
-  const handleSelectOption = (option: string) => {
+  const handleSelectOption = (optionText: string) => {
     if (isAnswered || !currentRiddle) return;
 
-    const optIndex = currentRiddle.options.indexOf(option);
+    const optIndex = currentRiddle.options.findIndex(o => o.text === optionText);
     trackerRef.current.recordInteraction(optIndex >= 0 ? optIndex : 0);
     const metrics = trackerRef.current.getMetrics();
 
-    setSelectedOption(option);
+    setSelectedOption(optionText);
     setIsAnswered(true);
 
-    const isCorrect = option === currentRiddle.correct;
+    const isCorrect = optionText === currentRiddle.correct;
 
     // Track question attempt in Supabase
     logQuestionAttempt({
@@ -337,16 +194,16 @@ export default function LegalConceptGuesser({
       } else if (currentRiddle) {
         if (['1', 'Digit1', 'KeyA', 'a', 'A'].includes(e.code) || e.key === '1' || e.key === 'a' || e.key === 'A') {
           e.preventDefault();
-          if (currentRiddle.options[0]) handleSelectOption(currentRiddle.options[0]);
+          if (currentRiddle.options[0]) handleSelectOption(currentRiddle.options[0].text);
         } else if (['2', 'Digit2', 'KeyB', 'b', 'B'].includes(e.code) || e.key === '2' || e.key === 'b' || e.key === 'B') {
           e.preventDefault();
-          if (currentRiddle.options[1]) handleSelectOption(currentRiddle.options[1]);
+          if (currentRiddle.options[1]) handleSelectOption(currentRiddle.options[1].text);
         } else if (['3', 'Digit3', 'KeyC', 'c', 'C'].includes(e.code) || e.key === '3' || e.key === 'c' || e.key === 'C') {
           e.preventDefault();
-          if (currentRiddle.options[2]) handleSelectOption(currentRiddle.options[2]);
+          if (currentRiddle.options[2]) handleSelectOption(currentRiddle.options[2].text);
         } else if (['4', 'Digit4', 'KeyD', 'd', 'D'].includes(e.code) || e.key === '4' || e.key === 'd' || e.key === 'D') {
           e.preventDefault();
-          if (currentRiddle.options[3]) handleSelectOption(currentRiddle.options[3]);
+          if (currentRiddle.options[3]) handleSelectOption(currentRiddle.options[3].text);
         }
       }
     };
@@ -429,6 +286,17 @@ export default function LegalConceptGuesser({
                   questionId={`riddle-${currentRiddle.id}`}
                   targetLanguage={translationLang} 
                   type="frage" 
+                  directTranslation={
+                    translationLang === 'en' || translationLang === 'englisch'
+                      ? currentRiddle.translations?.en?.question
+                      : translationLang === 'ru' || translationLang === 'russisch'
+                      ? currentRiddle.translations?.ru?.question
+                      : translationLang === 'ar' || translationLang === 'arabisch'
+                      ? currentRiddle.translations?.ar?.question
+                      : translationLang === 'fa' || translationLang === 'farsi'
+                      ? currentRiddle.translations?.fa?.question
+                      : undefined
+                  }
                 />
               </div>
             )}
@@ -436,10 +304,10 @@ export default function LegalConceptGuesser({
 
           {/* ANTWORT-BUTTONS: 2x2 Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {currentRiddle.options.map((option, idx) => {
+            {currentRiddle.options.map((optionObj, idx) => {
               const letter = String.fromCharCode(65 + idx); // A, B, C, D
-              const isSelected = selectedOption === option;
-              const isCorrect = option === currentRiddle.correct;
+              const isSelected = selectedOption === optionObj.text;
+              const isCorrect = optionObj.text === currentRiddle.correct;
 
               let buttonStyle = 'bg-[#131B2A] border-[#1E293B] hover:border-amber-500/60 hover:bg-[#1A253A] text-slate-200';
 
@@ -457,8 +325,8 @@ export default function LegalConceptGuesser({
 
               return (
                 <button
-                  key={idx}
-                  onClick={() => handleSelectOption(option)}
+                  key={optionObj.id || idx}
+                  onClick={() => handleSelectOption(optionObj.text)}
                   disabled={isAnswered}
                   className={`p-3.5 rounded-xl border transition-all text-left flex items-center justify-between gap-3 group active:scale-[0.99] cursor-pointer min-h-[58px] ${buttonStyle}`}
                 >
@@ -475,15 +343,26 @@ export default function LegalConceptGuesser({
 
                     <div className="min-w-0 flex-1">
                       <span className="font-semibold text-xs sm:text-sm font-sans leading-snug block">
-                        {option}
+                        {optionObj.text}
                       </span>
                       {translationLang !== 'deaktiviert' && (
                         <TranslationView
                           variant="compact"
-                          text={option}
-                          questionId={`${currentRiddle.id}-opt-${idx}`}
+                          text={optionObj.text}
+                          questionId={`riddle_${currentRiddle.id}-opt-${optionObj.id}`}
                           targetLanguage={translationLang}
                           type="antwort"
+                          directTranslation={
+                            translationLang === 'en' || translationLang === 'englisch'
+                              ? optionObj.translations?.en
+                              : translationLang === 'ru' || translationLang === 'russisch'
+                              ? optionObj.translations?.ru
+                              : translationLang === 'ar' || translationLang === 'arabisch'
+                              ? optionObj.translations?.ar
+                              : translationLang === 'fa' || translationLang === 'farsi'
+                              ? optionObj.translations?.fa
+                              : undefined
+                          }
                         />
                       )}
                     </div>
@@ -519,6 +398,26 @@ export default function LegalConceptGuesser({
                 <p className="text-xs text-slate-300 font-sans leading-relaxed">
                   {currentRiddle.explanation}
                 </p>
+                {translationLang !== 'deaktiviert' && (
+                  <TranslationView
+                    variant="compact"
+                    text={currentRiddle.explanation}
+                    questionId={`riddle_${currentRiddle.id}_explanation`}
+                    targetLanguage={translationLang}
+                    type="loesung"
+                    directTranslation={
+                      translationLang === 'en' || translationLang === 'englisch'
+                        ? currentRiddle.translations?.en?.explanation
+                        : translationLang === 'ru' || translationLang === 'russisch'
+                        ? currentRiddle.translations?.ru?.explanation
+                        : translationLang === 'ar' || translationLang === 'arabisch'
+                        ? currentRiddle.translations?.ar?.explanation
+                        : translationLang === 'fa' || translationLang === 'farsi'
+                        ? currentRiddle.translations?.fa?.explanation
+                        : undefined
+                    }
+                  />
+                )}
               </div>
 
               <button
